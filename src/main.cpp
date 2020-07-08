@@ -55,11 +55,7 @@ auto main(int argc, char *argv[]) -> int {
 
     Logger::info(LogFacility::Other) << "Starting Illarion!" << Log::end;
 
-    // initialize signalhandlers
-    if (!init_sighandlers()) {
-        Logger::critical(LogFacility::Other) << "failed to initialise signal handlers" << Log::end;
-        return 1;
-    }
+    init_sighandlers();
 
     const std::vector<std::string> args(argv, argv + argc);
 

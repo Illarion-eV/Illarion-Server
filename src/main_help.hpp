@@ -28,7 +28,6 @@ extern volatile bool running;
 class Player;
 
 void logout_save(Player *who, bool forced, unsigned long int thistime);
-
 void login_save(Player *who);
 
 // process commandline arguments
@@ -37,10 +36,7 @@ auto checkArguments(const std::vector<std::string> &args) -> bool;
 // load item definitions
 void loadData();
 
-// initialise signal handlers
-auto init_sighandlers() -> bool;
-
-// reset signal handlers
+void init_sighandlers();
 void reset_sighandlers();
 
 #endif

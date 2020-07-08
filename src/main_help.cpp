@@ -36,6 +36,7 @@
 #include "script/LuaPlayerDeathScript.hpp"
 #include "script/LuaWeaponScript.hpp" //For standard fighting script.
 
+#include <csignal>
 #include <ctime>
 #include <memory>
 #include <sstream>
@@ -181,21 +182,10 @@ void loadData() {
     }
 }
 
-////////////////////////////////////////
-// signal handling functions
-////////////////////////////////////////
-
-struct sigaction act_segv, act_segv_o, act_pipe, act_pipe_o, act_term, act_term_o, act_usr;
-
-// signal handler for SIGTERM
 void sig_term(int /*unused*/) {
     Logger::info(LogFacility::Other) << "SIGTERM received!" << Log::end;
-    //  ignore signal
-    act_term.sa_handler = SIG_IGN;
 
-    if (sigaction(SIGTERM, &act_term, nullptr) < 0) {
-        Logger::error(LogFacility::Other) << "SIGTERM: sigaction failed" << Log::end;
-    }
+    std::signal(SIGTERM, SIG_IGN); // NOLINT
 
     World::get()->allowLogin(false);
     running = false;
@@ -205,19 +195,15 @@ void sig_term(int /*unused*/) {
 void sig_segv(int /*unused*/) {
     Logger::error(LogFacility::Other) << "SIGSEGV received! Last Script: " << World::get()->currentScript->getFileName()
                                       << Log::end;
-    // ignore signal
-    act_segv.sa_handler = SIG_IGN;
 
-    if (sigaction(SIGSEGV, &act_segv, nullptr) < 0) {
-        Logger::error(LogFacility::Other) << "SIGSEGV: sigaction failed" << Log::end;
-    }
+    std::signal(SIGSEGV, SIG_IGN); // NOLINT
 }
 
 // signal handler for SIGUSR1 - Used to reload maps
 void sig_usr(int /*unused*/) {
-    Logger::info(LogFacility::World) << "SIGUSR received! Importing new maps." << Log::end;
-    act_usr.sa_handler = sig_usr;
+    std::signal(SIGUSR1, SIG_IGN); // NOLINT
 
+    Logger::info(LogFacility::World) << "SIGUSR received! Importing new maps." << Log::end;
     Logger::info(LogFacility::World) << "Disable login and force log out of all players." << Log::end;
     World *world = World::get();
     world->allowLogin(false);
@@ -226,88 +212,22 @@ void sig_usr(int /*unused*/) {
     world->allowLogin(true);
     Logger::info(LogFacility::World) << "Map import finished." << Log::end;
 
-    if (sigaction(SIGUSR1, &act_usr, nullptr) < 0) {
-        Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;
-    }
+    std::signal(SIGUSR1, sig_usr);
 }
 
-auto init_sighandlers() -> bool {
-    // ignore all signals while installing signal handlers
-    if (sigfillset(&act_pipe.sa_mask) < 0) {
-        Logger::error(LogFacility::Other) << "main: sigfillset failed" << Log::end;
-        return false;
-    }
+void init_sighandlers() {
+    std::signal(SIGPIPE, SIG_IGN); // NOLINT
+    std::signal(SIGCHLD, SIG_IGN); // NOLINT
+    std::signal(SIGINT, SIG_IGN);  // NOLINT
+    std::signal(SIGQUIT, SIG_IGN); // NOLINT
 
-    // ignore signals
-    act_pipe.sa_handler = SIG_IGN;
-    act_pipe.sa_flags = SA_RESTART;
-
-    // install signal handlers
-    if (sigaction(SIGPIPE, &act_pipe, &act_pipe_o) < 0) {
-        Logger::error(LogFacility::Other) << "SIGPIPE: sigaction failed" << Log::end;
-        return false;
-    }
-
-    if (sigaction(SIGCHLD, &act_pipe, nullptr) < 0) {
-        Logger::error(LogFacility::Other) << "SIGCHLD: sigaction failed" << Log::end;
-        return false;
-    }
-
-    if (sigaction(SIGINT, &act_pipe, nullptr) < 0) {
-        Logger::error(LogFacility::Other) << "SIGINT: sigaction failed" << Log::end;
-        return false;
-    }
-
-    if (sigaction(SIGQUIT, &act_pipe, nullptr) < 0) {
-        Logger::error(LogFacility::Other) << "SIGQUIT: sigaction failed" << Log::end;
-        return false;
-    }
-
-    // ignore all signals while installing signal handlers
-    if (sigfillset(&act_term.sa_mask) < 0) {
-        Logger::error(LogFacility::Other) << "main: failed to install signal handlers" << Log::end;
-        return false;
-    }
-
-    act_term.sa_handler = sig_term;
-    act_term.sa_flags = SA_RESTART;
-
-    if (sigaction(SIGTERM, &act_term, &act_term_o) < 0) {
-        Logger::error(LogFacility::Other) << "SIGTERM: sigaction failed" << Log::end;
-        return false;
-    }
-
-    if (sigfillset(&act_segv.sa_mask) < 0) {
-        Logger::error(LogFacility::Other) << "main: failed to install signal handlers" << Log::end;
-        return false;
-    }
-
-    act_segv.sa_handler = sig_segv;
-    act_segv.sa_flags = SA_RESTART;
-
-    if (sigaction(SIGSEGV, &act_segv, &act_segv_o) < 0) {
-        Logger::error(LogFacility::Other) << "SIGSEGV: sigaction failed" << Log::end;
-        return false;
-    }
-
-    if (sigfillset(&act_usr.sa_mask) < 0) {
-        Logger::error(LogFacility::Other) << "main: failed to install signal handlers" << Log::end;
-        return false;
-    }
-
-    act_usr.sa_handler = sig_usr;
-    act_usr.sa_flags = SA_RESTART;
-
-    if (sigaction(SIGUSR1, &act_usr, nullptr) < 0) {
-        Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;
-        return false;
-    }
-
-    return true;
+    std::signal(SIGTERM, sig_term);
+    std::signal(SIGSEGV, sig_segv);
+    std::signal(SIGUSR1, sig_usr);
 }
 
 void reset_sighandlers() {
-    sigaction(SIGPIPE, &act_pipe_o, nullptr);
-    sigaction(SIGTERM, &act_term_o, nullptr);
-    sigaction(SIGSEGV, &act_segv_o, nullptr);
+    std::signal(SIGPIPE, SIG_DFL);
+    std::signal(SIGTERM, SIG_DFL);
+    std::signal(SIGSEGV, SIG_DFL);
 }
