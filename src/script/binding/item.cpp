@@ -47,7 +47,7 @@ auto item() -> luabind::scope {
             .property("quality", &Item::getQuality, &Item::setQuality)
             .def("setData", (void (Item::*)(const std::string &, const std::string &)) & Item::setData)
             .def("setData", (void (Item::*)(const std::string &, int32_t)) & Item::setData)
-            .def("getData", (std::string(Item::*)(const std::string &)) & Item::getData)
+            .def("getData", &Item::getData)
             .def("isLarge", &Item::isLarge);
 }
 
