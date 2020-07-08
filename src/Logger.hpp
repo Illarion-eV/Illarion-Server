@@ -22,16 +22,7 @@
 #include <sstream>
 #include <string>
 #include <syslog.h>
-
-#define LOGLEVEL_ERROR 3
-#define LOGLEVEL_WARNING 4
-#define LOGLEVEL_NOTICE 5
-#define LOGLEVEL_INFO 6
-#define LOGLEVEL_DEBUG 7
-
-#ifndef MIN_LOGLEVEL
-#define MIN_LOGLEVEL 6
-#endif
+#include <type_traits>
 
 enum class LogFacility {
     Database = LOG_LOCAL1,
@@ -53,6 +44,8 @@ enum class LogPriority {
     INFO = LOG_INFO,
     DEBUG = LOG_DEBUG
 };
+
+constexpr auto isLogEnabled(LogPriority priority) -> bool { return priority != LogPriority::DEBUG; }
 
 void log_message(LogPriority priority, LogFacility facility, const std::string &message);
 
@@ -98,26 +91,8 @@ private:
 
 template <LogPriority priority> class LogType {
 public:
-    using type = LogStream<priority>;
+    using type = std::conditional_t<isLogEnabled(priority), LogStream<priority>, NullStream>;
 };
-
-#define DEACTIVATE_LOG(priority)                                                                                       \
-    template <> class LogType<priority> {                                                                              \
-    public:                                                                                                            \
-        using type = NullStream;                                                                                       \
-    };
-
-#if MIN_LOGLEVEL < LOGLEVEL_DEBUG
-DEACTIVATE_LOG(LogPriority::DEBUG)
-#endif
-#if MIN_LOGLEVEL < LOGLEVEL_INFO
-DEACTIVATE_LOG(LogPriority::INFO)
-#endif
-#if MIN_LOGLEVEL < LOGLEVEL_NOTICE
-DEACTIVATE_LOG(LogPriority::NOTICE)
-#endif
-
-#undef DEACTIVATE_LOG
 
 class Logger {
 public:
