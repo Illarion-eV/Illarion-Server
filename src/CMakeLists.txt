@@ -165,7 +165,6 @@ add_library(server
     Random.hpp
     Scheduler.hpp
     Scheduler.tcc
-    SchedulerTaskClasses.hpp
     Showcase.cpp
     Showcase.hpp
     SpawnPoint.cpp

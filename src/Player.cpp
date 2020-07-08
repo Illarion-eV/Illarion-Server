@@ -24,7 +24,6 @@
 #include "MonitoringClients.hpp"
 #include "PlayerManager.hpp"
 #include "Random.hpp"
-#include "SchedulerTaskClasses.hpp"
 #include "Showcase.hpp"
 #include "World.hpp"
 #include "data/ContainerObjectTable.hpp"

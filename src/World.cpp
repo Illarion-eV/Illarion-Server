@@ -23,9 +23,11 @@
 #include "Config.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
+#include "Monster.hpp"
+#include "NPC.hpp"
+#include "Player.hpp"
 #include "PlayerManager.hpp"
 #include "Random.hpp"
-#include "SchedulerTaskClasses.hpp"
 #include "TableStructs.hpp"
 #include "WaypointList.hpp"
 #include "data/Data.hpp"
@@ -40,6 +42,7 @@
 #include "netinterface/BasicCommand.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
+#include "script/LuaLearnScript.hpp"
 #include "script/LuaLogoutScript.hpp"
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaWeaponScript.hpp"
@@ -54,6 +57,7 @@
 
 extern ScheduledScriptsTable *scheduledScripts;
 extern MonsterTable *monsterDescriptions;
+extern std::unique_ptr<LuaLearnScript> learnScript;
 extern std::unique_ptr<LuaLogoutScript> logoutScript;
 extern std::unique_ptr<LuaWeaponScript> standardFightingScript;
 
@@ -619,6 +623,12 @@ static auto getNextIGDayTime() -> std::chrono::steady_clock::time_point {
 }
 
 void World::initScheduler() {
+    auto reduceMC = [](Character *character) {
+        if (character->getMentalCapacity() > 0) {
+            learnScript->reduceMC(character);
+        }
+    };
+
     scheduler.addRecurringTask([&] { Players.for_each(reduceMC); }, reduceMentalCapacityInterval,
                                "increase_player_learn_points");
     scheduler.addRecurringTask(
