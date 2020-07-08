@@ -496,7 +496,7 @@ auto Container::weight() -> int { return recursiveWeight(0); }
 auto Container::recursiveWeight(int rekt) -> int {
     int temprekt = rekt + 1;
 
-    if (rekt > MAXIMALEREKURSIONSTIEFE) {
+    if (rekt > maximumRecursionDepth) {
         throw RecursionException();
     }
 

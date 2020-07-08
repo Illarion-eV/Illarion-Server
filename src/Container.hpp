@@ -19,8 +19,6 @@
 #ifndef CONTAINER_HPP
 #define CONTAINER_HPP
 
-#define MAXIMALEREKURSIONSTIEFE 100
-
 #include "Item.hpp"
 #include "TableStructs.hpp"
 
@@ -37,13 +35,6 @@ public:
     using ITEMMAP = std::map<TYPE_OF_CONTAINERSLOTS, Item>;
     using CONTAINERMAP = std::map<TYPE_OF_CONTAINERSLOTS, Container *>;
 
-private:
-    Item::id_type itemId{};
-
-    ITEMMAP items;
-    CONTAINERMAP containers;
-
-public:
     explicit Container(Item::id_type itemId);
     Container(const Container &) = delete;
     Container(Container &&) = delete;
@@ -97,9 +88,15 @@ public:
     [[nodiscard]] inline auto isDepot() const -> bool { return itemId == DEPOTITEM; }
 
 private:
+    static constexpr auto maximumRecursionDepth = 100;
+
     void insertIntoFirstFreeSlot(Item &item);
     void insertIntoFirstFreeSlot(Item &item, Container *container);
     auto recursiveWeight(int rekt) -> int;
+
+    Item::id_type itemId{};
+    ITEMMAP items;
+    CONTAINERMAP containers;
 };
 
 #endif

@@ -27,8 +27,6 @@
 
 class NetInterface;
 
-#define BACKLOG 10
-
 class InitialConnection : public Connection, public std::enable_shared_from_this<InitialConnection> {
 public:
     using NewPlayerVector = thread_safe_vector<std::shared_ptr<NetInterface>>;
