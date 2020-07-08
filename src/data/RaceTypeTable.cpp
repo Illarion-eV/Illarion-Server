@@ -159,7 +159,7 @@ auto RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> Ra
     auto it = table.at(race).begin();
 
     // sub types do not need to be sequentiell
-    for (int i = 0; i < selectedSubTypeNumber; ++i) {
+    for (TABLE::size_type i = 0; i < selectedSubTypeNumber; ++i) {
         ++it;
     }
 

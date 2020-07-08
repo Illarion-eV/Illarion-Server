@@ -46,7 +46,7 @@ void NewClientView::readFields(Coordinate length) {
     maxtiles = length;
     exists = true;
 
-    for (MAPSTRIPE::size_type i = 0; i < length; ++i) {
+    for (Coordinate i = 0; i < length; ++i) {
         try {
             map::Field &field = World::get()->fieldAt(pos);
 
