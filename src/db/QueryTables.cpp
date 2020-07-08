@@ -25,7 +25,7 @@
 
 using namespace Database;
 
-QueryTables::QueryTables() { oneTable = false; };
+QueryTables::QueryTables() { oneTable = false; }
 
 void QueryTables::addServerTable(const std::string &table) {
     if (oneTable && !tables.empty()) {

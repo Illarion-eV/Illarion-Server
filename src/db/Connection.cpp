@@ -37,21 +37,21 @@ void Connection::beginTransaction() {
 
     rollbackTransaction();
     transaction = std::make_unique<pqxx::transaction<>>(*internalConnection);
-};
+}
 
 void Connection::commitTransaction() {
     if (transaction) {
         transaction->commit();
         transaction.reset();
     }
-};
+}
 
 void Connection::rollbackTransaction() {
     if (transaction) {
         transaction->abort();
         transaction.reset();
     }
-};
+}
 
 auto Connection::query(const std::string &query) -> pqxx::result {
     if (transaction) {

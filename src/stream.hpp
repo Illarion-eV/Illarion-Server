@@ -24,22 +24,22 @@
 #include <string>
 #include <type_traits>
 
-inline void readFromStream(std::ifstream &stream, char *output, std::size_t size) { stream.read(output, size); };
+inline void readFromStream(std::ifstream &stream, char *output, std::size_t size) { stream.read(output, size); }
 
-inline void writeToStream(std::ofstream &stream, const char *input, std::size_t size) { stream.write(input, size); };
+inline void writeToStream(std::ofstream &stream, const char *input, std::size_t size) { stream.write(input, size); }
 
 template <typename T> void readFromStream(std::ifstream &stream, T &output) {
     static_assert(std::is_trivially_copyable_v<T>); // avoid UB with memcpy
     std::string buffer(sizeof(T), '\0');
     readFromStream(stream, buffer.data(), sizeof(T));
     std::memcpy(&output, buffer.data(), sizeof(T));
-};
+}
 
 template <typename T> void writeToStream(std::ofstream &stream, const T &input) {
     static_assert(std::is_trivially_copyable_v<T>); // avoid UB with memcpy
     std::string buffer(sizeof(T), '\0');
     std::memcpy(buffer.data(), &input, sizeof(T));
     writeToStream(stream, buffer.data(), sizeof(T));
-};
+}
 
 #endif

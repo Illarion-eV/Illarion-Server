@@ -46,7 +46,7 @@ public:
     static void appendToStringList(std::string &list, const std::string &newEntry);
     template <typename T> [[nodiscard]] auto quote(T value) const -> std::string {
         return dbConnection->quote<T>(value);
-    };
+    }
 
     virtual auto execute() -> Result;
 

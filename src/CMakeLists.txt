@@ -202,7 +202,7 @@ target_link_libraries(server ${Boost_LIBRARIES})
 
 find_package(Threads REQUIRED)
 target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT})
-target_compile_options(server PRIVATE -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated)
+target_compile_options(server PRIVATE ${WARNINGS})
 
 add_executable(illarion main.cpp)
 target_link_libraries(illarion server)

@@ -55,7 +55,7 @@ auto ConnectionManager::getConnection() -> PConnection {
     return connPtr;
 }
 
-ConnectionManager::ConnectionManager() { isOperational = false; };
+ConnectionManager::ConnectionManager() { isOperational = false; }
 
 void ConnectionManager::addConnectionParameterIfValid(const string &param, const string &value) {
     if (!value.empty()) {

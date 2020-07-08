@@ -27,7 +27,7 @@ using namespace Database;
 QueryColumns::QueryColumns() {
     hideTable = false;
     nextColumn = 0;
-};
+}
 
 auto QueryColumns::addColumn(const std::string &column) -> QueryColumns::columnIndex {
     Query::appendToStringList(columns, Query::escapeKey(column));

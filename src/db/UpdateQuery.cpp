@@ -34,7 +34,7 @@ UpdateQuery::UpdateQuery() : QueryAssign(*Query::getConnection()), QueryWhere(*Q
 UpdateQuery::UpdateQuery(const PConnection &connection)
         : Query(connection), QueryAssign(*Query::getConnection()), QueryWhere(*connection) {
     setOnlyOneTable(true);
-};
+}
 
 auto UpdateQuery::execute() -> Result {
     std::stringstream ss;

@@ -54,7 +54,7 @@ public:
 
     template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) {
         addValues(column, value, 1);
-    };
+    }
 
     template <typename T> void addValues(const QueryColumns::columnIndex &column, const T &value, uint32_t count) {
         if (count == 0) {
@@ -94,25 +94,25 @@ public:
             dataStorage.emplace_back(columns, std::nullopt);
             dataStorage.back().at(column) = strValue;
         }
-    };
+    }
 
     template <typename T> void addValues(const QueryColumns::columnIndex &column, const std::vector<T> &values) {
         for (const auto &value : values) {
             addValue<T>(column, value);
         }
-    };
+    }
 
     template <typename Key, typename T>
     void addValues(const QueryColumns::columnIndex &column, const std::map<Key, T> &values,
                    MapInsertMode mode = keysAndValues) {
         addValues<Key, T, std::less<Key>>(column, values);
-    };
+    }
 
     template <typename Key, typename T, class Compare>
     void addValues(const QueryColumns::columnIndex &column, const std::map<Key, T, Compare> &values,
                    MapInsertMode mode = keysAndValues) {
         addValues<Key, T, Compare, std::allocator<std::pair<const Key, T>>>(column, values);
-    };
+    }
 
     template <typename Key, typename T, class Compare, class Allocator>
     void addValues(const QueryColumns::columnIndex &column, const std::map<Key, T, Compare, Allocator> &values,
@@ -133,7 +133,7 @@ public:
                 break;
             }
         }
-    };
+    }
 
     auto execute() -> Result override;
 };

@@ -42,7 +42,7 @@ public:
     template <typename T> void addAssignColumn(const std::string &column, const T &value) {
         Query::appendToStringList(assignColumns,
                                   Query::escapeAndChainKeys("", column) + " = " + connection.quote<T>(value));
-    };
+    }
 
     void addAssignColumnNull(const std::string &column);
 

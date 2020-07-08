@@ -1549,6 +1549,6 @@ void Character::setFaceTo(face_to faceTo) { faceto = faceTo; }
 
 void Character::setMagicFlags(magic_type type, uint64_t flags) { magic.flags.at(type) = flags; }
 
-auto operator<<(std::ostream &os, const Character &character) -> std::ostream & { return os << character.to_string(); };
+auto operator<<(std::ostream &os, const Character &character) -> std::ostream & { return os << character.to_string(); }
 
 auto Character::getLoot() const -> const MonsterStruct::loottype & { throw NoLootFound(); }

@@ -139,13 +139,13 @@ protected:
         if (!callQuestEntrypoint(entrypoint, args...)) {
             safeCall(entrypoint, args...);
         }
-    };
+    }
     template <typename T, typename... Args>
     auto callEntrypoint(const std::string &entrypoint, const Args &... args) -> T {
         setCurrentWorldScript();
         callQuestEntrypoint(entrypoint, args...);
         return safeCall<T, Args...>(entrypoint, args...);
-    };
+    }
 
 private:
     static void initialize();
@@ -178,7 +178,7 @@ private:
         } catch (const luabind::error &e) {
             writeErrorMsg();
         }
-    };
+    }
     template <typename T, typename... Args> auto safeCall(const std::string &entrypoint, const Args &... args) -> T {
         try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
@@ -191,7 +191,7 @@ private:
         }
 
         return T();
-    };
+    }
 
     std::string _filename;
     std::string luafile = {};

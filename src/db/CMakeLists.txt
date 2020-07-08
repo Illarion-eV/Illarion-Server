@@ -26,3 +26,4 @@ add_library(db
     UpdateQuery.hpp)
 
 target_link_libraries(db /usr/lib/x86_64-linux-gnu/libpqxx-6.2.so)
+target_compile_options(db PRIVATE ${WARNINGS})
