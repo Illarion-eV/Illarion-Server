@@ -1389,20 +1389,7 @@ void Character::changeQualityAt(unsigned char pos, int amount) {
                         ? (amount + items.at(pos).getQuality())
                         : (items.at(pos).getQuality() - items.at(pos).getDurability() + Item::maximumDurability);
 
-        if (tmpQuality % (Item::maximumDurability + 1) > 1) {
-            items.at(pos).setQuality(tmpQuality);
-            return;
-        }
-        if (pos == RIGHT_TOOL && items.at(LEFT_TOOL).getId() == BLOCKEDITEM) {
-            items.at(LEFT_TOOL).reset();
-
-        } else if (pos == LEFT_TOOL && items.at(RIGHT_TOOL).getId() == BLOCKEDITEM) {
-            items.at(RIGHT_TOOL).reset();
-        }
-
-        items.at(pos).reset();
-
-        return;
+        items.at(pos).setQuality(tmpQuality);
     }
 }
 

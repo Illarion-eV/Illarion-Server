@@ -150,12 +150,8 @@ void World::changeQuality(ScriptItem item, int amount) {
                              ? (amount + item.getQuality())
                              : (item.getQuality() - item.getDurability() + Item::maximumDurability);
 
-    if (tmpQuality % (Item::maximumDurability + 1) > 0) {
-        item.setQuality(tmpQuality);
-        changeItem(item);
-    } else {
-        erase(item, item.getNumber());
-    }
+    item.setQuality(tmpQuality);
+    changeItem(item);
 }
 
 auto World::changeItem(ScriptItem item) -> bool {

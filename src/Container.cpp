@@ -170,20 +170,7 @@ auto Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) -> 
                                                 ? (amount + item.getQuality())
                                                 : (item.getQuality() - item.getDurability() + Item::maximumDurability);
 
-        if (tmpQuality % (Item::maximumDurability + 1) > 1) {
-            item.setQuality(tmpQuality);
-            return true;
-        }
-        if (item.isContainer()) {
-            auto iterat = containers.find(nr);
-
-            if (iterat != containers.end()) {
-                containers.erase(iterat);
-            }
-        }
-
-        items.erase(nr);
-
+        item.setQuality(tmpQuality);
         return true;
     }
 
