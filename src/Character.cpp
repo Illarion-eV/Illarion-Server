@@ -1401,7 +1401,7 @@ auto Character::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const -> T
     return 0;
 }
 
-auto Character::getItemList(TYPE_OF_ITEM_ID id) const -> std::vector<ScriptItem> {
+auto Character::getItemList(TYPE_OF_ITEM_ID id) -> std::vector<ScriptItem> {
     std::vector<ScriptItem> list;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
@@ -1416,7 +1416,7 @@ auto Character::getItemList(TYPE_OF_ITEM_ID id) const -> std::vector<ScriptItem>
 
             item.pos = pos;
             item.itempos = i;
-            item.owner = const_cast<Character *>(this);
+            item.owner = this;
             list.push_back(item);
         }
     }

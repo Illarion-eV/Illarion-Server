@@ -66,7 +66,7 @@ auto world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int cou
 
 void log_lua(const std::string &message);
 
-auto character_getItemList(const Character * /*character*/, TYPE_OF_ITEM_ID id) -> luabind::object;
+auto character_getItemList(Character * /*character*/, TYPE_OF_ITEM_ID id) -> luabind::object;
 
 void waypointlist_addFromList(WaypointList *wpl, const luabind::object &list);
 auto waypointlist_getWaypoints(const WaypointList *wpl) -> luabind::object;

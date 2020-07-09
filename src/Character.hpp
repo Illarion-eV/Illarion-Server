@@ -265,7 +265,7 @@ public:
     virtual auto GetItemAt(unsigned char itempos) -> ScriptItem;
     virtual auto GetBackPack() const -> Container *;
     auto GetDepot(uint32_t depotid) const -> Container *;
-    auto getItemList(TYPE_OF_ITEM_ID id) const -> std::vector<ScriptItem>;
+    auto getItemList(TYPE_OF_ITEM_ID id) -> std::vector<ScriptItem>;
 
     virtual auto getSkillName(TYPE_OF_SKILL_ID s) const -> std::string;
     virtual auto getSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int;

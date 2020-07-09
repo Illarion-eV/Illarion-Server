@@ -192,14 +192,14 @@ auto world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int cou
 
 void log_lua(const std::string &message) { Logger::info(LogFacility::Script) << message << Log::end; }
 
-auto character_getItemList(const Character *character, TYPE_OF_ITEM_ID id) -> luabind::object {
-    const auto &content = character->getItemList(id);
+auto character_getItemList(Character *character, TYPE_OF_ITEM_ID id) -> luabind::object {
+    auto items = character->getItemList(id);
     lua_State *_luaState = LuaScript::getLuaState();
     luabind::object list = luabind::newtable(_luaState);
 
     int index = 1;
 
-    for (const auto &item : content) {
+    for (const auto &item : items) {
         list[index++] = item;
     }
 
