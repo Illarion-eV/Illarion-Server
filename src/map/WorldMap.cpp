@@ -61,22 +61,6 @@ auto WorldMap::intersects(const Map &map) const -> bool {
     return foundIntersection;
 }
 
-auto WorldMap::at(const position &pos) -> Field & {
-    return const_cast<Field &>(static_cast<const WorldMap &>(*this).at(pos));
-}
-
-auto WorldMap::at(const position &pos) const -> const Field & {
-    if (persistentFields.count(pos) > 0) {
-        return persistentFields.at(pos);
-    }
-    try {
-        return maps.at(world_map.at(pos)).at(pos.x, pos.y);
-
-    } catch (std::out_of_range &) {
-        throw FieldNotFound();
-    }
-}
-
 auto WorldMap::insert(Map &&newMap) -> bool {
     if (intersects(newMap)) {
         return false;

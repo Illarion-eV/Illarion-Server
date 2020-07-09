@@ -36,8 +36,8 @@ class WorldMap {
     size_t ageIndex = 0;
 
 public:
-    auto at(const position &pos) -> Field &;
-    auto at(const position &pos) const -> const Field &;
+    auto at(const position &pos) -> Field & { return atImpl(*this, pos); }
+    auto at(const position &pos) const -> const Field & { return atImpl(*this, pos); }
     auto intersects(const Map &map) const -> bool;
 
     auto allMapsAged() -> bool;
@@ -65,6 +65,18 @@ private:
     static auto readHeaderLine(const std::string &mapName, char header, std::ifstream &headerFile, int &lineNumber)
             -> int16_t;
     static auto isCommentOrEmpty(const std::string &line) -> bool;
+
+    template <class T> static auto atImpl(T &t, const position &pos) -> decltype(t.at(pos)) {
+        if (t.persistentFields.count(pos) > 0) {
+            return t.persistentFields.at(pos);
+        }
+        try {
+            return t.maps.at(t.world_map.at(pos)).at(pos.x, pos.y);
+
+        } catch (std::out_of_range &) {
+            throw FieldNotFound();
+        }
+    }
 };
 
 auto walkableNear(WorldMap &worldMap, const position &pos) -> Field &;
