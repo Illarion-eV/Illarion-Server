@@ -156,7 +156,7 @@ void World::changeQuality(ScriptItem item, int amount) {
 
 auto World::changeItem(ScriptItem item) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        item.owner->items.at(item.itempos) = (Item)item;
+        item.owner->items.at(item.itempos) = item.cloneItem();
 
         if (item.owner->getType() == Character::player) {
             dynamic_cast<Player *>(item.owner)->sendCharacterItemAtPos(item.itempos);
@@ -172,7 +172,7 @@ auto World::changeItem(ScriptItem item) -> bool {
             Item it;
 
             if (field.takeItemFromStack(it)) {
-                field.addItemOnStack(static_cast<Item>(item));
+                field.addItemOnStack(item.cloneItem());
 
                 if (item.getId() != it.getId() || it.getNumber() != item.getNumber()) {
                     sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos, item);
@@ -395,7 +395,7 @@ auto World::createFromId(TYPE_OF_ITEM_ID id, int count, const position &pos, boo
 }
 
 auto World::createFromItem(const ScriptItem &item, const position &pos, bool always) -> bool {
-    g_item = static_cast<Item>(item);
+    g_item = item.cloneItem();
     g_cont = nullptr;
 
     if (always) {

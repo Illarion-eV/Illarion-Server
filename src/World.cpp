@@ -277,8 +277,8 @@ void World::checkMonsters() {
                         monster.lastTargetSeen = false;
                     }
 
-                    Item itl = monster.GetItemAt(LEFT_TOOL);
-                    Item itr = monster.GetItemAt(RIGHT_TOOL);
+                    Item itl = monster.GetItemAt(LEFT_TOOL).cloneItem();
+                    Item itr = monster.GetItemAt(RIGHT_TOOL).cloneItem();
 
                     uint16_t range = 1;
 
@@ -458,8 +458,8 @@ void World::checkMonsters() {
                         }
                     }
                 } else {
-                    Item itl = monster.GetItemAt(LEFT_TOOL);
-                    Item itr = monster.GetItemAt(RIGHT_TOOL);
+                    Item itl = monster.GetItemAt(LEFT_TOOL).cloneItem();
+                    Item itr = monster.GetItemAt(RIGHT_TOOL).cloneItem();
 
                     uint16_t range = 1;
 

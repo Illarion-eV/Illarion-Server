@@ -68,7 +68,6 @@ public:
     void setMinQuality(const Item &item);
 
     // setData actually does either a clear (if the datamap is nil) or a merge of the keys in datamap
-    // TODO split into clear and add or merge function to make usage more obvious
     void setData(script_data_exchangemap const *datamap);
     auto hasData(const script_data_exchangemap &datamap) const -> bool;
     auto hasNoData() const -> bool;
@@ -140,6 +139,7 @@ public:
     auto getLookAt(Character * /*character*/) const -> ItemLookAt;
 
     auto operator==(const ScriptItem &rhs) const -> bool;
+    auto cloneItem() const -> Item;
 };
 
 #endif

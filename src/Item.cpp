@@ -24,6 +24,7 @@
 #include "script/LuaLookAtItemScript.hpp"
 #include "stream.hpp"
 
+#include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include <range/v3/all.hpp>
 #include <sstream>
@@ -294,4 +295,11 @@ auto ScriptItem::getLookAt(Character *character) const -> ItemLookAt {
     }
 
     return lookAtItemScript->lookAtItem(character, *this);
+}
+
+auto ScriptItem::cloneItem() const -> Item {
+    Item item{getId(), getNumber(), getWear(), getQuality()};
+    std::for_each(getDataBegin(), getDataEnd(),
+                  [&item](const auto &keyValue) { item.setData(keyValue.first, keyValue.second); });
+    return item;
 }

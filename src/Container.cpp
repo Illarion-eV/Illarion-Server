@@ -386,7 +386,7 @@ auto Container::changeItem(ScriptItem &item) -> bool {
 
     if (it != items.end()) {
         if (!it->second.isContainer()) {
-            it->second = item;
+            it->second = item.cloneItem();
             return true;
         }
     }
