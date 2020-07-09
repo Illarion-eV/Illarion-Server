@@ -547,10 +547,6 @@ auto WorldMap::isPersistentAt(const position &pos) const -> bool {
 }
 
 auto walkableNear(WorldMap &worldMap, const position &pos) -> Field & {
-    return const_cast<Field &>(walkableNear(static_cast<const WorldMap &>(worldMap), pos));
-}
-
-auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field & {
     auto start = pos;
     auto testPos = pos;
 
@@ -562,7 +558,7 @@ auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field 
         while (testPos.x <= start.x + d) {
             try {
                 testPos.y = d + start.y;
-                const Field &field = worldMap.at(testPos);
+                auto &field = worldMap.at(testPos);
 
                 if (field.moveToPossible()) {
                     return field;
@@ -572,7 +568,7 @@ auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field 
 
             try {
                 testPos.y = start.y - d;
-                const Field &field = worldMap.at(testPos);
+                auto &field = worldMap.at(testPos);
 
                 if (field.moveToPossible()) {
                     return field;
@@ -588,7 +584,7 @@ auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field 
         while (testPos.y <= d + start.y) {
             try {
                 testPos.x = d + start.x;
-                const Field &field = worldMap.at(testPos);
+                auto &field = worldMap.at(testPos);
 
                 if (field.moveToPossible()) {
                     return field;
@@ -598,7 +594,7 @@ auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field 
 
             try {
                 testPos.x = start.x - d;
-                const Field &field = worldMap.at(testPos);
+                auto &field = worldMap.at(testPos);
 
                 if (field.moveToPossible()) {
                     return field;

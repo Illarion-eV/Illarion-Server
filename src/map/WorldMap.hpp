@@ -80,7 +80,6 @@ private:
 };
 
 auto walkableNear(WorldMap &worldMap, const position &pos) -> Field &;
-auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field &;
 
 } // namespace map
 
