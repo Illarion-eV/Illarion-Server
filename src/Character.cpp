@@ -1129,23 +1129,6 @@ void Character::increaseMentalCapacity(int value) {
     }
 }
 
-auto Character::alterSpokenMessage(const std::string &message, int languageSkill) const -> std::string {
-    std::string alteredMessage;
-
-    alteredMessage = message;
-    constexpr auto minimumUnalteredSkill = 70;
-
-    for (auto &character : alteredMessage) {
-        if (Random::uniform(0, minimumUnalteredSkill) > languageSkill) {
-            character = '*';
-        }
-    }
-
-    return alteredMessage;
-}
-
-auto Character::getLanguageSkill(int languageSkillNumber) -> int { return defaultLanguageSkill; }
-
 void Character::talk(talk_type tt, const std::string &message) { // only for say, whisper, shout
     talk(tt, message, message);
 

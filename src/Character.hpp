@@ -315,9 +315,6 @@ public:
     auto isInRangeToField(const position &m_pos, Coordinate distancemetric) const -> bool;
     auto distanceMetricToPosition(const position &m_pos) const -> Coordinate;
 
-    virtual auto alterSpokenMessage(const std::string &message, int languageSkill) const -> std::string;
-    static auto getLanguageSkill(int languageSkillNumber) -> int;
-
     virtual void talk(talk_type tt, const std::string &message);
     virtual void talk(talk_type tt, const std::string &german, const std::string &english);
 
@@ -505,7 +502,6 @@ private:
     TYPE_OF_RACE_ID race = 0;
     face_to faceto = north;
     s_magic magic{};
-    static constexpr auto defaultLanguageSkill = 100;
 };
 
 auto operator<<(std::ostream &os, const Character &character) -> std::ostream &;

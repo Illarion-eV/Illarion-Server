@@ -59,7 +59,6 @@ auto character() -> luabind::scope {
             .def("sendBook", &Character::sendBook)
             .def("updateAppearance", &Character::forceUpdateAppearanceForAll)
             .def("performAnimation", &Character::performAnimation)
-            .def("alterSpokenMessage", &Character::alterSpokenMessage)
             .def("actionRunning", &Character::actionRunning)
             .def("changeQualityAt", &Character::changeQualityAt)
             .def("isAdmin", &Character::isAdmin)

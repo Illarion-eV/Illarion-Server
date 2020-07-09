@@ -1,15 +1,3 @@
-%% TO BE IMPLEMENTED:
-  %      .def("alterSpokenMessage", &Character::alterSpokenMessage)
-  %      .def("actionRunning", &Character::actionRunning)%
-
-%        .def("abortAction", &Character::abortAction)
-%        .def("successAction", &Character::successAction)
-%        .def("disturbAction", &Character::actionDisturbed)
-%        .def("setClippingActive", &Character::setClippingActive)
-%        .def("getClippingActive", &Character::getClippingActive)
-%        .def("callAttackScript", &Character::callAttackScript)
-%        .def("callDefendScript", &Character::callDefendScript)
-
 %% run makeindex luadocu.idx
 \documentclass[a4paper,10pt,makeidx]{scrreprt}
 \usepackage[ansinew]{inputenc}
@@ -56,7 +44,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.22}
+\title{Lua documentation for Illarion scripting\\v5.23}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -289,10 +277,6 @@ Creates colour structure for given RGBA values. All parameters range from 0 to 2
 \void \var{character}:\com{turn}{\position \var{position}}
 \begin{quote}
     Turns \var{character} into the given \var{direction} or towards the given \var{position}.
-\end{quote}
-\txt \var{character}:\com{alterMessage}{\txt \var{Text},\integer \var{LanguageSkill}}
-\begin{quote}
-       Returns the altered \var{Text} with respect to the \var{LanguageSkill} given.
 \end{quote}
 \void \var{character}:\com{sendCharDescription}{\integer \var{id}, \txt \var{text}}
 \begin{quote}
@@ -2409,18 +2393,21 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
-Version 5.22 (20 05 28)\\
-* Add map persistence\\
-* Add world::makePersistentAt\\
-* Add world::isPersistentAt\\
-* Add world::removePersistenceAt\\
-* Remove world::sendMapUpdate\\
+Version 5.23 (9.7.20)\\
+* Remove character:alterMessage\\
 \\
-Version 5.21 (15 06 23)\\
+Version 5.22 (28 05 20)\\
+* Add map persistence\\
+* Add world:makePersistentAt\\
+* Add world:isPersistentAt\\
+* Add world:removePersistenceAt\\
+* Remove world:sendMapUpdate\\
+\\
+Version 5.21 (23 06 15)\\
 * Add item id constants\\
 * Move item level from weapons and armors to item struct\\
 \\
-Version 5.20 (15 06 07)\\
+Version 5.20 (07 06 15)\\
 * Remove obsolete bit manipulation functions\\
 * Update section about modules\\
 \\

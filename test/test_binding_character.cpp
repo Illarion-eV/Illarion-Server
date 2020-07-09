@@ -37,7 +37,6 @@ public:
     MOCK_METHOD(void, sendBook, (uint16_t), (override));
     MOCK_METHOD(void, forceUpdateAppearanceForAll, (), (override));
     MOCK_METHOD(void, performAnimation, (uint8_t), (override));
-    MOCK_METHOD(std::string, alterSpokenMessage, (const std::string &, int), (const override));
     MOCK_METHOD(bool, actionRunning, (), (const override));
     MOCK_METHOD(void, changeQualityAt, (unsigned char, int), (override));
     MOCK_METHOD(bool, isAdmin, (), (const override));
@@ -210,13 +209,6 @@ TEST_F(monster_bindings, performAnimation) {
     LuaTestSupportScript script {"function test(monster) monster:performAnimation(47) end"};
     EXPECT_CALL(*monster, performAnimation(47));
     script.test<bool, Monster *>(monster);
-}
-
-TEST_F(monster_bindings, alterSpokenMessage) {
-    LuaTestSupportScript script {"function test(monster) return monster:alterSpokenMessage('foo', 23) end"};
-    EXPECT_CALL(*monster, alterSpokenMessage("foo", 23)).WillOnce(Return("bar"));
-    auto result = script.test<std::string, Monster *>(monster);
-    EXPECT_EQ("bar", result);
 }
 
 TEST_F(monster_bindings, actionRunning) {
