@@ -25,7 +25,7 @@
 
 namespace binding {
 
-auto waypoint_list() -> luabind::scope {
+auto waypoint_list() -> Binding<WaypointList> {
     return luabind::class_<WaypointList>("WaypointList")
             .def("addFromList", &waypointlist_addFromList)
             .def("getWaypoints", &waypointlist_getWaypoints)

@@ -24,7 +24,7 @@
 
 namespace binding {
 
-auto random() -> luabind::scope {
+auto random() -> Binding<Random> {
     return luabind::class_<Random>("Random").scope[luabind::def("uniform", (double (*)()) & Random::uniform),
                                                    luabind::def("uniform", (int (*)(int, int)) & Random::uniform),
                                                    luabind::def("normal", &Random::normal)];

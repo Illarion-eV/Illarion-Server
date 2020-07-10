@@ -24,7 +24,7 @@
 
 namespace binding {
 
-auto weather_struct() -> luabind::scope {
+auto weather_struct() -> Binding<WeatherStruct> {
     return luabind::class_<WeatherStruct>("WeatherStruct")
             .def_readwrite("cloud_density", &WeatherStruct::cloud_density)
             .def_readwrite("fog_density", &WeatherStruct::fog_density)

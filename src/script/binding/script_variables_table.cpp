@@ -26,7 +26,7 @@
 
 namespace binding {
 
-auto script_variables_table() -> luabind::scope {
+auto script_variables_table() -> Binding<ScriptVariablesTable> {
     return luabind::class_<ScriptVariablesTable>("ScriptVariables")
             .def("find", &ScriptVariablesTable::find, luabind::pure_out_value(_3))
             .def("set",

@@ -26,7 +26,7 @@
 
 namespace binding {
 
-auto position() -> luabind::scope {
+auto position() -> Binding<::position> {
     return luabind::class_<::position>("position")
             .def(luabind::constructor<>())
             .def(luabind::constructor<short int, short int, short int>())

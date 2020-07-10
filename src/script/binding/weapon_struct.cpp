@@ -23,7 +23,7 @@
 
 namespace binding {
 
-auto weapon_struct() -> luabind::scope {
+auto weapon_struct() -> Binding<WeaponStruct> {
     return luabind::class_<WeaponStruct>("WeaponStruct")
             .def(luabind::constructor<>())
             .enum_("type")[luabind::value("slashing", WeaponStruct::slashing),

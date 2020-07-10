@@ -24,7 +24,7 @@
 
 namespace binding {
 
-auto monster_armor() -> luabind::scope {
+auto monster_armor() -> Binding<MonsterArmor> {
     return luabind::class_<MonsterArmor>("NaturalArmor")
             .def(luabind::constructor<>())
             .def_readonly("strokeArmor", &MonsterArmor::strokeArmor)

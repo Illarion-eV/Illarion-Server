@@ -23,7 +23,7 @@
 
 namespace binding {
 
-auto armor_struct() -> luabind::scope {
+auto armor_struct() -> Binding<ArmorStruct> {
     return luabind::class_<ArmorStruct>("ArmorStruct")
             .enum_("type")[luabind::value("clothing", ArmorStruct::clothing),
                            luabind::value("general", ArmorStruct::general), luabind::value("light", ArmorStruct::light),

@@ -28,7 +28,7 @@
 
 namespace binding {
 
-auto container() -> luabind::scope {
+auto container() -> Binding<Container> {
     return luabind::class_<Container>("Container")
             .def(luabind::constructor<TYPE_OF_ITEM_ID>())
             .def("getSlotCount", &Container::getSlotCount)

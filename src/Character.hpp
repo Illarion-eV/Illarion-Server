@@ -52,6 +52,11 @@ enum magic_type { MAGE = 0, PRIEST = 1, BARD = 2, DRUID = 3 };
 
 class NoLootFound : public std::exception {};
 
+struct SkillValue {
+    int major = 0;
+    int minor = 0;
+};
+
 class Character {
 public:
     struct appearance {
@@ -123,10 +128,7 @@ public:
         informScriptHighPriority = 102
     };
 
-    struct skillvalue {
-        int major = 0;
-        int minor = 0;
-    };
+    using skillvalue = SkillValue;
 
     struct s_magic {
         magic_type type;

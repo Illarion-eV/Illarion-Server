@@ -23,7 +23,7 @@
 
 namespace binding {
 
-auto selection_dialog() -> luabind::scope {
+auto selection_dialog() -> Binding<SelectionDialog> {
     return luabind::class_<SelectionDialog>("SelectionDialog")
             .def(luabind::constructor<std::string, std::string, luabind::object>())
             .def("addOption", &SelectionDialog::addOption)

@@ -24,6 +24,6 @@
 
 namespace binding {
 
-auto npc() -> luabind::scope { return luabind::class_<NPC, Character>("NPC"); }
+auto npc() -> Binding<NPC, Character> { return luabind::class_<NPC, Character>("NPC"); }
 
 } // namespace binding

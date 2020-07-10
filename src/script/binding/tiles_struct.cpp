@@ -23,7 +23,7 @@
 
 namespace binding {
 
-auto tiles_struct() -> luabind::scope {
+auto tiles_struct() -> Binding<TilesStruct> {
     return luabind::class_<TilesStruct>("TilesStruct")
             .def_readonly("flags", &TilesStruct::flags)
             .def_readonly("German", &TilesStruct::German)
