@@ -98,7 +98,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 data/ScheduledScriptsTable.hpp data/TilesTable.hpp \
 		 data/Table.hpp data/WeaponObjectTable.hpp \
 		 data/NaturalArmorTable.hpp main_help.hpp TableStructs.hpp \
-		 Connection.hpp Language.hpp \
+		 Language.hpp \
 		 NewClientView.hpp \
 		 netinterface/BasicCommand.hpp \
 		 netinterface/BasicClientCommand.hpp \

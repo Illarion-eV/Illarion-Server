@@ -125,7 +125,6 @@ add_library(server
     CharacterContainer.hpp
     Config.cpp
     Config.hpp
-    Connection.hpp
     constants.hpp
     Container.cpp
     Container.hpp

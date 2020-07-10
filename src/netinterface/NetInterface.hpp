@@ -24,7 +24,6 @@
  */
 
 // include thread save vector
-#include "Connection.hpp"
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/CommandFactory.hpp"

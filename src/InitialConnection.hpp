@@ -19,15 +19,17 @@
 #ifndef InitialConnection_HPP
 #define InitialConnection_HPP
 
-#include "Connection.hpp"
 #include "thread_safe_vector.hpp"
 
 #include <boost/asio.hpp>
 #include <memory>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 
 class NetInterface;
 
-class InitialConnection : public Connection, public std::enable_shared_from_this<InitialConnection> {
+class InitialConnection : public std::enable_shared_from_this<InitialConnection> {
 public:
     using NewPlayerVector = thread_safe_vector<std::shared_ptr<NetInterface>>;
 
