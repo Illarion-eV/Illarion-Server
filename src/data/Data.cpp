@@ -28,6 +28,7 @@
 
 namespace Data {
 
+namespace {
 ScriptVariablesTable ScriptVariables;
 SkillTable Skills;
 QuestTable Quests;
@@ -43,6 +44,37 @@ TilesTable Tiles;
 SpellTable Spells;
 TriggerTable Triggers;
 LongTimeEffectTable LongTimeEffects;
+} // namespace
+
+auto scriptVariables() -> ScriptVariablesTable & { return ScriptVariables; }
+
+auto skills() -> SkillTable & { return Skills; }
+
+auto quests() -> QuestTable & { return Quests; }
+
+auto races() -> RaceTable & { return Races; }
+
+auto naturalArmors() -> NaturalArmorTable & { return NaturalArmors; }
+
+auto monsterAttacks() -> MonsterAttackTable & { return MonsterAttacks; }
+
+auto items() -> ItemTable & { return Items; }
+
+auto weaponItems() -> WeaponObjectTable & { return WeaponItems; }
+
+auto armorItems() -> ArmorObjectTable & { return ArmorItems; }
+
+auto containerItems() -> ContainerObjectTable & { return ContainerItems; }
+
+auto tilesModItems() -> TilesModificatorTable & { return TilesModItems; }
+
+auto tiles() -> TilesTable & { return Tiles; }
+
+auto spells() -> SpellTable & { return Spells; }
+
+auto triggers() -> TriggerTable & { return Triggers; }
+
+auto longTimeEffects() -> LongTimeEffectTable & { return LongTimeEffects; }
 
 auto getTables() -> std::vector<Table *> {
     return {&ScriptVariables, &Quests,      &Races,      &NaturalArmors,  &MonsterAttacks,

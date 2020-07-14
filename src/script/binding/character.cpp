@@ -37,13 +37,13 @@ auto character() -> Binding<Character> {
 
     luabind::value_vector skills;
 
-    ranges::for_each(Data::Skills, [&skills](const auto &skill) {
+    ranges::for_each(Data::skills(), [&skills](const auto &skill) {
         skills.push_back(luabind::value(skill.second.serverName.c_str(), skill.first));
     });
 
     luabind::value_vector races;
 
-    ranges::for_each(Data::Races, [&races](const auto &race) {
+    ranges::for_each(Data::races(), [&races](const auto &race) {
         races.push_back(luabind::value(race.second.serverName.c_str(), race.first));
     });
 

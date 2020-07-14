@@ -78,12 +78,12 @@ auto main(int argc, char *argv[]) -> int {
 
     Data::preReload();
 
-    if (!Data::Skills.reloadBuffer()) {
+    if (!Data::skills().reloadBuffer()) {
         Logger::critical(LogFacility::Other) << "failed to initialise skills" << Log::end;
         return 1;
     }
 
-    Data::Skills.activateBuffer();
+    Data::skills().activateBuffer();
 
     if (!Data::reloadTables()) {
         Logger::critical(LogFacility::Other) << "failed to initialise tables" << Log::end;
@@ -151,7 +151,7 @@ auto main(int argc, char *argv[]) -> int {
 
     Logger::info(LogFacility::Other) << "Stopping Illarion!" << Log::end;
 
-    Data::ScriptVariables.save();
+    Data::scriptVariables().save();
     Logger::info(LogFacility::Other) << "ScriptVariables saved!" << Log::end;
 
     world->forceLogoutOfAllPlayers();

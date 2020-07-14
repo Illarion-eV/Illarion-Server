@@ -39,21 +39,21 @@
 
 namespace Data {
 
-extern ScriptVariablesTable ScriptVariables;
-extern SkillTable Skills;
-extern QuestTable Quests;
-extern RaceTable Races;
-extern NaturalArmorTable NaturalArmors;
-extern MonsterAttackTable MonsterAttacks;
-extern ItemTable Items;
-extern WeaponObjectTable WeaponItems;
-extern ArmorObjectTable ArmorItems;
-extern ContainerObjectTable ContainerItems;
-extern TilesModificatorTable TilesModItems;
-extern TilesTable Tiles;
-extern SpellTable Spells;
-extern TriggerTable Triggers;
-extern LongTimeEffectTable LongTimeEffects;
+auto scriptVariables() -> ScriptVariablesTable &;
+auto skills() -> SkillTable &;
+auto quests() -> QuestTable &;
+auto races() -> RaceTable &;
+auto naturalArmors() -> NaturalArmorTable &;
+auto monsterAttacks() -> MonsterAttackTable &;
+auto items() -> ItemTable &;
+auto weaponItems() -> WeaponObjectTable &;
+auto armorItems() -> ArmorObjectTable &;
+auto containerItems() -> ContainerObjectTable &;
+auto tilesModItems() -> TilesModificatorTable &;
+auto tiles() -> TilesTable &;
+auto spells() -> SpellTable &;
+auto triggers() -> TriggerTable &;
+auto longTimeEffects() -> LongTimeEffectTable &;
 
 auto getTables() -> std::vector<Table *>;
 auto reloadTables() -> bool;

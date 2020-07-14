@@ -142,7 +142,7 @@ auto weight_calc::operator[](key_type const &k) -> mapped_type & {
         try {
             map::Field &field = World::get()->fieldAt(::position(v.first, v.second, level));
             auto tileId = field.getTileId();
-            insert(std::make_pair(k, Data::Tiles[tileId].walkingCost));
+            insert(std::make_pair(k, Data::tiles()[tileId].walkingCost));
         } catch (FieldNotFound &) {
             insert(std::make_pair(k, 1));
         }

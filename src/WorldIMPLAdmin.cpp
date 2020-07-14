@@ -1008,10 +1008,10 @@ auto World::reload_defs(Player *cp) const -> bool {
 
     Data::preReload();
 
-    bool ok = Data::Skills.reloadBuffer();
+    bool ok = Data::skills().reloadBuffer();
 
     if (ok) {
-        Data::Skills.activateBuffer();
+        Data::skills().activateBuffer();
     }
 
     std::unique_ptr<MonsterTable> monsterDescriptionsTemp;

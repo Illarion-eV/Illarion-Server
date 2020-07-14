@@ -77,7 +77,7 @@ void LongTimeCharacterEffects::addEffect(std::unique_ptr<LongTimeEffect> effect)
         effect->setExecutionTime(time);
 
         if (effect->isFirstAdd()) {
-            const auto &script = Data::LongTimeEffects.script(effect->getEffectId());
+            const auto &script = Data::longTimeEffects().script(effect->getEffectId());
 
             if (script) {
                 script->addEffect(effect.get(), owner);
@@ -88,7 +88,7 @@ void LongTimeCharacterEffects::addEffect(std::unique_ptr<LongTimeEffect> effect)
         effects.push_back(std::move(effect));
         std::push_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
     } else {
-        const auto &script = Data::LongTimeEffects.script(effect->getEffectId());
+        const auto &script = Data::longTimeEffects().script(effect->getEffectId());
 
         if (script) {
             script->doubleEffect(foundeffect, owner);
@@ -99,7 +99,7 @@ void LongTimeCharacterEffects::addEffect(std::unique_ptr<LongTimeEffect> effect)
 auto LongTimeCharacterEffects::removeEffect(uint16_t effectid) -> bool {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if ((*it)->getEffectId() == effectid) {
-            const auto &script = Data::LongTimeEffects.script(effectid);
+            const auto &script = Data::longTimeEffects().script(effectid);
 
             if (script) {
                 script->removeEffect(it->get(), owner);
@@ -117,7 +117,7 @@ auto LongTimeCharacterEffects::removeEffect(uint16_t effectid) -> bool {
 auto LongTimeCharacterEffects::removeEffect(const std::string &name) -> bool {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if ((*it)->getEffectName() == name) {
-            const auto &script = Data::LongTimeEffects.script((*it)->getEffectId());
+            const auto &script = Data::longTimeEffects().script((*it)->getEffectId());
 
             if (script) {
                 script->removeEffect(it->get(), owner);
@@ -135,7 +135,7 @@ auto LongTimeCharacterEffects::removeEffect(const std::string &name) -> bool {
 auto LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) -> bool {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if (it->get() == effect) {
-            const auto &script = Data::LongTimeEffects.script((*it)->getEffectId());
+            const auto &script = Data::longTimeEffects().script((*it)->getEffectId());
 
             if (script) {
                 script->removeEffect(it->get(), owner);
@@ -164,7 +164,7 @@ void LongTimeCharacterEffects::checkEffects() {
         if (effect->callEffect(owner)) {
             addEffect(std::move(effect));
         } else {
-            const auto &script = Data::LongTimeEffects.script(effect->getEffectId());
+            const auto &script = Data::longTimeEffects().script(effect->getEffectId());
 
             if (script) {
                 script->removeEffect(effect.get(), owner);
@@ -266,7 +266,7 @@ auto LongTimeCharacterEffects::load() -> bool {
                     }
                 }
 
-                const auto &script = Data::LongTimeEffects.script(effectId);
+                const auto &script = Data::longTimeEffects().script(effectId);
 
                 if (script) {
                     script->loadEffect(effect.get(), player);

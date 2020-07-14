@@ -251,7 +251,7 @@ void World::lookAtMapItem(Player *player, const position &pos, uint8_t stackPos)
 }
 
 void World::lookAtTile(Player *cp, unsigned short int tile, const position &pos) {
-    const TilesStruct &tileStruct = Data::Tiles[tile];
+    const TilesStruct &tileStruct = Data::tiles()[tile];
     ServerCommandPointer cmd = std::make_shared<LookAtTileTC>(pos, cp->nls(tileStruct.German, tileStruct.English));
     cp->Connection->addCommand(cmd);
 }

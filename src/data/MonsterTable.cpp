@@ -250,7 +250,7 @@ MonsterTable::MonsterTable() {
                         return std::nullopt;
                     }();
 
-                    const auto &itemStruct = Data::Items[tempitem.itemid];
+                    const auto &itemStruct = Data::items()[tempitem.itemid];
 
                     if (location.has_value() && itemStruct.isValid()) {
                         tempitem.AgeingSpeed = itemStruct.AgeingSpeed;

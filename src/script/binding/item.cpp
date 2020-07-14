@@ -29,7 +29,7 @@ namespace binding {
 auto item() -> Binding<Item> {
     luabind::value_vector items;
 
-    for (const auto &dataItem : Data::Items) {
+    for (const auto &dataItem : Data::items()) {
         const auto &name = dataItem.second.serverName;
 
         if (name.length() > 0) {

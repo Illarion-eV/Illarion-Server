@@ -37,7 +37,7 @@ auto MerchantDialog::getOffersBegin() const -> offer_iterator { return offers.cb
 auto MerchantDialog::getOffersEnd() const -> offer_iterator { return offers.cend(); }
 
 void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price) {
-    const auto &itemStruct = Data::Items[item];
+    const auto &itemStruct = Data::items()[item];
     addOffer(item, name, price, itemStruct.BuyStack);
 }
 

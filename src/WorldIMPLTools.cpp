@@ -502,38 +502,38 @@ auto World::isPersistentAt(const position &pos) const -> bool { return maps.isPe
 auto World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int {
     // Armor //
     if (s == "bodyparts") {
-        if (Data::ArmorItems.exists(ItemID)) {
-            return Data::ArmorItems[ItemID].BodyParts;
+        if (Data::armorItems().exists(ItemID)) {
+            return Data::armorItems()[ItemID].BodyParts;
         }
     } else if (s == "strokearmor") {
-        if (Data::ArmorItems.exists(ItemID)) {
-            return Data::ArmorItems[ItemID].StrokeArmor;
+        if (Data::armorItems().exists(ItemID)) {
+            return Data::armorItems()[ItemID].StrokeArmor;
         }
     } else if (s == "thrustarmor") {
-        if (Data::ArmorItems.exists(ItemID)) {
-            return Data::ArmorItems[ItemID].ThrustArmor;
+        if (Data::armorItems().exists(ItemID)) {
+            return Data::armorItems()[ItemID].ThrustArmor;
         }
     } else if (s == "armormagicdisturbance") {
-        if (Data::ArmorItems.exists(ItemID)) {
-            return Data::ArmorItems[ItemID].MagicDisturbance;
+        if (Data::armorItems().exists(ItemID)) {
+            return Data::armorItems()[ItemID].MagicDisturbance;
         }
     }
 
     // Item //
     else if (s == "agingspeed") {
-        const auto &itemStruct = Data::Items[ItemID];
+        const auto &itemStruct = Data::items()[ItemID];
 
         if (itemStruct.isValid()) {
             return itemStruct.AgeingSpeed;
         }
     } else if (s == "objectafterrot") {
-        const auto &itemStruct = Data::Items[ItemID];
+        const auto &itemStruct = Data::items()[ItemID];
 
         if (itemStruct.isValid()) {
             return itemStruct.ObjectAfterRot;
         }
     } else if (s == "weight") {
-        const auto &itemStruct = Data::Items[ItemID];
+        const auto &itemStruct = Data::items()[ItemID];
 
         if (itemStruct.isValid()) {
             return itemStruct.Weight;
@@ -542,35 +542,35 @@ auto World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int {
 
     // Tiles Modificator //
     else if (s == "modificator") {
-        if (Data::TilesModItems.exists(ItemID)) {
-            return Data::TilesModItems[ItemID].Modificator;
+        if (Data::tilesModItems().exists(ItemID)) {
+            return Data::tilesModItems()[ItemID].Modificator;
         }
     }
 
     // Weapon //
     else if (s == "accuracy") {
-        if (Data::WeaponItems.exists(ItemID)) {
-            return Data::WeaponItems[ItemID].Accuracy;
+        if (Data::weaponItems().exists(ItemID)) {
+            return Data::weaponItems()[ItemID].Accuracy;
         }
     } else if (s == "attack") {
-        if (Data::WeaponItems.exists(ItemID)) {
-            return Data::WeaponItems[ItemID].Attack;
+        if (Data::weaponItems().exists(ItemID)) {
+            return Data::weaponItems()[ItemID].Attack;
         }
     } else if (s == "defence") {
-        if (Data::WeaponItems.exists(ItemID)) {
-            return Data::WeaponItems[ItemID].Defence;
+        if (Data::weaponItems().exists(ItemID)) {
+            return Data::weaponItems()[ItemID].Defence;
         }
     } else if (s == "range") {
-        if (Data::WeaponItems.exists(ItemID)) {
-            return Data::WeaponItems[ItemID].Range;
+        if (Data::weaponItems().exists(ItemID)) {
+            return Data::weaponItems()[ItemID].Range;
         }
     } else if (s == "weapontype") {
-        if (Data::WeaponItems.exists(ItemID)) {
-            return Data::WeaponItems[ItemID].Type;
+        if (Data::weaponItems().exists(ItemID)) {
+            return Data::weaponItems()[ItemID].Type;
         }
     } else if (s == "weaponmagicdisturbance") {
-        if (Data::WeaponItems.exists(ItemID)) {
-            return Data::WeaponItems[ItemID].MagicDisturbance;
+        if (Data::weaponItems().exists(ItemID)) {
+            return Data::weaponItems()[ItemID].MagicDisturbance;
         }
     }
 

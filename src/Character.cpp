@@ -348,10 +348,10 @@ auto Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count)
     Item it;
 
     if (weightOK(newid, count, nullptr)) {
-        const auto &cos = Data::Items[newid];
+        const auto &cos = Data::items()[newid];
 
         if (cos.isValid()) {
-            if (!Data::ContainerItems.exists(newid)) {
+            if (!Data::containerItems().exists(newid)) {
                 if (items.at(pos).getId() == 0) {
                     if (temp > cos.MaxStack) {
                         items.at(pos).setId(newid);
@@ -382,10 +382,10 @@ auto Character::createItem(Item::id_type id, Item::number_type number, Item::qua
     Item it;
 
     if (weightOK(id, number, nullptr)) {
-        const auto &cos = Data::Items[id];
+        const auto &cos = Data::items()[id];
 
         if (cos.isValid()) {
-            if (Data::ContainerItems.exists(id)) {
+            if (Data::containerItems().exists(id)) {
                 if (items.at(BACKPACK).getId() == 0) {
                     items.at(BACKPACK).setId(id);
                     items.at(BACKPACK).setWear(cos.AgeingSpeed);
@@ -549,14 +549,14 @@ void Character::ageInventory() {
         auto itemId = item.getId();
 
         if (itemId != 0) {
-            const auto &itemStruct = Data::Items[itemId];
+            const auto &itemStruct = Data::items()[itemId];
 
             if (itemStruct.isValid() && itemStruct.rotsInInventory) {
                 if (!item.survivesAgeing()) {
                     if (itemId != itemStruct.ObjectAfterRot) {
                         item.setId(itemStruct.ObjectAfterRot);
 
-                        const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
+                        const auto &afterRotItemStruct = Data::items()[itemStruct.ObjectAfterRot];
 
                         if (afterRotItemStruct.isValid()) {
                             item.setWear(afterRotItemStruct.AgeingSpeed);
@@ -627,8 +627,8 @@ auto Character::getAttackTarget() const -> character_ptr {
 }
 
 auto Character::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string {
-    if (Data::Skills.exists(s)) {
-        return Data::Skills[s].englishName;
+    if (Data::skills().exists(s)) {
+        return Data::skills()[s].englishName;
     }
     return "unknown skill";
 }
@@ -758,7 +758,7 @@ auto Character::increaseAttribute(Character::attributeIndex attribute, int amoun
 }
 
 auto Character::isBaseAttributeValid(Character::attributeIndex attribute, Attribute::attribute_t value) const -> bool {
-    return Data::Races.isBaseAttributeInLimits(getRace(), attribute, value);
+    return Data::races().isBaseAttributeInLimits(getRace(), attribute, value);
 }
 
 auto Character::getBaseAttributeSum() const -> uint16_t {
@@ -768,7 +768,7 @@ auto Character::getBaseAttributeSum() const -> uint16_t {
            attributes[Character::strength].getBaseValue() + attributes[Character::willpower].getBaseValue();
 }
 
-auto Character::getMaxAttributePoints() const -> uint16_t { return Data::Races.getMaxAttributePoints(getRace()); }
+auto Character::getMaxAttributePoints() const -> uint16_t { return Data::races().getMaxAttributePoints(getRace()); }
 
 auto Character::saveBaseAttributes() -> bool { return false; }
 
@@ -838,7 +838,7 @@ auto Character::increaseAttrib(const std::string &name, int amount) -> Attribute
 }
 
 auto Character::setSkill(TYPE_OF_SKILL_ID skill, int major, int minor) -> int {
-    if (!Data::Skills.exists(skill)) {
+    if (!Data::skills().exists(skill)) {
         return 0;
     }
 
@@ -860,7 +860,7 @@ auto Character::setSkill(TYPE_OF_SKILL_ID skill, int major, int minor) -> int {
 }
 
 auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, int amount) -> int {
-    if (!Data::Skills.exists(skill)) {
+    if (!Data::skills().exists(skill)) {
         return 0;
     }
 
@@ -900,7 +900,7 @@ auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, int amount) -> int {
 }
 
 auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, int amount) -> int {
-    if (!Data::Skills.exists(skill)) {
+    if (!Data::skills().exists(skill)) {
         return 0;
     }
 
@@ -964,7 +964,7 @@ auto Character::getSkillValue(TYPE_OF_SKILL_ID s) const -> const skillvalue * {
 }
 
 void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
-    if (!Data::Skills.exists(skill)) {
+    if (!Data::skills().exists(skill)) {
         return;
     }
 
@@ -1064,7 +1064,7 @@ auto Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const 
     if (tcont != nullptr) {
         return (realweight + weightContainer(id, 1, tcont)) <= maxLoadWeight();
     }
-    const auto &itemStruct = Data::Items[id];
+    const auto &itemStruct = Data::items()[id];
 
     return (realweight + itemStruct.Weight * count) <= maxLoadWeight();
 }
@@ -1073,7 +1073,7 @@ auto Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont)
     int temp = 0;
 
     if (id != 0) {
-        const auto &itemStruct = Data::Items[id];
+        const auto &itemStruct = Data::items()[id];
 
         if (itemStruct.isValid()) {
             if (count > 0) {
@@ -1375,8 +1375,8 @@ void Character::callAttackScript(Character *Attacker, Character *Defender) {
     const auto weaponId = items.at(RIGHT_TOOL).getId();
 
     if (weaponId != 0) {
-        if (Data::WeaponItems.exists(weaponId)) {
-            const auto &script = Data::WeaponItems.script(weaponId);
+        if (Data::weaponItems().exists(weaponId)) {
+            const auto &script = Data::weaponItems().script(weaponId);
 
             if (script && script->existsEntrypoint("onAttack")) {
                 script->onAttack(Attacker, Defender);

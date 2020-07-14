@@ -18,9 +18,7 @@ public:
 
 class ItemEnvironment: public ::testing::Environment {
 public:
-    void SetUp() override {
-        Data::Items = ItemTest();
-    }
+    void SetUp() override { Data::items() = ItemTest(); }
 };
 
 TEST(ItemTest, defaultNumber) {

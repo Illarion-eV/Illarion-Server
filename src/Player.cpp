@@ -467,14 +467,14 @@ void Player::sendWeather(WeatherStruct weather) {
 void Player::ageInventory() {
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
         if (items.at(i).getId() != 0) {
-            const auto &itemStruct = Data::Items[items.at(i).getId()];
+            const auto &itemStruct = Data::items()[items.at(i).getId()];
 
             if (itemStruct.rotsInInventory) {
                 if (!items.at(i).survivesAgeing()) {
                     if (items.at(i).getId() != itemStruct.ObjectAfterRot) {
                         items.at(i).setId(itemStruct.ObjectAfterRot);
 
-                        const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
+                        const auto &afterRotItemStruct = Data::items()[itemStruct.ObjectAfterRot];
 
                         if (afterRotItemStruct.isValid()) {
                             items.at(i).setWear(afterRotItemStruct.AgeingSpeed);
@@ -2027,7 +2027,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 }
 
 void Player::sendAvailableQuests() {
-    const auto quests = Data::Quests.getQuestsInRange(getPosition(), getScreenRange());
+    const auto quests = Data::quests().getQuestsInRange(getPosition(), getScreenRange());
     int someTime = 0;
     std::vector<position> questsAvailableNow;
     std::vector<position> questsAvailableSoon;
@@ -2036,7 +2036,7 @@ void Player::sendAvailableQuests() {
         const TYPE_OF_QUEST_ID questId = quest.first;
         const TYPE_OF_QUESTSTATUS questStatus = getQuestProgress(questId, someTime);
         const position &start = quest.second;
-        const QuestAvailability availability = Data::Quests.script(questId)->available(this, questStatus);
+        const QuestAvailability availability = Data::quests().script(questId)->available(this, questStatus);
 
         if ((availability == questDefaultAvailable && questStatus == 0) || availability == questAvailable) {
             questsAvailableNow.push_back(start);
@@ -2058,8 +2058,8 @@ void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS pro
         return;
     }
 
-    if (Data::Quests.exists(questId)) {
-        const auto &script = Data::Quests.script(questId);
+    if (Data::quests().exists(questId)) {
+        const auto &script = Data::quests().script(questId);
 
         if (script) {
             std::string title = script->title(this);
@@ -2126,8 +2126,8 @@ void Player::changeTarget(const position &pos) { ltAction->changeTarget(pos); }
 void Player::changeTarget() { ltAction->changeTarget(); }
 
 auto Player::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string {
-    if (Data::Skills.exists(s)) {
-        const auto &skill = Data::Skills[s];
+    if (Data::skills().exists(s)) {
+        const auto &skill = Data::skills()[s];
         return nls(skill.germanName, skill.englishName);
     }
     std::string german("unbekannter Skill");

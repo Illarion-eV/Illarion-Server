@@ -505,7 +505,7 @@ auto Container::recursiveWeight(int rekt) -> int {
     for (auto &it : items) {
         Item &item = it.second;
 
-        const auto &itemStruct = Data::Items[item.getId()];
+        const auto &itemStruct = Data::items()[item.getId()];
 
         if (item.isContainer()) {
             auto iterat = containers.find(it.first);
@@ -567,14 +567,14 @@ void Container::doAge(bool inventory) {
         while (it != items.end()) {
             Item &item = it->second;
 
-            const auto &itemStruct = Data::Items[item.getId()];
+            const auto &itemStruct = Data::items()[item.getId()];
 
             if (!inventory || itemStruct.rotsInInventory) {
                 if (!item.survivesAgeing()) {
                     if (item.getId() != itemStruct.ObjectAfterRot) {
                         item.setId(itemStruct.ObjectAfterRot);
 
-                        const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
+                        const auto &afterRotItemStruct = Data::items()[itemStruct.ObjectAfterRot];
 
                         if (afterRotItemStruct.isValid()) {
                             item.setWear(itemStruct.AgeingSpeed);
@@ -618,7 +618,7 @@ void Container::resetWear() {
     }
 }
 
-auto Container::getSlotCount() const -> TYPE_OF_CONTAINERSLOTS { return Data::ContainerItems[itemId]; }
+auto Container::getSlotCount() const -> TYPE_OF_CONTAINERSLOTS { return Data::containerItems()[itemId]; }
 
 void Container::insertIntoFirstFreeSlot(Item &item) {
     TYPE_OF_CONTAINERSLOTS freeSlot = getFirstFreeSlot();

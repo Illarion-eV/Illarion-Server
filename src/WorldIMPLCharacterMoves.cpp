@@ -36,11 +36,11 @@ void World::checkFieldAfterMove(Character *character, const map::Field &field) {
 
     if (character->isAlive() && field.hasSpecialItem()) {
         for (const auto &item : field.getItemStack()) {
-            if (Data::TilesModItems.exists(item.getId())) {
-                const auto &tmod = Data::TilesModItems[item.getId()];
+            if (Data::tilesModItems().exists(item.getId())) {
+                const auto &tmod = Data::tilesModItems()[item.getId()];
 
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
-                    std::shared_ptr<LuaItemScript> script = Data::Items.script(item.getId());
+                    std::shared_ptr<LuaItemScript> script = Data::items().script(item.getId());
 
                     if (script) {
                         script->CharacterOnField(character);
@@ -51,8 +51,8 @@ void World::checkFieldAfterMove(Character *character, const map::Field &field) {
         }
     }
 
-    if (character->isAlive() && Data::Triggers.exists(character->getPosition())) {
-        const auto &script = Data::Triggers.script(character->getPosition());
+    if (character->isAlive() && Data::triggers().exists(character->getPosition())) {
+        const auto &script = Data::triggers().script(character->getPosition());
 
         if (script) {
             script->CharacterOnField(character);
@@ -61,8 +61,8 @@ void World::checkFieldAfterMove(Character *character, const map::Field &field) {
 }
 
 void World::triggerFieldMove(Character *cc, bool moveto) {
-    if ((cc != nullptr) && cc->isAlive() && Data::Triggers.exists(cc->getPosition())) {
-        const auto &script = Data::Triggers.script(cc->getPosition());
+    if ((cc != nullptr) && cc->isAlive() && Data::triggers().exists(cc->getPosition())) {
+        const auto &script = Data::triggers().script(cc->getPosition());
 
         if (script) {
             if (moveto) {

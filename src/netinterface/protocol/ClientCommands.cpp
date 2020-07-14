@@ -329,8 +329,8 @@ void CastTS::performAction(Player *player) {
         spell.magicType = player->getMagicType();
         spell.spellId = spellId;
 
-        if (Data::Spells.exists(spell)) {
-            LuaMageScript = Data::Spells.script(spell);
+        if (Data::spells().exists(spell)) {
+            LuaMageScript = Data::spells().script(spell);
         }
     }
 
@@ -443,8 +443,8 @@ void CastTS::performAction(Player *player) {
             if ((player->items[LEFT_TOOL].getId() != 0) && (player->items[LEFT_TOOL].getId() != BLOCKEDITEM)) {
                 const auto weaponId = player->items[LEFT_TOOL].getId();
 
-                if (Data::WeaponItems.exists(weaponId)) {
-                    if (Data::WeaponItems[weaponId].Type == WeaponStruct::stave) {
+                if (Data::weaponItems().exists(weaponId)) {
+                    if (Data::weaponItems()[weaponId].Type == WeaponStruct::stave) {
                         zauberstab = true;
                     }
                 }
@@ -453,8 +453,8 @@ void CastTS::performAction(Player *player) {
             if ((player->items[RIGHT_TOOL].getId() != 0) && (player->items[RIGHT_TOOL].getId() != BLOCKEDITEM)) {
                 const auto weaponId = player->items[RIGHT_TOOL].getId();
 
-                if (Data::WeaponItems.exists(weaponId)) {
-                    if (Data::WeaponItems[weaponId].Type == WeaponStruct::stave) {
+                if (Data::weaponItems().exists(weaponId)) {
+                    if (Data::weaponItems()[weaponId].Type == WeaponStruct::stave) {
                         zauberstab = true;
                     }
                 }
@@ -662,7 +662,7 @@ void UseTS::performAction(Player *player) {
                 if (field.viewItemOnStack(item)) {
                     Logger::debug(LogFacility::Script) << "Item on field" << Log::end;
 
-                    LuaScript = Data::Items.script(item.getId());
+                    LuaScript = Data::items().script(item.getId());
 
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;
@@ -675,7 +675,7 @@ void UseTS::performAction(Player *player) {
                 } else {
                     Logger::debug(LogFacility::Script) << "empty field!" << Log::end;
 
-                    const auto &script = Data::Tiles.script(field.getTileId());
+                    const auto &script = Data::tiles().script(field.getTileId());
 
                     if (script) {
                         LuaTileScript = script;
@@ -707,7 +707,7 @@ void UseTS::performAction(Player *player) {
                 if (ps->viewItemNr(pos, tempi, tempc)) {
                     Logger::debug(LogFacility::Script) << "pos found item id: " << tempi.getId() << Log::end;
 
-                    LuaScript = Data::Items.script(tempi.getId());
+                    LuaScript = Data::items().script(tempi.getId());
 
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;
@@ -741,7 +741,7 @@ void UseTS::performAction(Player *player) {
                         << "at position " << static_cast<int>(pos)
                         << " on body, is an item with id: " << player->items.at(pos).getId() << Log::end;
 
-                LuaScript = Data::Items.script(player->items.at(pos).getId());
+                LuaScript = Data::items().script(player->items.at(pos).getId());
 
                 if (LuaScript) {
                     Source.Type = LUA_ITEM;

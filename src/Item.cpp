@@ -80,7 +80,7 @@ Item::Item(id_type id, number_type number, wear_type wear, quality_type quality,
 }
 
 auto Item::increaseNumberBy(Item::number_type count) -> number_type {
-    const auto &itemStruct = Data::Items[id];
+    const auto &itemStruct = Data::items()[id];
 
     if (itemStruct.isValid()) {
         count += getNumber();
@@ -165,7 +165,7 @@ void Item::reset() {
 }
 
 void Item::resetWear() {
-    const auto &itemStruct = Data::Items[id];
+    const auto &itemStruct = Data::items()[id];
 
     if (itemStruct.isValid()) {
         if (!itemStruct.rotsInInventory && itemStruct.AgeingSpeed > wear) {
@@ -221,10 +221,10 @@ auto Item::survivesAgeing() -> bool {
     return wear > 0;
 }
 
-auto Item::isContainer() const -> bool { return Data::ContainerItems.exists(id); }
+auto Item::isContainer() const -> bool { return Data::containerItems().exists(id); }
 
 auto Item::getVolume() const -> TYPE_OF_VOLUME {
-    const auto &itemStruct = Data::Items[id];
+    const auto &itemStruct = Data::items()[id];
 
     if (itemStruct.isValid()) {
         return itemStruct.Volume;
@@ -234,7 +234,7 @@ auto Item::getVolume() const -> TYPE_OF_VOLUME {
 }
 
 auto Item::getWeight() const -> TYPE_OF_WEIGHT {
-    const auto &itemStruct = Data::Items[id];
+    const auto &itemStruct = Data::items()[id];
 
     if (itemStruct.isValid()) {
         return itemStruct.Weight * number;
@@ -244,7 +244,7 @@ auto Item::getWeight() const -> TYPE_OF_WEIGHT {
 }
 
 auto Item::getWorth() const -> TYPE_OF_WORTH {
-    const auto &itemStruct = Data::Items[id];
+    const auto &itemStruct = Data::items()[id];
 
     if (itemStruct.isValid()) {
         return itemStruct.Worth * number;
@@ -254,7 +254,7 @@ auto Item::getWorth() const -> TYPE_OF_WORTH {
 }
 
 auto Item::getMaxStack() const -> number_type {
-    const auto &itemStruct = Data::Items[id];
+    const auto &itemStruct = Data::items()[id];
 
     if (itemStruct.isValid()) {
         return itemStruct.MaxStack;
@@ -270,7 +270,7 @@ auto Item::isStackable() const -> bool { return getMaxStack() > 1; }
 auto Item::isPermanent() const -> bool { return wear == PERMANENT_WEAR; }
 
 auto Item::isMovable() const -> bool {
-    const auto &itemStruct = Data::Items[id];
+    const auto &itemStruct = Data::items()[id];
 
     if (itemStruct.isValid()) {
         return itemStruct.Weight < MAXWEIGHT && !isPermanent();
@@ -282,7 +282,7 @@ auto Item::isMovable() const -> bool {
 void Item::makePermanent() { wear = PERMANENT_WEAR; }
 
 auto ScriptItem::getLookAt(Character *character) const -> ItemLookAt {
-    auto script = Data::Items.script(getId());
+    auto script = Data::items().script(getId());
 
     if (script && script->existsEntrypoint("LookAtItem")) {
         ItemLookAt lookAt = script->LookAtItem(character, *this);

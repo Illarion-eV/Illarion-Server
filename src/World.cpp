@@ -277,10 +277,10 @@ void World::checkMonsters() {
 
                     uint16_t range = 1;
 
-                    if (Data::WeaponItems.exists(itr.getId())) {
-                        range = Data::WeaponItems[itr.getId()].Range;
-                    } else if (Data::WeaponItems.exists(itl.getId())) {
-                        range = Data::WeaponItems[itl.getId()].Range;
+                    if (Data::weaponItems().exists(itr.getId())) {
+                        range = Data::weaponItems()[itr.getId()].Range;
+                    } else if (Data::weaponItems().exists(itl.getId())) {
+                        range = Data::weaponItems()[itl.getId()].Range;
                     }
 
                     const auto temp = getTargetsInRange(monster.getPosition(), range);
@@ -458,10 +458,10 @@ void World::checkMonsters() {
 
                     uint16_t range = 1;
 
-                    if (Data::WeaponItems.exists(itr.getId())) {
-                        range = Data::WeaponItems[itr.getId()].Range;
-                    } else if (Data::WeaponItems.exists(itl.getId())) {
-                        range = Data::WeaponItems[itl.getId()].Range;
+                    if (Data::weaponItems().exists(itr.getId())) {
+                        range = Data::weaponItems()[itr.getId()].Range;
+                    } else if (Data::weaponItems().exists(itl.getId())) {
+                        range = Data::weaponItems()[itl.getId()].Range;
                     }
 
                     const auto temp = getTargetsInRange(monster.getPosition(), range);

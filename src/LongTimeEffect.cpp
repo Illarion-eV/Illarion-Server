@@ -34,11 +34,11 @@
 #include <sstream>
 
 LongTimeEffect::LongTimeEffect(uint16_t effectId, int32_t executeIn)
-        : effectId(effectId), effectName(Data::LongTimeEffects[effectId].effectname), executeIn(executeIn) {}
+        : effectId(effectId), effectName(Data::longTimeEffects()[effectId].effectname), executeIn(executeIn) {}
 
 auto LongTimeEffect::callEffect(Character *target) -> bool {
     bool ret = false;
-    const auto &script = Data::LongTimeEffects.script(effectId);
+    const auto &script = Data::longTimeEffects().script(effectId);
 
     if (script) {
         ret = script->callEffect(this, target);

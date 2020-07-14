@@ -80,11 +80,11 @@ auto Field::isTransparent() const -> bool { return getTileId() == TRANSPARENT; }
 auto Field::getMovementCost() const -> TYPE_OF_WALKINGCOST {
     if (isWalkable()) {
         auto tileId = getTileId();
-        const auto &primaryTile = Data::Tiles[tileId];
+        const auto &primaryTile = Data::tiles()[tileId];
         TYPE_OF_WALKINGCOST tileWalkingCost = primaryTile.walkingCost;
 
         tileId = getSecondaryTileId();
-        const auto &secondaryTile = Data::Tiles[tileId];
+        const auto &secondaryTile = Data::tiles()[tileId];
         uint16_t secondaryWalkingCost = secondaryTile.walkingCost;
 
         if (secondaryWalkingCost < tileWalkingCost) {
@@ -181,7 +181,7 @@ auto Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) -> bool 
         item.setQuality(newQuality);
     }
 
-    const auto &itemStruct = Data::Items[newId];
+    const auto &itemStruct = Data::items()[newId];
 
     if (itemStruct.isValid()) {
         item.setWear(itemStruct.AgeingSpeed);
@@ -312,7 +312,7 @@ auto Field::getExportItems() const -> std::vector<Item> {
         if (item.isPermanent()) {
             result.push_back(item);
         } else {
-            const auto &itemStruct = Data::Items[item.getId()];
+            const auto &itemStruct = Data::items()[item.getId()];
 
             if (itemStruct.isValid() && itemStruct.AfterInfiniteRot > 0) {
                 Item rottenItem = item;
@@ -414,13 +414,13 @@ void Field::age() {
             Item &item = *it;
 
             if (!item.survivesAgeing()) {
-                const auto &itemStruct = Data::Items[item.getId()];
+                const auto &itemStruct = Data::items()[item.getId()];
                 refreshItems = true;
 
                 if (itemStruct.isValid() && item.getId() != itemStruct.ObjectAfterRot) {
                     item.setId(itemStruct.ObjectAfterRot);
 
-                    const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
+                    const auto &afterRotItemStruct = Data::items()[itemStruct.ObjectAfterRot];
 
                     if (afterRotItemStruct.isValid()) {
                         item.setWear(afterRotItemStruct.AgeingSpeed);
@@ -462,14 +462,14 @@ void Field::age() {
 void Field::updateFlags() {
     unsetBits(FLAG_SPECIALITEM | FLAG_BLOCKPATH | FLAG_MAKEPASSABLE);
 
-    if (Data::Tiles.exists(tile)) {
-        const TilesStruct &tt = Data::Tiles[tile];
+    if (Data::tiles().exists(tile)) {
+        const TilesStruct &tt = Data::tiles()[tile];
         setBits(tt.flags & FLAG_BLOCKPATH);
     }
 
     for (const auto &item : items) {
-        if (Data::TilesModItems.exists(item.getId())) {
-            const auto &mod = Data::TilesModItems[item.getId()];
+        if (Data::tilesModItems().exists(item.getId())) {
+            const auto &mod = Data::tilesModItems()[item.getId()];
             setBits(mod.Modificator & FLAG_SPECIALITEM);
 
             if ((mod.Modificator & FLAG_MAKEPASSABLE) != 0) {

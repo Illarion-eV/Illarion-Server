@@ -200,18 +200,18 @@ auto World::changeItem(ScriptItem item) -> bool {
 
 auto World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) const -> std::string {
     if (language == 0) {
-        return Data::Items[itemid].German;
+        return Data::items()[itemid].German;
     }
-    return Data::Items[itemid].English;
+    return Data::items()[itemid].English;
 }
 
 auto World::getItemStats(const ScriptItem &item) const -> ItemStruct {
-    const auto &data = Data::Items[item.getId()];
+    const auto &data = Data::items()[item.getId()];
     return data;
 }
 
 auto World::getItemStatsFromId(TYPE_OF_ITEM_ID id) const -> ItemStruct {
-    const auto &data = Data::Items[id];
+    const auto &data = Data::items()[id];
     return data;
 }
 
@@ -366,7 +366,7 @@ auto World::createFromId(TYPE_OF_ITEM_ID id, int count, const position &pos, boo
                          script_data_exchangemap const *data) -> ScriptItem {
     ScriptItem sItem;
 
-    const auto &com = Data::Items[id];
+    const auto &com = Data::items()[id];
 
     if (com.isValid()) {
         g_item.setId(id);
@@ -495,8 +495,8 @@ auto World::createSavedArea(uint16_t tile, const position &origin, uint16_t heig
 auto World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool {
     // Has to be an own function cant give a pointer of Armor items to the script
 
-    if (Data::ArmorItems.exists(id)) {
-        ret = Data::ArmorItems[id];
+    if (Data::armorItems().exists(id)) {
+        ret = Data::armorItems()[id];
         return true;
     }
     return false;
@@ -505,24 +505,24 @@ auto World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool {
 auto World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool {
     // Has to be an own function cant give a pointer of Armor items to the script
 
-    if (Data::WeaponItems.exists(id)) {
-        ret = Data::WeaponItems[id];
+    if (Data::weaponItems().exists(id)) {
+        ret = Data::weaponItems()[id];
         return true;
     }
     return false;
 }
 
 auto World::getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool {
-    if (Data::NaturalArmors.exists(id)) {
-        ret = Data::NaturalArmors[id];
+    if (Data::naturalArmors().exists(id)) {
+        ret = Data::naturalArmors()[id];
         return true;
     }
     return false;
 }
 
 auto World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool {
-    if (Data::MonsterAttacks.exists(id)) {
-        ret = Data::MonsterAttacks[id];
+    if (Data::monsterAttacks().exists(id)) {
+        ret = Data::monsterAttacks()[id];
         return true;
     }
     return false;
