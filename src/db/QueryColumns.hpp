@@ -46,13 +46,13 @@ public:
     auto addColumn(const std::string &column) -> columnIndex;
     auto addColumn(const std::string &table, const std::string &column) -> columnIndex;
 
-    void addColumns() {}
+    static void addColumns() {}
     template <typename... Args> void addColumns(const std::string &column, const Args &... args) {
         addColumn(column);
         addColumns(args...);
     }
 
-    void addColumnsWithTable(const std::string &table) {}
+    static void addColumnsWithTable(const std::string &table) {}
     template <typename... Args>
     void addColumnsWithTable(const std::string &table, const std::string &column, const Args &... args) {
         addColumn(table, column);

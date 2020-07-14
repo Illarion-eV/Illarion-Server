@@ -235,12 +235,6 @@ public:
      */
     auto getTime(const std::string &timeType) const -> int override;
 
-    /**
-     *checks the command list of one player and put them into practize
-     *@param cp the player which buffer is currently processed
-     */
-    void workout_CommandBuffer(Player *&cp);
-
     void allowLogin(bool allow) { _is_login_allowed = allow; }
     auto isLoginAllowed() const -> bool { return _is_login_allowed; }
 

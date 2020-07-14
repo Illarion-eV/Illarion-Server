@@ -115,8 +115,8 @@ public:
     }
 
     template <typename Key, typename T, class Compare, class Allocator>
-    void addValues(const QueryColumns::columnIndex &column, const std::map<Key, T, Compare, Allocator> &values,
-                   MapInsertMode mode = keysAndValues) {
+    static void addValues(const QueryColumns::columnIndex &column, const std::map<Key, T, Compare, Allocator> &values,
+                          MapInsertMode mode = keysAndValues) {
         for (const auto &key_value : values) {
             switch (mode) {
             case onlyKeys:

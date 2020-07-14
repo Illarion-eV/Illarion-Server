@@ -575,8 +575,6 @@ void World::checkNPC() {
     });
 }
 
-void World::workout_CommandBuffer(Player *&cp) {}
-
 // Init method for NPC's
 void World::initNPC() {
     Npc.for_each([this](NPC *npc) {
