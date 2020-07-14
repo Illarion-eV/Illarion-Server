@@ -32,19 +32,18 @@
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "script/LuaItemScript.hpp"
-#include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaMagicScript.hpp"
 #include "script/LuaMonsterScript.hpp"
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaScript.hpp"
 #include "script/LuaTileScript.hpp"
+#include "script/server.hpp"
 #include "tuningConstants.hpp"
 #include "types.hpp"
 
 #include <string>
 
 extern MonsterTable *monsterDescriptions;
-extern std::unique_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
 
 InputDialogTS::InputDialogTS() : BasicClientCommand(C_INPUTDIALOG_TS) {}
 
@@ -242,9 +241,7 @@ void LookAtCharacterTS::performAction(Player *player) {
         Player *pl = World::get()->Players.find(id);
 
         if (pl != nullptr) {
-            if (lookAtPlayerScript) {
-                lookAtPlayerScript->lookAtPlayer(player, pl, mode);
-            }
+            script::server::lookAtPlayer().lookAtPlayer(player, pl, mode);
         }
 
         // code for player handling

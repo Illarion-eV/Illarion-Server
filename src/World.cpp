@@ -42,10 +42,8 @@
 #include "netinterface/BasicCommand.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "script/LuaLearnScript.hpp"
-#include "script/LuaLogoutScript.hpp"
 #include "script/LuaNPCScript.hpp"
-#include "script/LuaWeaponScript.hpp"
+#include "script/server.hpp"
 #include "tuningConstants.hpp"
 
 #include <algorithm>
@@ -57,9 +55,6 @@
 
 extern ScheduledScriptsTable *scheduledScripts;
 extern MonsterTable *monsterDescriptions;
-extern std::unique_ptr<LuaLearnScript> learnScript;
-extern std::unique_ptr<LuaLogoutScript> logoutScript;
-extern std::unique_ptr<LuaWeaponScript> standardFightingScript;
 
 World *World::_self;
 
@@ -158,7 +153,7 @@ void World::checkPlayers() {
 
             Logger::info(LogFacility::Player) << "logout of " << player << Log::end;
 
-            logoutScript->onLogout(playerPointer);
+            script::server::logout().onLogout(playerPointer);
 
             PlayerManager::get().getLogOutPlayers().push_back(playerPointer);
             sendRemoveCharToVisiblePlayers(player.getId(), pos);
@@ -294,7 +289,7 @@ void World::checkMonsters() {
 
                     if ((!temp.empty()) && monster.canAttack()) {
                         if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, target)) {
-                            target = standardFightingScript->setTarget(monsterPointer, temp);
+                            target = script::server::fighting().setTarget(monsterPointer, temp);
                         }
 
                         if (target != nullptr) {
@@ -334,7 +329,7 @@ void World::checkMonsters() {
 
                             if (!monStruct.script ||
                                 !monStruct.script->setTarget(monsterPointer, targets, targetChar)) {
-                                targetChar = standardFightingScript->setTarget(monsterPointer, targets);
+                                targetChar = script::server::fighting().setTarget(monsterPointer, targets);
                             }
 
                             if (targetChar != nullptr) {
@@ -475,7 +470,7 @@ void World::checkMonsters() {
                         Character *target = nullptr;
 
                         if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, target)) {
-                            target = standardFightingScript->setTarget(monsterPointer, temp);
+                            target = script::server::fighting().setTarget(monsterPointer, temp);
                         }
 
                         if (target != nullptr) {
@@ -494,7 +489,7 @@ void World::checkMonsters() {
                         Character *target = nullptr;
 
                         if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp2, target)) {
-                            target = standardFightingScript->setTarget(monsterPointer, temp2);
+                            target = script::server::fighting().setTarget(monsterPointer, temp2);
                         }
 
                         if (target != nullptr) {
@@ -625,7 +620,7 @@ static auto getNextIGDayTime() -> std::chrono::steady_clock::time_point {
 void World::initScheduler() {
     auto reduceMC = [](Character *character) {
         if (character->getMentalCapacity() > 0) {
-            learnScript->reduceMC(character);
+            script::server::learn().reduceMC(character);
         }
     };
 

@@ -47,8 +47,7 @@
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "script/LuaDepotScript.hpp"
-#include "script/LuaPlayerDeathScript.hpp"
+#include "script/server.hpp"
 #include "tuningConstants.hpp"
 
 #include <arpa/inet.h>
@@ -59,9 +58,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <utility>
-
-extern std::unique_ptr<LuaPlayerDeathScript> playerDeathScript;
-extern std::unique_ptr<LuaDepotScript> depotScript;
 
 Player::Player(std::shared_ptr<NetInterface> newConnection) : Connection(std::move(newConnection)) {
     screenwidth = 0;
@@ -223,9 +219,7 @@ void Player::setAlive(bool alive) {
 
         ltAction->abortAction();
 
-        if (playerDeathScript) {
-            playerDeathScript->playerDeath(this);
-        }
+        script::server::playerDeath().playerDeath(this);
     }
 }
 
@@ -435,8 +429,10 @@ auto Player::lookIntoContainerOnField(direction dir) -> bool {
                     scriptItem.type = ScriptItem::it_field;
                     scriptItem.pos = containerPosition;
 
-                    if (depotScript && depotScript->existsEntrypoint("onOpenDepot")) {
-                        if (depotScript->onOpenDepot(this, scriptItem)) {
+                    auto &depot = script::server::depot();
+
+                    if (depot.existsEntrypoint("onOpenDepot")) {
+                        if (depot.onOpenDepot(this, scriptItem)) {
                             openDepot(scriptItem);
                         }
                     } else {

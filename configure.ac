@@ -95,7 +95,6 @@ AC_SUBST([DEPS_LIBS])
 
 AC_OUTPUT([Makefile
 	   src/Makefile
-	   src/script/Makefile
 	   test/Makefile
 ])
 

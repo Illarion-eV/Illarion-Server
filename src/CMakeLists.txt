@@ -25,9 +25,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/db)
 add_subdirectory(db)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/script)
-add_subdirectory(script)
-
 add_library(server
     data/ArmorObjectTable.cpp
     data/ArmorObjectTable.hpp
@@ -113,6 +110,83 @@ add_library(server
     netinterface/CommandFactory.hpp
     netinterface/NetInterface.cpp
     netinterface/NetInterface.hpp
+    script/binding/armor_struct.cpp
+    script/binding/attack_boni.cpp
+    script/binding/binding.hpp
+    script/binding/character.cpp
+    script/binding/character_skillvalue.cpp
+    script/binding/colour.cpp
+    script/binding/item_struct.cpp
+    script/binding/container.cpp
+    script/binding/crafting_dialog.cpp
+    script/binding/field.cpp
+    script/binding/input_dialog.cpp
+    script/binding/item.cpp
+    script/binding/item_look_at.cpp
+    script/binding/long_time_action.cpp
+    script/binding/long_time_character_effects.cpp
+    script/binding/long_time_effect.cpp
+    script/binding/long_time_effect_struct.cpp
+    script/binding/merchant_dialog.cpp
+    script/binding/message_dialog.cpp
+    script/binding/monster.cpp
+    script/binding/monster_armor.cpp
+    script/binding/npc.cpp
+    script/binding/player.cpp
+    script/binding/position.cpp
+    script/binding/random.cpp
+    script/binding/script_item.cpp
+    script/binding/script_variables_table.cpp
+    script/binding/selection_dialog.cpp
+    script/binding/tiles_struct.cpp
+    script/binding/waypoint_list.cpp
+    script/binding/weapon_struct.cpp
+    script/binding/weather_struct.cpp
+    script/binding/world.cpp
+    script/forwarder.cpp
+    script/forwarder.hpp
+    script/LuaDepotScript.cpp
+    script/LuaDepotScript.hpp
+    script/LuaItemScript.cpp
+    script/LuaItemScript.hpp
+    script/LuaLearnScript.cpp
+    script/LuaLearnScript.hpp
+    script/LuaLoginScript.cpp
+    script/LuaLoginScript.hpp
+    script/LuaLogoutScript.cpp
+    script/LuaLogoutScript.hpp
+    script/LuaLongTimeEffectScript.cpp
+    script/LuaLongTimeEffectScript.hpp
+    script/LuaLookAtItemScript.cpp
+    script/LuaLookAtItemScript.hpp
+    script/LuaLookAtPlayerScript.cpp
+    script/LuaLookAtPlayerScript.hpp
+    script/LuaMagicScript.cpp
+    script/LuaMagicScript.hpp
+    script/LuaMonsterScript.cpp
+    script/LuaMonsterScript.hpp
+    script/LuaNPCScript.cpp
+    script/LuaNPCScript.hpp
+    script/LuaPlayerDeathScript.cpp
+    script/LuaPlayerDeathScript.hpp
+    script/LuaQuestScript.cpp
+    script/LuaQuestScript.hpp
+    script/LuaReloadScript.cpp
+    script/LuaReloadScript.hpp
+    script/LuaScheduledScript.cpp
+    script/LuaScheduledScript.hpp
+    script/LuaScript.cpp
+    script/LuaScript.hpp
+    script/LuaTestSupportScript.cpp
+    script/LuaTestSupportScript.hpp
+    script/LuaTileScript.cpp
+    script/LuaTileScript.hpp
+    script/LuaTriggerScript.cpp
+    script/LuaTriggerScript.hpp
+    script/LuaWeaponScript.cpp
+    script/LuaWeaponScript.hpp
+    script/server.cpp
+    script/server.hpp
     a_star.cpp
     a_star.hpp
     Attribute.cpp
@@ -189,10 +263,12 @@ add_library(server
     WorldIMPLTalk.cpp
     WorldIMPLTools.cpp)
 
-target_link_libraries(server db script)
+target_link_libraries(server db)
 
 find_package(Lua 5.2 REQUIRED)
 include_directories(${LUA_INCLUDE_DIR})
+target_link_libraries(server ${LUA_LIBRARIES})
+target_link_libraries(server /usr/lib/x86_64-linux-gnu/libluabind.so)
 
 find_package(Boost 1.67.0 REQUIRED COMPONENTS system graph)
 include_directories(${Boost_INCLUDE_DIRS})

@@ -27,7 +27,7 @@ check_PROGRAMS = test_binding ItemTest CharacterContainerTest test_container \
 AM_CXXFLAGS = -ggdb -pipe -Wall -Wno-deprecated -std=c++17 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(BOOST_CPPFLAGS) -I../$(GMOCK_DIR)/include -I../$(GTEST_DIR)/include -I$(top_srcdir)/src
 AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) -lpthread
-LDADD = $(DEPS_LIBS) $(top_builddir)/src/libserver.a $(top_builddir)/src/script/libscriptbinding.a -lstdc++fs libtest.a
+LDADD = $(DEPS_LIBS) $(top_builddir)/src/libserver.a -lstdc++fs libtest.a
 
 LIBS = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 

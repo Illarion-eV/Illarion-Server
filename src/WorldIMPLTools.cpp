@@ -34,7 +34,7 @@
 #include "db/InsertQuery.hpp"
 #include "map/Field.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "script/LuaWeaponScript.hpp"
+#include "script/server.hpp"
 
 #include <algorithm>
 #include <cstdlib>
@@ -42,7 +42,6 @@
 #include <range/v3/all.hpp>
 
 extern MonsterTable *monsterDescriptions;
-extern std::unique_ptr<LuaWeaponScript> standardFightingScript;
 
 void World::deleteAllLostNPC() {
     for (const TYPE_OF_CHARACTER_ID &npcToDelete : LostNpcs) {
@@ -427,7 +426,7 @@ auto World::characterAttacks(Character *cp) const -> bool {
                         }
 
                         if (!temp.empty()) {
-                            Character *target = standardFightingScript->setTarget(temppl, temp);
+                            Character *target = script::server::fighting().setTarget(temppl, temp);
 
                             if (target != nullptr) {
                                 temppl->turn(target->getPosition());

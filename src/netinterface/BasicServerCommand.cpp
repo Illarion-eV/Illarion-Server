@@ -19,7 +19,6 @@
 #include "BasicServerCommand.hpp"
 
 #include "BasicCommand.hpp"
-#include "Connection.hpp"
 #include "Logger.hpp"
 #include "netinterface/NetInterface.hpp"
 

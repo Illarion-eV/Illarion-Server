@@ -31,15 +31,8 @@
 #include "map/Field.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "script/LuaDepotScript.hpp"
-#include "script/LuaLearnScript.hpp"
-#include "script/LuaLoginScript.hpp"
-#include "script/LuaLogoutScript.hpp"
-#include "script/LuaLookAtItemScript.hpp"
-#include "script/LuaLookAtPlayerScript.hpp"
-#include "script/LuaPlayerDeathScript.hpp"
 #include "script/LuaReloadScript.hpp"
-#include "script/LuaWeaponScript.hpp"
+#include "script/server.hpp"
 
 #include <iostream>
 #include <limits>
@@ -47,17 +40,9 @@
 #include <regex>
 #include <sstream>
 
-extern std::unique_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
-extern std::unique_ptr<LuaLookAtItemScript> lookAtItemScript;
-extern std::unique_ptr<LuaPlayerDeathScript> playerDeathScript;
-extern std::unique_ptr<LuaLoginScript> loginScript;
-extern std::unique_ptr<LuaLogoutScript> logoutScript;
-extern std::unique_ptr<LuaLearnScript> learnScript;
-extern std::unique_ptr<LuaDepotScript> depotScript;
 extern std::unique_ptr<RaceTypeTable> raceTypes;
 extern std::unique_ptr<MonsterTable> monsterDescriptions;
 extern std::unique_ptr<ScheduledScriptsTable> scheduledScripts;
-extern std::unique_ptr<LuaWeaponScript> standardFightingScript;
 
 void set_spawn_command(World * /*world*/, Player * /*player*/, const std::string & /*in*/);
 void create_area_command(World * /*world*/, Player * /*player*/, const std::string & /*params*/);
@@ -1019,9 +1004,9 @@ auto World::reload_defs(Player *cp) const -> bool {
         return false;
     }
 
-    Data::preReload();
-
     sendMessageToAllPlayers("### The server is reloading, this may cause some lag ###");
+
+    Data::preReload();
 
     bool ok = Data::Skills.reloadBuffer();
 
@@ -1075,62 +1060,7 @@ auto World::reload_defs(Player *cp) const -> bool {
         // Mutex entsperren.
         PlayerManager::setLoginLogout(false);
 
-        // Reload the standard Fighting script
-        try {
-            standardFightingScript = std::make_unique<LuaWeaponScript>("server.standardfighting");
-        } catch (ScriptException &e) {
-            reportScriptError(cp, "standardfighting", e.what());
-            ok = false;
-        }
-
-        try {
-            lookAtPlayerScript = std::make_unique<LuaLookAtPlayerScript>("server.playerlookat");
-        } catch (ScriptException &e) {
-            reportScriptError(cp, "playerlookat", e.what());
-            ok = false;
-        }
-
-        try {
-            lookAtItemScript = std::make_unique<LuaLookAtItemScript>("server.itemlookat");
-        } catch (ScriptException &e) {
-            reportScriptError(cp, "itemlookat", e.what());
-            ok = false;
-        }
-
-        try {
-            playerDeathScript = std::make_unique<LuaPlayerDeathScript>("server.playerdeath");
-        } catch (ScriptException &e) {
-            reportScriptError(cp, "playerdeath", e.what());
-            ok = false;
-        }
-
-        try {
-            loginScript = std::make_unique<LuaLoginScript>("server.login");
-        } catch (ScriptException &e) {
-            reportScriptError(cp, "login", e.what());
-            ok = false;
-        }
-
-        try {
-            logoutScript = std::make_unique<LuaLogoutScript>("server.logout");
-        } catch (ScriptException &e) {
-            reportScriptError(cp, "logout", e.what());
-            ok = false;
-        }
-
-        try {
-            learnScript = std::make_unique<LuaLearnScript>("server.learn");
-        } catch (ScriptException &e) {
-            reportScriptError(cp, "learn", e.what());
-            ok = false;
-        }
-
-        try {
-            depotScript = std::make_unique<LuaDepotScript>("server.depot");
-        } catch (ScriptException &e) {
-            reportScriptError(cp, "depot", e.what());
-            ok = false;
-        }
+        ok = script::server::reload();
     }
 
     if (ok) {

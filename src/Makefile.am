@@ -21,13 +21,13 @@ bin_PROGRAMS = illarion
 noinst_LIBRARIES = libserver.a
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -pedantic-errors -std=c++17 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
-AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -D_FORTIFY_SOURCE=2 -I$(top_srcdir)/src
+AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -D_FORTIFY_SOURCE=2 -DLUABIND_USE_CXX11 -I$(top_srcdir)/src
 AM_LDFLAGS = $(BOOST_SYSTEM_LDFLAGS) -lpthread
-LDADD = $(DEPS_LIBS) libserver.a $(top_builddir)/src/script/libscriptbinding.a -lstdc++fs
+LDADD = $(DEPS_LIBS) libserver.a -lstdc++fs
 
 LIBS = $(BOOST_SYSTEM_LIBS)
 
-SUBDIRS = script .
+SUBDIRS = .
 
 BUILT_SOURCES = version.hpp
 
@@ -63,9 +63,26 @@ db/QueryAssign.cpp db/QueryWhere.cpp db/QueryColumns.cpp db/QueryTables.cpp db/S
 netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.cpp MonitoringClients.cpp \
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \
 netinterface/protocol/ServerCommands.cpp netinterface/protocol/ClientCommands.cpp netinterface/ByteBuffer.cpp \
-netinterface/protocol/BBIWIServerCommands.cpp netinterface/protocol/BBIWIClientCommands.cpp
-
-libserver_a_LIBADD = $(top_builddir)/src/script/libscriptbinding.a
+netinterface/protocol/BBIWIServerCommands.cpp netinterface/protocol/BBIWIClientCommands.cpp \
+\
+script/LuaScript.cpp script/forwarder.cpp script/server.cpp script/LuaTestSupportScript.cpp \
+script/LuaNPCScript.cpp script/LuaItemScript.cpp script/LuaMonsterScript.cpp \
+script/LuaMagicScript.cpp script/LuaTileScript.cpp script/LuaTriggerScript.cpp \
+script/LuaWeaponScript.cpp script/LuaScheduledScript.cpp script/LuaLongTimeEffectScript.cpp \
+script/LuaReloadScript.cpp script/LuaLoginScript.cpp script/LuaLogoutScript.cpp \
+script/LuaDepotScript.cpp script/LuaLookAtPlayerScript.cpp script/LuaLearnScript.cpp \
+script/LuaPlayerDeathScript.cpp script/LuaLookAtItemScript.cpp script/LuaQuestScript.cpp \
+script/binding/armor_struct.cpp script/binding/attack_boni.cpp script/binding/binding.hpp \
+script/binding/character.cpp script/binding/character_skillvalue.cpp script/binding/colour.cpp \
+script/binding/item_struct.cpp script/binding/container.cpp script/binding/crafting_dialog.cpp \
+script/binding/field.cpp script/binding/input_dialog.cpp script/binding/item.cpp \
+script/binding/item_look_at.cpp script/binding/long_time_action.cpp script/binding/long_time_character_effects.cpp \
+script/binding/long_time_effect.cpp script/binding/long_time_effect_struct.cpp script/binding/merchant_dialog.cpp \
+script/binding/message_dialog.cpp script/binding/monster.cpp script/binding/monster_armor.cpp \
+script/binding/npc.cpp script/binding/player.cpp script/binding/position.cpp \
+script/binding/random.cpp script/binding/script_item.cpp script/binding/script_variables_table.cpp \
+script/binding/selection_dialog.cpp script/binding/tiles_struct.cpp script/binding/waypoint_list.cpp \
+script/binding/weapon_struct.cpp script/binding/weather_struct.cpp script/binding/world.cpp
 
 illarion_SOURCES = main.cpp
 
@@ -98,6 +115,18 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 data/ScheduledScriptsTable.hpp data/TilesTable.hpp \
 		 data/Table.hpp data/WeaponObjectTable.hpp \
 		 data/NaturalArmorTable.hpp main_help.hpp TableStructs.hpp \
+         script/forwarder.hpp script/server.hpp \
+		 script/LuaLookAtItemScript.hpp script/LuaTestSupportScript.hpp \
+		 script/LuaLookAtPlayerScript.hpp script/LuaTriggerScript.hpp \
+		 script/LuaLongTimeEffectScript.hpp script/LuaLearnScript.hpp \
+		 script/LuaNPCScript.hpp script/LuaWeaponScript.hpp \
+		 script/LuaMagicScript.hpp script/LuaScheduledScript.hpp \
+		 script/LuaLoginScript.hpp script/LuaLogoutScript.hpp \
+		 script/LuaReloadScript.hpp script/LuaQuestScript.hpp \
+		 script/LuaDepotScript.hpp script/LuaMonsterScript.hpp \
+		 script/LuaPlayerDeathScript.hpp script/LuaScript.hpp \
+		 script/LuaTileScript.hpp script/LuaItemScript.hpp \
+		 script/binding/binding.hpp \
 		 Language.hpp \
 		 NewClientView.hpp \
 		 netinterface/BasicCommand.hpp \
@@ -113,7 +142,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 LongTimeCharacterEffects.hpp LongTimeAction.hpp character_ptr.hpp \
 		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp
 
-version.hpp: $(HEADERS) $(SOURCES) $(top_builddir)/src/script/libscriptbinding.a
+version.hpp: $(HEADERS) $(SOURCES)
 	echo "#define SERVER_VERSION \"`cd $(top_srcdir) && git describe --long`\"" > version.hpp.new ;\
     cp -n version.hpp.new version.hpp ;\
     if [ "$$(< version.hpp)" != "$$(< version.hpp.new)" ] ;\
@@ -121,5 +150,3 @@ version.hpp: $(HEADERS) $(SOURCES) $(top_builddir)/src/script/libscriptbinding.a
         cp version.hpp.new version.hpp ;\
     fi ;\
     rm version.hpp.new
-
-$(top_builddir)/src/script/libscriptbinding.a: script

@@ -37,8 +37,8 @@
 #include "main_help.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "script/LuaLoginScript.hpp"
 #include "script/LuaReloadScript.hpp"
+#include "script/server.hpp"
 #include "tuningConstants.hpp"
 
 #include <memory>
@@ -46,7 +46,6 @@
 #include <string>
 #include <vector>
 
-extern std::unique_ptr<LuaLoginScript> loginScript;
 extern ScriptVariablesTable *scriptVariables;
 
 auto main(int argc, char *argv[]) -> int {
@@ -134,7 +133,7 @@ auto main(int argc, char *argv[]) -> int {
                     try {
                         world->Players.insert(newPlayer);
                         newPlayer->login();
-                        loginScript->onLogin(newPlayer);
+                        script::server::login().onLogin(newPlayer);
                         world->updatePlayerList();
                     } catch (Player::LogoutException &e) {
                         ServerCommandPointer cmd = std::make_shared<LogOutTC>(e.getReason());

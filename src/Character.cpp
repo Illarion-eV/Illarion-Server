@@ -36,8 +36,7 @@
 #include "map/Field.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "script/LuaLearnScript.hpp"
-#include "script/LuaWeaponScript.hpp"
+#include "script/server.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -45,8 +44,6 @@
 #include <map>
 #include <range/v3/all.hpp>
 
-extern std::unique_ptr<LuaLearnScript> learnScript;
-extern std::unique_ptr<LuaWeaponScript> standardFightingScript;
 extern std::unique_ptr<RaceTypeTable> raceTypes;
 
 Character::attribute_map_t Character::attributeMap = {{"strength", strength},
@@ -971,9 +968,7 @@ void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opp
         return;
     }
 
-    if (learnScript) {
-        learnScript->learn(this, skill, actionPoints, opponent);
-    }
+    script::server::learn().learn(this, skill, actionPoints, opponent);
 }
 
 void Character::deleteAllSkills() { skills.clear(); }
@@ -1389,7 +1384,7 @@ void Character::callAttackScript(Character *Attacker, Character *Defender) {
         }
     }
 
-    standardFightingScript->onAttack(Attacker, Defender);
+    script::server::fighting().onAttack(Attacker, Defender);
 }
 
 void Character::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) {

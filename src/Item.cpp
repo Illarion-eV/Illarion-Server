@@ -21,15 +21,13 @@
 #include "constants.hpp"
 #include "data/Data.hpp"
 #include "script/LuaItemScript.hpp"
-#include "script/LuaLookAtItemScript.hpp"
+#include "script/server.hpp"
 #include "stream.hpp"
 
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include <range/v3/all.hpp>
 #include <sstream>
-
-extern std::unique_ptr<LuaLookAtItemScript> lookAtItemScript;
 
 auto ItemLookAt::operator==(const ItemLookAt &rhs) const -> bool {
     bool equal = true;
@@ -294,7 +292,7 @@ auto ScriptItem::getLookAt(Character *character) const -> ItemLookAt {
         }
     }
 
-    return lookAtItemScript->lookAtItem(character, *this);
+    return script::server::lookAtItem().lookAtItem(character, *this);
 }
 
 auto ScriptItem::cloneItem() const -> Item {
