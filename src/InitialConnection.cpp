@@ -22,6 +22,7 @@
 #include "Logger.hpp"
 #include "netinterface/NetInterface.hpp"
 
+#include <cstdlib>
 #include <memory>
 #include <thread>
 
@@ -35,19 +36,25 @@ auto InitialConnection::create() -> std::shared_ptr<InitialConnection> {
 auto InitialConnection::getNewPlayers() -> NewPlayerVector & { return newPlayers; }
 
 void InitialConnection::run_service() {
-    using boost::asio::ip::tcp;
+    try {
+        using boost::asio::ip::tcp;
 
-    int port = Config::instance().port;
+        int port = Config::instance().port;
 
-    auto endpoint = tcp::endpoint(tcp::v4(), port);
-    acceptor = std::make_unique<tcp::acceptor>(io_service, endpoint);
-    auto newConnection = std::make_shared<NetInterface>(io_service);
-    using std::placeholders::_1;
-    acceptor->async_accept(newConnection->getSocket(), [shared_this = shared_from_this(), newConnection](auto &&PH1) {
-        shared_this->accept_connection(newConnection, PH1);
-    });
-    Logger::info(LogFacility::Other) << "Starting the IO Service!" << Log::end;
-    io_service.run();
+        auto endpoint = tcp::endpoint(tcp::v4(), port);
+        acceptor = std::make_unique<tcp::acceptor>(io_service, endpoint);
+        auto newConnection = std::make_shared<NetInterface>(io_service);
+        using std::placeholders::_1;
+        acceptor->async_accept(newConnection->getSocket(),
+                               [shared_this = shared_from_this(), newConnection](auto &&PH1) {
+                                   shared_this->accept_connection(newConnection, PH1);
+                               });
+        Logger::info(LogFacility::Other) << "Starting the io service." << Log::end;
+        io_service.run();
+    } catch (const boost::system::system_error &e) {
+        Logger::critical(LogFacility::Other) << "Failed to start io service: " << e.what() << Log::end;
+        std::abort();
+    }
 }
 
 void InitialConnection::accept_connection(const std::shared_ptr<NetInterface> &connection,
