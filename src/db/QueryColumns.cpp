@@ -43,7 +43,7 @@ auto QueryColumns::addColumn(const std::string &table, const std::string &column
     return nextColumn++;
 }
 
-auto QueryColumns::buildQuerySegment() -> std::string & { return columns; }
+auto QueryColumns::buildQuerySegment() const -> const std::string & { return columns; }
 
 auto QueryColumns::getColumnCount() const -> uint32_t { return (uint32_t)nextColumn; }
 

@@ -124,6 +124,6 @@ auto CraftingDialog::getCraftableTime() const -> uint16_t {
 
 auto CraftingDialog::closeOnMove() const -> bool { return true; }
 
-auto CraftingDialog::canAddCraftable(uint8_t group) -> bool {
+auto CraftingDialog::canAddCraftable(uint8_t group) const -> bool {
     return (groups.size() - 1 >= group) && (craftables.size() < maximumCraftables);
 }

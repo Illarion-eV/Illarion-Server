@@ -28,4 +28,4 @@ void QueryAssign::addAssignColumnNull(const std::string &column) {
     Query::appendToStringList(assignColumns, Query::escapeAndChainKeys("", column) + " = NULL");
 }
 
-auto QueryAssign::buildQuerySegment() -> std::string & { return assignColumns; }
+auto QueryAssign::buildQuerySegment() const -> const std::string & { return assignColumns; }

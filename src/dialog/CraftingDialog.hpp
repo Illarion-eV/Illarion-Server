@@ -153,7 +153,7 @@ public:
     auto closeOnMove() const -> bool override;
 
 private:
-    auto canAddCraftable(uint8_t group) -> bool;
+    auto canAddCraftable(uint8_t group) const -> bool;
 };
 
 #endif

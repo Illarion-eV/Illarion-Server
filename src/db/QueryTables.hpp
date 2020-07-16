@@ -49,7 +49,7 @@ protected:
     QueryTables();
 
     void setOnlyOneTable(const bool &enabled);
-    auto buildQuerySegment() -> std::string &;
+    auto buildQuerySegment() const -> const std::string &;
 };
 } // namespace Database
 

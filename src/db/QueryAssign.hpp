@@ -49,7 +49,7 @@ public:
 protected:
     explicit QueryAssign(const Connection &connection);
 
-    auto buildQuerySegment() -> std::string &;
+    auto buildQuerySegment() const -> const std::string &;
 };
 } // namespace Database
 

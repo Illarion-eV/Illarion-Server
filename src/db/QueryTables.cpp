@@ -53,4 +53,4 @@ void QueryTables::setAccountTable(const std::string &table) {
 
 void QueryTables::setOnlyOneTable(const bool &enabled) { oneTable = enabled; }
 
-auto QueryTables::buildQuerySegment() -> std::string & { return tables; }
+auto QueryTables::buildQuerySegment() const -> const std::string & { return tables; }
