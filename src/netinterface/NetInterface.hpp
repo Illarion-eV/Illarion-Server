@@ -30,6 +30,7 @@
 #include "thread_safe_vector.hpp"
 
 #include <array>
+#include <atomic>
 #include <boost/asio.hpp>
 #include <deque>
 #include <memory>
@@ -80,7 +81,7 @@ public:
 
     auto getIPAdress() -> std::string;
 
-    volatile bool online; /*< if connection is active*/
+    std::atomic_bool online; /*< if connection is active*/
 
     using SERVERCOMMANDLIST = std::deque<ServerCommandPointer>;
 

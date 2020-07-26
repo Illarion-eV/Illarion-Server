@@ -19,11 +19,12 @@
 #ifndef MAIN_HELP_HPP
 #define MAIN_HELP_HPP
 
+#include <atomic>
 #include <string>
 #include <vector>
 
 // break out of the main loop if false
-extern volatile bool running;
+extern std::atomic_bool running;
 
 class Player;
 

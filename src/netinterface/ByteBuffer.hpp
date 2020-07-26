@@ -20,6 +20,7 @@
 #define BYTE_BUFFER_HPP
 
 #include <array>
+#include <atomic>
 #include <cstdint>
 #include <mutex>
 
@@ -79,9 +80,9 @@ private:
     std::mutex vlock;           /*<mutex for thread safety*/
     uint16_t bytesAvailable{0}; /*<stores how much bytes are currently in the buffer*/
 
-    volatile uint8_t rBuff{0};    /*<number of current read buffer*/
-    volatile uint8_t wBuff{1};    /*<number of the current write buffer*/
-    volatile uint16_t readPos{0}; /*<current reading position inside the read buffer*/
+    std::atomic_uint8_t rBuff{0};                        /*<number of current read buffer*/
+    std::atomic_uint8_t wBuff{1};                        /*<number of the current write buffer*/
+    std::atomic_uint16_t readPos{0};                     /*<current reading position inside the read buffer*/
     std::array<t_rbuffer, NUMBEROFBUFFERS> recvBuffer{}; /*<internal buffer collection*/
 };
 

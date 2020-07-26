@@ -22,6 +22,7 @@
 #include "InitialConnection.hpp"
 #include "thread_safe_vector.hpp"
 
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <thread>
@@ -63,12 +64,12 @@ private:
     /**
      * true if the thread is running
      */
-    volatile bool running = false;
+    std::atomic_bool running = false;
 
     /**
      * if false the thread was exited correctly
      */
-    volatile bool threadOk = false;
+    std::atomic_bool threadOk = false;
 
     /**
      * logged out players which connection wherent shutted down

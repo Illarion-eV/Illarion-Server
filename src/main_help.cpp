@@ -39,7 +39,7 @@ std::unique_ptr<MonsterTable> monsterDescriptions;
 std::unique_ptr<RaceTypeTable> raceTypes;
 
 // break out of the main loop if false
-volatile bool running;
+std::atomic_bool running;
 
 void logout_save(Player *who, bool forced, unsigned long int thistime) {
     time_t acttime = 0;
