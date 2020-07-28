@@ -53,7 +53,7 @@ void InitialConnection::run_service() {
         io_service.run();
     } catch (const boost::system::system_error &e) {
         Logger::critical(LogFacility::Other) << "Failed to start io service: " << e.what() << Log::end;
-        std::abort();
+        std::exit(EXIT_FAILURE);
     }
 }
 
