@@ -25,6 +25,7 @@
 #include "data/TilesTable.hpp"
 #include "map/Field.hpp"
 
+#include <cmath>
 #include <utility>
 
 namespace pathfinding {
@@ -118,7 +119,7 @@ distance_heuristic::distance_heuristic(Vertex goal) : goal(std::move(goal)) {
 auto distance_heuristic::operator()(const Vertex &u) const -> Cost {
     Cost dx = goal.first - u.first;
     Cost dy = goal.second - u.second;
-    Cost d = sqrt(dx * dx + dy * dy);
+    Cost d = std::sqrt(dx * dx + dy * dy);
     Logger::debug(LogFacility::Other) << "from (" << u.first << ", " << u.second << ") to (" << goal.first << ", "
                                       << goal.second << "): " << d << Log::end;
     return d;

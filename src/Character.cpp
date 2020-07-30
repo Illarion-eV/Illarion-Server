@@ -982,9 +982,9 @@ auto Character::isInRange(Character *cc, Coordinate distancemetric) const -> boo
 }
 
 auto Character::isInScreen(const position &pos) const -> bool {
-    Coordinate dx = abs(this->pos.x - pos.x);
-    Coordinate dy = abs(this->pos.y - pos.y);
-    Coordinate dz = abs(this->pos.z - pos.z);
+    Coordinate dx = std::abs(this->pos.x - pos.x);
+    Coordinate dy = std::abs(this->pos.y - pos.y);
+    Coordinate dz = std::abs(this->pos.z - pos.z);
 
     return dx + dy <= getScreenRange() && -RANGEDOWN <= dz && dz <= RANGEUP;
 }
@@ -992,17 +992,17 @@ auto Character::isInScreen(const position &pos) const -> bool {
 auto Character::getScreenRange() const -> Coordinate { return screenRange; }
 
 auto Character::isInRangeToField(const position &m_pos, Coordinate distancemetric) const -> bool {
-    Coordinate dz = abs(m_pos.z - pos.z);
-    Coordinate dx = abs(m_pos.x - pos.x);
-    Coordinate dy = abs(m_pos.y - pos.y);
+    Coordinate dz = std::abs(m_pos.z - pos.z);
+    Coordinate dx = std::abs(m_pos.x - pos.x);
+    Coordinate dy = std::abs(m_pos.y - pos.y);
 
     return dx <= distancemetric && dy <= distancemetric && dz == 0;
 }
 
 auto Character::distanceMetricToPosition(const position &m_pos) const -> Coordinate {
-    Coordinate dz = abs(pos.z - m_pos.z);
-    Coordinate dx = abs(pos.x - m_pos.x);
-    Coordinate dy = abs(pos.y - m_pos.y);
+    Coordinate dz = std::abs(pos.z - m_pos.z);
+    Coordinate dx = std::abs(pos.x - m_pos.x);
+    Coordinate dy = std::abs(pos.y - m_pos.y);
 
     return std::max(dx, std::max(dy, dz));
 }

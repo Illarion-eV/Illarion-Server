@@ -27,6 +27,8 @@
 #include "script/LuaItemScript.hpp"
 #include "tuningConstants.hpp"
 
+#include <cmath>
+
 // TODO find a better place for the constants
 static const std::string message_overweight_german{"Du kannst nicht so viel tragen!"};
 static const std::string message_overweight_english{"You can't carry that much!"};
@@ -415,9 +417,9 @@ auto World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
 }
 
 auto World::takeItemFromMap(Character *cc, const position &itemPosition) -> bool {
-    auto dx = abs(itemPosition.x - cc->getPosition().x);
-    auto dy = abs(itemPosition.y - cc->getPosition().y);
-    auto dz = abs(itemPosition.z - cc->getPosition().z);
+    auto dx = std::abs(itemPosition.x - cc->getPosition().x);
+    auto dy = std::abs(itemPosition.y - cc->getPosition().y);
+    auto dz = std::abs(itemPosition.z - cc->getPosition().z);
 
     if (dx > 1 || dy > 1 || dz != 0) {
         return false;
@@ -1429,7 +1431,7 @@ void World::closeShowcaseIfNotInRange(Container *moved, const position &showcase
     if (moved != nullptr) {
         Players.for_each([&showcasePosition, moved](Player *player) {
             const auto &pos = player->getPosition();
-            if (abs(showcasePosition.x - pos.x) > 1 || abs(showcasePosition.y - pos.y) > 1 ||
+            if (std::abs(showcasePosition.x - pos.x) > 1 || std::abs(showcasePosition.y - pos.y) > 1 ||
                 showcasePosition.z != pos.z) {
                 player->closeShowcase(moved);
             }
