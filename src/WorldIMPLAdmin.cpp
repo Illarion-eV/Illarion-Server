@@ -466,7 +466,7 @@ void World::ForceIntroduceAll(Player *player) const {
 }
 
 void World::teleportPlayerToOther(Player *player, const std::string &target) const {
-    if (!player->hasGMRight(gmr_warp)) {
+    if (!player->hasGMRight(gmr_warp) && (Config::instance().debug == 0)) {
         return;
     }
 
