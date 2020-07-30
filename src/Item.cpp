@@ -25,7 +25,6 @@
 #include "stream.hpp"
 
 #include <algorithm>
-#include <boost/lexical_cast.hpp>
 #include <range/v3/all.hpp>
 #include <sstream>
 
@@ -149,11 +148,9 @@ void Item::setData(const std::string &key, int32_t value) {
 }
 
 auto Item::getDepot() const -> uint16_t {
-    try {
-        return boost::lexical_cast<uint16_t>(getData("depot"));
-    } catch (const boost::bad_lexical_cast &) {
-        return 1;
-    }
+    uint16_t depot = 1;
+    stringToNumber(getData("depot"), depot);
+    return depot;
 }
 
 void Item::reset() {

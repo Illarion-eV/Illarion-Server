@@ -23,6 +23,7 @@
 #include "types.hpp"
 
 #include <boost/functional/hash/hash.hpp>
+#include <charconv>
 #include <exception>
 #include <iostream>
 #include <map>
@@ -156,5 +157,10 @@ enum QuestAvailability {
 };
 
 using script_data_exchangemap = std::vector<std::pair<std::string, std::string>>;
+
+template <typename T> auto stringToNumber(const std::string &s, T &n) -> bool {
+    auto [p, error] = std::from_chars(s.data(), s.data() + s.length(), n); // NOLINT
+    return error == std::errc();
+}
 
 #endif

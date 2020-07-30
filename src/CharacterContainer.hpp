@@ -23,7 +23,6 @@
 #include "globals.hpp"
 #include "utility.hpp"
 
-#include <boost/lexical_cast.hpp>
 #include <functional>
 #include <string>
 #include <unordered_map>

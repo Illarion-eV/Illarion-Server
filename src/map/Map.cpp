@@ -19,10 +19,11 @@
 #include "map/Map.hpp"
 
 #include "Logger.hpp"
+#include "globals.hpp"
 #include "stream.hpp"
 
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/lexical_cast.hpp>
+#include <limits>
 #include <regex>
 #include <vector>
 
@@ -126,50 +127,44 @@ auto Map::importFields(const std::string &importDir, const std::string &mapName)
             }
 
             if (smatch fieldMatch; regex_match(line, fieldMatch, tileExpression)) {
-                try {
-                    const auto xPosition = 1;
-                    const auto x = boost::lexical_cast<uint16_t>(fieldMatch[xPosition]);
+                const auto xPosition = 1;
+                auto x = std::numeric_limits<uint16_t>::max();
+                stringToNumber(fieldMatch[xPosition].str(), x);
 
-                    if (x >= width) {
-                        Logger::error(LogFacility::Script)
-                                << fileName << ": x must be less than width in line " << lineNumber << Log::end;
-                        success = false;
-                    }
-
-                    const auto yPosition = 2;
-                    const auto y = boost::lexical_cast<uint16_t>(fieldMatch[yPosition]);
-
-                    if (y >= height) {
-                        Logger::error(LogFacility::Script)
-                                << fileName << ": y must be less than height in line " << lineNumber << Log::end;
-                        success = false;
-                    }
-
-                    const auto tilePosition = 3;
-                    const auto musicPosition = 4;
-                    const auto tile = boost::lexical_cast<uint16_t>(fieldMatch[tilePosition]);
-                    const auto music = boost::lexical_cast<uint16_t>(fieldMatch[musicPosition]);
-
-                    if (success) {
-                        auto &field = fields[x][y];
-
-                        if ((field.getTileCode() != 0) || (field.getMusicId() != 0)) {
-                            Logger::warn(LogFacility::Script)
-                                    << fileName << ": tile on (" << x << ", " << y
-                                    << ") is already present, ignoring line " << lineNumber << Log::end;
-                        } else {
-                            field.setTileId(tile);
-                            field.setMusicId(music);
-                        }
-                    }
-                } catch (boost::bad_lexical_cast &) {
-                    Logger::error(LogFacility::Script) << fileName
-                                                       << ": expected "
-                                                          "<uint16_t>;<uint16_t>;<uint16_t>;<"
-                                                          "uint16_t> but found '"
-                                                       << line << "' in line " << lineNumber << Log::end;
-
+                if (x >= width) {
+                    Logger::error(LogFacility::Script)
+                            << fileName << ": x must be less than width in line " << lineNumber << Log::end;
                     success = false;
+                }
+
+                const auto yPosition = 2;
+                auto y = std::numeric_limits<uint16_t>::max();
+                stringToNumber(fieldMatch[yPosition].str(), y);
+
+                if (y >= height) {
+                    Logger::error(LogFacility::Script)
+                            << fileName << ": y must be less than height in line " << lineNumber << Log::end;
+                    success = false;
+                }
+
+                const auto tilePosition = 3;
+                const auto musicPosition = 4;
+                auto tile = 0;
+                auto music = 0;
+                stringToNumber(fieldMatch[tilePosition].str(), tile);
+                stringToNumber(fieldMatch[musicPosition].str(), music);
+
+                if (success) {
+                    auto &field = fields[x][y];
+
+                    if ((field.getTileCode() != 0) || (field.getMusicId() != 0)) {
+                        Logger::warn(LogFacility::Script)
+                                << fileName << ": tile on (" << x << ", " << y << ") is already present, ignoring line "
+                                << lineNumber << Log::end;
+                    } else {
+                        field.setTileId(tile);
+                        field.setMusicId(music);
+                    }
                 }
             } else {
                 Logger::error(LogFacility::Script) << fileName
@@ -205,113 +200,107 @@ auto Map::importItems(const std::string &importDir, const std::string &mapName) 
 
         if (line.length() != 0 && line[0] != '#') {
             if (smatch itemMatch; regex_match(line, itemMatch, itemExpression)) {
-                try {
-                    const auto xPosition = 1;
-                    const auto x = boost::lexical_cast<uint16_t>(itemMatch[xPosition]);
+                const auto xPosition = 1;
+                auto x = std::numeric_limits<uint16_t>::max();
+                stringToNumber(itemMatch[xPosition].str(), x);
 
-                    if (x >= width) {
-                        Logger::error(LogFacility::Script)
-                                << fileName << ": x must be less than width in line " << lineNumber << Log::end;
-                        success = false;
-                    }
-
-                    const auto yPosition = 2;
-                    const auto y = boost::lexical_cast<uint16_t>(itemMatch[yPosition]);
-
-                    if (y >= height) {
-                        Logger::error(LogFacility::Script)
-                                << fileName << ": y must be less than height in line " << lineNumber << Log::end;
-                        success = false;
-                    }
-
-                    const auto idPosition = 3;
-                    const auto qualityPosition = 4;
-                    const auto itemId = boost::lexical_cast<uint16_t>(itemMatch[idPosition]);
-                    const auto quality = boost::lexical_cast<uint16_t>(itemMatch[qualityPosition]);
-
-                    if (quality > Item::maximumQuality) {
-                        Logger::error(LogFacility::Script)
-                                << fileName << ": quality must not exceed " << Item::maximumQuality << " in line "
-                                << lineNumber << Log::end;
-                        success = false;
-                    }
-
-                    Item item;
-                    item.setId(itemId);
-                    item.setQuality(quality);
-                    item.setNumber(1);
-                    item.makePermanent();
-
-                    const auto dataPosition = 5;
-                    std::string data = itemMatch[dataPosition];
-
-                    while (data.length() > 0) {
-                        if (smatch dataMatch; regex_match(data, dataMatch, dataExpression)) {
-                            const auto keyPosition = 1;
-                            const auto valuePosition = 2;
-                            std::string key = dataMatch[keyPosition];
-                            std::string value = dataMatch[valuePosition];
-
-                            if (key.length() == 0) {
-                                Logger::error(LogFacility::Script) << fileName
-                                                                   << ": data key must not have "
-                                                                      "zero length in line "
-                                                                   << lineNumber << Log::end;
-                                success = false;
-                            }
-
-                            if (value.length() == 0) {
-                                Logger::error(LogFacility::Script) << fileName
-                                                                   << ": data value must not have "
-                                                                      "zero length in line "
-                                                                   << lineNumber << Log::end;
-                                success = false;
-                            }
-
-                            if (key.length() > maxDataKeyLength) {
-                                Logger::error(LogFacility::Script)
-                                        << fileName << ": data key must not exceed " << maxDataKeyLength
-                                        << " characters in line " << lineNumber << Log::end;
-                                success = false;
-                            }
-
-                            if (value.length() > maxDataValueLength) {
-                                Logger::error(LogFacility::Script)
-                                        << fileName << ": data value must not exceed " << maxDataValueLength
-                                        << " characters in line " << lineNumber << Log::end;
-                                success = false;
-                            }
-
-                            data.erase(0, key.length() + value.length() + 2);
-
-                            unescape(key);
-                            unescape(value);
-
-                            item.setData(key, value);
-                        } else {
-                            Logger::error(LogFacility::Script) << fileName << ": invalid data sequence '" << data
-                                                               << "' in line " << lineNumber << Log::end;
-                            success = false;
-                            break;
-                        }
-                    }
-
-                    if (success) {
-                        auto &field = fields[x][y];
-
-                        if (item.isContainer()) {
-                            field.addContainerOnStack(item, nullptr);
-                        } else {
-                            field.addItemOnStack(item);
-                        }
-                    }
-                } catch (boost::bad_lexical_cast &) {
-                    Logger::error(LogFacility::Script) << fileName
-                                                       << ": expected "
-                                                          "<uint16_t>;<uint16_t>;<uint16_t>;<"
-                                                          "uint16_t> but found '"
-                                                       << line << "' in line " << lineNumber << Log::end;
+                if (x >= width) {
+                    Logger::error(LogFacility::Script)
+                            << fileName << ": x must be less than width in line " << lineNumber << Log::end;
                     success = false;
+                }
+
+                const auto yPosition = 2;
+                auto y = std::numeric_limits<uint16_t>::max();
+                stringToNumber(itemMatch[yPosition].str(), y);
+
+                if (y >= height) {
+                    Logger::error(LogFacility::Script)
+                            << fileName << ": y must be less than height in line " << lineNumber << Log::end;
+                    success = false;
+                }
+
+                const auto idPosition = 3;
+                const auto qualityPosition = 4;
+                auto itemId = 0;
+                stringToNumber(itemMatch[idPosition].str(), itemId);
+                auto quality = 0;
+                stringToNumber(itemMatch[qualityPosition].str(), quality);
+
+                if (quality > Item::maximumQuality) {
+                    Logger::error(LogFacility::Script) << fileName << ": quality must not exceed "
+                                                       << Item::maximumQuality << " in line " << lineNumber << Log::end;
+                    success = false;
+                }
+
+                Item item;
+                item.setId(itemId);
+                item.setQuality(quality);
+                item.setNumber(1);
+                item.makePermanent();
+
+                const auto dataPosition = 5;
+                std::string data = itemMatch[dataPosition];
+
+                while (data.length() > 0) {
+                    if (smatch dataMatch; regex_match(data, dataMatch, dataExpression)) {
+                        const auto keyPosition = 1;
+                        const auto valuePosition = 2;
+                        std::string key = dataMatch[keyPosition];
+                        std::string value = dataMatch[valuePosition];
+
+                        if (key.length() == 0) {
+                            Logger::error(LogFacility::Script) << fileName
+                                                               << ": data key must not have "
+                                                                  "zero length in line "
+                                                               << lineNumber << Log::end;
+                            success = false;
+                        }
+
+                        if (value.length() == 0) {
+                            Logger::error(LogFacility::Script) << fileName
+                                                               << ": data value must not have "
+                                                                  "zero length in line "
+                                                               << lineNumber << Log::end;
+                            success = false;
+                        }
+
+                        if (key.length() > maxDataKeyLength) {
+                            Logger::error(LogFacility::Script)
+                                    << fileName << ": data key must not exceed " << maxDataKeyLength
+                                    << " characters in line " << lineNumber << Log::end;
+                            success = false;
+                        }
+
+                        if (value.length() > maxDataValueLength) {
+                            Logger::error(LogFacility::Script)
+                                    << fileName << ": data value must not exceed " << maxDataValueLength
+                                    << " characters in line " << lineNumber << Log::end;
+                            success = false;
+                        }
+
+                        data.erase(0, key.length() + value.length() + 2);
+
+                        unescape(key);
+                        unescape(value);
+
+                        item.setData(key, value);
+                    } else {
+                        Logger::error(LogFacility::Script) << fileName << ": invalid data sequence '" << data
+                                                           << "' in line " << lineNumber << Log::end;
+                        success = false;
+                        break;
+                    }
+                }
+
+                if (success) {
+                    auto &field = fields[x][y];
+
+                    if (item.isContainer()) {
+                        field.addContainerOnStack(item, nullptr);
+                    } else {
+                        field.addItemOnStack(item);
+                    }
                 }
             } else {
                 Logger::error(LogFacility::Script) << fileName
@@ -356,50 +345,44 @@ auto Map::importWarps(const std::string &importDir, const std::string &mapName) 
 
         if (line.length() != 0 && line[0] != '#') {
             if (smatch warpMatch; regex_match(line, warpMatch, warpExpression)) {
-                try {
-                    const auto warpXPosition = 1;
-                    const auto x = boost::lexical_cast<uint16_t>(warpMatch[warpXPosition]);
+                const auto warpXPosition = 1;
+                auto x = std::numeric_limits<uint16_t>::max();
+                stringToNumber(warpMatch[warpXPosition].str(), x);
 
-                    if (x >= width) {
-                        Logger::error(LogFacility::Script)
-                                << fileName << ": x must be less than width in line " << lineNumber << Log::end;
-                        success = false;
-                    }
-
-                    const auto warpYPosition = 2;
-                    const auto y = boost::lexical_cast<uint16_t>(warpMatch[warpYPosition]);
-
-                    if (y >= height) {
-                        Logger::error(LogFacility::Script)
-                                << fileName << ": y must be less than height in line " << lineNumber << Log::end;
-                        success = false;
-                    }
-
-                    const auto targetXPosition = 3;
-                    const auto targetYPosition = 4;
-                    const auto targetZPosition = 5;
-                    const position target{boost::lexical_cast<int16_t>(warpMatch[targetXPosition]),
-                                          boost::lexical_cast<int16_t>(warpMatch[targetYPosition]),
-                                          boost::lexical_cast<int16_t>(warpMatch[targetZPosition])};
-
-                    if (success) {
-                        auto &field = fields[x][y];
-
-                        if (field.isWarp()) {
-                            Logger::warn(LogFacility::Script)
-                                    << fileName << ": warp on (" << x << ", " << y
-                                    << ") is already present, ignoring line " << lineNumber << Log::end;
-                        } else {
-                            field.setWarp(target);
-                        }
-                    }
-                } catch (boost::bad_lexical_cast &) {
-                    Logger::error(LogFacility::Script) << fileName
-                                                       << ": expected "
-                                                          "<uint16_t>;<uint16_t>;<int16_t>;<"
-                                                          "int16_t>;<int16_t> but found '"
-                                                       << line << "' in line " << lineNumber << Log::end;
+                if (x >= width) {
+                    Logger::error(LogFacility::Script)
+                            << fileName << ": x must be less than width in line " << lineNumber << Log::end;
                     success = false;
+                }
+
+                const auto warpYPosition = 2;
+                auto y = std::numeric_limits<uint16_t>::max();
+                stringToNumber(warpMatch[warpYPosition].str(), y);
+
+                if (y >= height) {
+                    Logger::error(LogFacility::Script)
+                            << fileName << ": y must be less than height in line " << lineNumber << Log::end;
+                    success = false;
+                }
+
+                const auto targetXPosition = 3;
+                const auto targetYPosition = 4;
+                const auto targetZPosition = 5;
+                position target{};
+                stringToNumber(warpMatch[targetXPosition].str(), target.x);
+                stringToNumber(warpMatch[targetYPosition].str(), target.y);
+                stringToNumber(warpMatch[targetZPosition].str(), target.z);
+
+                if (success) {
+                    auto &field = fields[x][y];
+
+                    if (field.isWarp()) {
+                        Logger::warn(LogFacility::Script)
+                                << fileName << ": warp on (" << x << ", " << y << ") is already present, ignoring line "
+                                << lineNumber << Log::end;
+                    } else {
+                        field.setWarp(target);
+                    }
                 }
             } else {
                 Logger::error(LogFacility::Script) << fileName

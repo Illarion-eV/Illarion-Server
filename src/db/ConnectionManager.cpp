@@ -24,7 +24,6 @@
 #include "db/Connection.hpp"
 
 #include <boost/cstdint.hpp>
-#include <boost/lexical_cast.hpp>
 #include <pqxx/connection.hxx>
 #include <sstream>
 #include <string>
@@ -42,7 +41,7 @@ void ConnectionManager::setupManager() {
     addConnectionParameterIfValid("password", Config::instance().postgres_pwd);
     addConnectionParameterIfValid("dbname", Config::instance().postgres_db);
     addConnectionParameterIfValid("host", Config::instance().postgres_host);
-    addConnectionParameterIfValid("port", boost::lexical_cast<std::string>(Config::instance().postgres_port));
+    addConnectionParameterIfValid("port", std::to_string(Config::instance().postgres_port));
     isOperational = true;
 }
 

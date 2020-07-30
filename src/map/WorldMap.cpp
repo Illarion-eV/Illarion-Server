@@ -31,7 +31,6 @@
 
 #include <algorithm>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/lexical_cast.hpp>
 #include <chrono>
 #include <filesystem>
 #include <iomanip>
@@ -197,11 +196,9 @@ auto WorldMap::readHeaderLine(const std::string &mapName, char header, std::ifst
             smatch matches;
 
             if (regex_match(line, matches, headerExpression) && matches[1] == header) {
-                try {
-                    return boost::lexical_cast<int16_t>(matches[2]);
-                } catch (boost::bad_lexical_cast &) {
-                    break;
-                }
+                int16_t headerValue = 0;
+                stringToNumber(matches[2].str(), headerValue);
+                return headerValue;
             }
         }
     }

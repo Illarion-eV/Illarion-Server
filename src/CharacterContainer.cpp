@@ -44,18 +44,19 @@ auto CharacterContainer<T>::projection_x_axis(const position &pos, int r) const
 }
 
 template <class T> auto CharacterContainer<T>::find(const std::string &name) const -> pointer {
-    try {
-        auto id = boost::lexical_cast<TYPE_OF_CHARACTER_ID>(name);
-        return find(id);
-    } catch (boost::bad_lexical_cast &) {
-        using namespace ranges;
-        auto namesMatch = [&name](pointer character) { return comparestrings_nocase(character->getName(), name); };
-        auto characters = container | view::values;
-        auto result = find_if(characters, namesMatch);
+    TYPE_OF_CHARACTER_ID id = 0;
 
-        if (result != characters.end()) {
-            return *result;
-        }
+    if (stringToNumber(name, id)) {
+        return find(id);
+    }
+
+    using namespace ranges;
+    auto namesMatch = [&name](pointer character) { return comparestrings_nocase(character->getName(), name); };
+    auto characters = container | view::values;
+    auto result = find_if(characters, namesMatch);
+
+    if (result != characters.end()) {
+        return *result;
     }
 
     return nullptr;

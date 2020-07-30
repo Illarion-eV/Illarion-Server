@@ -22,10 +22,10 @@
 
 #include "Config.hpp"
 #include "Logger.hpp"
+#include "globals.hpp"
 #include "script/LuaScript.hpp"
 
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 #include <filesystem>
 #include <fstream>
 #include <memory>
@@ -107,9 +107,7 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
             position pos{};
             const auto &x = entries[triggerCoordinateXPosition];
 
-            try {
-                pos.x = boost::lexical_cast<signed short>(x);
-            } catch (boost::bad_lexical_cast &) {
+            if (!stringToNumber(x, pos.x)) {
                 Logger::error(LogFacility::Script)
                         << "Conversion error while loading quest file: " << x << " is not a map coordinate" << Log::end;
                 return;
@@ -117,9 +115,7 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
 
             const auto &y = entries[triggerCoordinateYPosition];
 
-            try {
-                pos.y = boost::lexical_cast<signed short>(y);
-            } catch (boost::bad_lexical_cast &) {
+            if (!stringToNumber(y, pos.y)) {
                 Logger::error(LogFacility::Script)
                         << "Conversion error while loading quest file: " << y << " is not a map coordinate" << Log::end;
                 return;
@@ -127,9 +123,7 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
 
             const auto &z = entries[triggerCoordinateZPosition];
 
-            try {
-                pos.z = boost::lexical_cast<signed short>(z);
-            } catch (boost::bad_lexical_cast &) {
+            if (!stringToNumber(z, pos.z)) {
                 Logger::error(LogFacility::Script)
                         << "Conversion error while loading quest file: " << z << " is not a map coordinate" << Log::end;
                 return;
@@ -155,9 +149,7 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
 
             const auto &idString = entries[idPosition];
 
-            try {
-                id = boost::lexical_cast<unsigned int>(idString);
-            } catch (boost::bad_lexical_cast &) {
+            if (!stringToNumber(idString, id)) {
                 Logger::error(LogFacility::Script)
                         << "Conversion error while loading quest file: " << idString << " is not an ID" << Log::end;
                 return;

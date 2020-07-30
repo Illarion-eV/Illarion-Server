@@ -28,6 +28,7 @@
 #include "data/QuestNodeTable.hpp"
 #include "data/RaceTypeTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
+#include "globals.hpp"
 #include "map/Field.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
@@ -529,28 +530,28 @@ void World::warpto_command(Player *player, const std::string &text) {
     std::smatch match;
 
     if (std::regex_match(text, match, pattern)) {
-        try {
-            position warpto = player->getPosition();
-            auto a = boost::lexical_cast<short int>(match[1].str());
+        position warpto = player->getPosition();
+        Coordinate a = 0;
+        stringToNumber(match[1].str(), a);
 
-            if (!match[2].str().empty()) {
-                auto b = boost::lexical_cast<short int>(match[2].str());
+        if (!match[2].str().empty()) {
+            Coordinate b = 0;
+            stringToNumber(match[2].str(), b);
 
-                if (!match[3].str().empty()) {
-                    auto c = boost::lexical_cast<short int>(match[3].str());
-                    warpto = {a, b, c};
-                } else {
-                    warpto.x = a;
-                    warpto.y = b;
-                }
+            if (!match[3].str().empty()) {
+                Coordinate c = 0;
+                stringToNumber(match[3].str(), c);
+                warpto = {a, b, c};
             } else {
-                warpto.z = a;
+                warpto.x = a;
+                warpto.y = b;
             }
-
-            player->forceWarp(warpto);
-            Logger::info(LogFacility::Admin) << *player << " warps to " << warpto << Log::end;
-        } catch (boost::bad_lexical_cast &) {
+        } else {
+            warpto.z = a;
         }
+
+        player->forceWarp(warpto);
+        Logger::info(LogFacility::Admin) << *player << " warps to " << warpto << Log::end;
     }
 }
 
@@ -590,36 +591,33 @@ void World::ban_command(Player *cp, const std::string &text) const {
                 message = "*** Banned player " + target->to_string() + " indefinately";
                 cp->inform(message);
             } else {
-                try {
-                    auto duration = boost::lexical_cast<int>(match[1].str());
-                    char timeunit = match[2].str()[0];
-                    static constexpr auto secondsInMinute = 60;
-                    static constexpr auto secondsInHour = secondsInMinute * 60;
-                    static constexpr auto secondsInDay = secondsInHour * 24;
+                int duration = 0;
+                stringToNumber(match[1].str(), duration);
+                char timeunit = match[2].str()[0];
+                static constexpr auto secondsInMinute = 60;
+                static constexpr auto secondsInHour = secondsInMinute * 60;
+                static constexpr auto secondsInDay = secondsInHour * 24;
 
-                    switch (timeunit) {
-                    case 'd':
-                        ban(target, duration * secondsInDay, cp->getId());
-                        break;
-                    case 'h':
-                        ban(target, duration * secondsInHour, cp->getId());
-                        break;
-                    case 'm':
-                        ban(target, duration * secondsInMinute, cp->getId());
-                        break;
-                    default:
-                        break;
-                    }
-
-                    std::string message = cp->to_string() + " bans player " + target->to_string() + " for " +
-                                          std::to_string(duration) + timeunit;
-                    Logger::info(LogFacility::Admin) << message << Log::end;
-                    sendMonitoringMessage(message);
-                    message = "*** Banned player " + target->to_string() + " for " + match[1].str() + match[2].str();
-                    cp->inform(message);
-                } catch (boost::bad_lexical_cast &) {
-                    cp->inform("*** Invalid duration, player not banned!");
+                switch (timeunit) {
+                case 'd':
+                    ban(target, duration * secondsInDay, cp->getId());
+                    break;
+                case 'h':
+                    ban(target, duration * secondsInHour, cp->getId());
+                    break;
+                case 'm':
+                    ban(target, duration * secondsInMinute, cp->getId());
+                    break;
+                default:
+                    break;
                 }
+
+                std::string message = cp->to_string() + " bans player " + target->to_string() + " for " +
+                                      std::to_string(duration) + timeunit;
+                Logger::info(LogFacility::Admin) << message << Log::end;
+                sendMonitoringMessage(message);
+                message = "*** Banned player " + target->to_string() + " for " + match[1].str() + match[2].str();
+                cp->inform(message);
             }
         } else {
             std::string message = "*** Could not find " + match[3].str();
@@ -691,10 +689,9 @@ void World::tile_command(Player *cp, const std::string &tile) {
         return;
     }
 
-    try {
-        setNextTile(cp, boost::lexical_cast<unsigned short>(tile));
-    } catch (boost::bad_lexical_cast &) {
-    }
+    uint16_t tileId = 0;
+    stringToNumber(tile, tileId);
+    setNextTile(cp, tileId);
 }
 
 void World::setNextTile(Player *cp, unsigned char tilenumber) {
@@ -714,12 +711,10 @@ void World::turtleon_command(Player *cp, const std::string &tile) {
         return;
     }
 
-    try {
-        auto id = boost::lexical_cast<unsigned short>(tile);
-        cp->setTurtleActive(true);
-        cp->setTurtleTile(id);
-    } catch (boost::bad_lexical_cast &) {
-    }
+    uint16_t id = 0;
+    stringToNumber(tile, id);
+    cp->setTurtleActive(true);
+    cp->setTurtleTile(id);
 }
 
 void World::turtleoff_command(Player *cp) {
@@ -833,18 +828,15 @@ void World::teleport_command(Player *cp, const std::string &text) {
     std::smatch match;
 
     if (std::regex_match(text, match, pattern)) {
-        try {
-            auto x = boost::lexical_cast<short int>(match[1].str());
-            auto y = boost::lexical_cast<short int>(match[2].str());
-            auto z = boost::lexical_cast<short int>(match[3].str());
+        position target{};
+        stringToNumber(match[1].str(), target.x);
+        stringToNumber(match[2].str(), target.y);
+        stringToNumber(match[3].str(), target.z);
 
-            if (addWarpField(cp->getPosition(), position(x, y, z), 0, 0)) {
-                cp->inform("*** warp field added ***");
-            } else {
-                cp->inform("*** Error: could not add warp field ***");
-            }
-        } catch (boost::bad_lexical_cast &) {
-            cp->inform("*** Error: could not parse target position ***");
+        if (addWarpField(cp->getPosition(), target, 0, 0)) {
+            cp->inform("*** warp field added ***");
+        } else {
+            cp->inform("*** Error: could not add warp field ***");
         }
     }
 }
@@ -1189,18 +1181,15 @@ void World::removeTeleporter(Player *cp, const std::string &text) {
     std::smatch match;
 
     if (std::regex_match(text, match, pattern)) {
-        try {
-            auto x = boost::lexical_cast<short int>(match[1].str());
-            auto y = boost::lexical_cast<short int>(match[2].str());
-            auto z = boost::lexical_cast<short int>(match[3].str());
+        position target{};
+        stringToNumber(match[1].str(), target.x);
+        stringToNumber(match[2].str(), target.y);
+        stringToNumber(match[3].str(), target.z);
 
-            if (removeWarpField(position(x, y, z))) {
-                cp->inform("*** warp field deleted ***");
-            } else {
-                cp->inform("*** Error: could not delete warp field ***");
-            }
-        } catch (boost::bad_lexical_cast &) {
-            cp->inform("*** Error: could not parse warp field position ***");
+        if (removeWarpField(target)) {
+            cp->inform("*** warp field deleted ***");
+        } else {
+            cp->inform("*** Error: could not delete warp field ***");
         }
     }
 }
@@ -1210,26 +1199,23 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &text) {
         return;
     }
 
-    try {
-        auto range = boost::lexical_cast<short int>(text);
-        std::vector<position> warpfieldsinrange;
+    short int range = 0;
+    stringToNumber(text, range);
+    std::vector<position> warpfieldsinrange;
 
-        if (findWarpFieldsInRange(cp->getPosition(), range, warpfieldsinrange)) {
-            cp->inform("List of warp fields:");
+    if (findWarpFieldsInRange(cp->getPosition(), range, warpfieldsinrange)) {
+        cp->inform("List of warp fields:");
 
-            for (const auto &warpfield : warpfieldsinrange) {
-                try {
-                    position target{};
-                    fieldAt(warpfield).getWarp(target);
-                    std::string message = warpfield.toString() + " -> " + target.toString();
-                    cp->inform(message);
-                } catch (FieldNotFound &) {
-                }
+        for (const auto &warpfield : warpfieldsinrange) {
+            try {
+                position target{};
+                fieldAt(warpfield).getWarp(target);
+                std::string message = warpfield.toString() + " -> " + target.toString();
+                cp->inform(message);
+            } catch (FieldNotFound &) {
             }
-
-            cp->inform("---");
         }
-    } catch (boost::bad_lexical_cast &) {
-        cp->inform("*** Error: could not parse range ***");
+
+        cp->inform("---");
     }
 }
