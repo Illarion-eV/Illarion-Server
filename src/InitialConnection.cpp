@@ -44,7 +44,6 @@ void InitialConnection::run_service() {
         auto endpoint = tcp::endpoint(tcp::v4(), port);
         acceptor = std::make_unique<tcp::acceptor>(io_service, endpoint);
         auto newConnection = std::make_shared<NetInterface>(io_service);
-        using std::placeholders::_1;
         acceptor->async_accept(newConnection->getSocket(),
                                [shared_this = shared_from_this(), newConnection](auto &&PH1) {
                                    shared_this->accept_connection(newConnection, PH1);
@@ -67,7 +66,6 @@ void InitialConnection::accept_connection(const std::shared_ptr<NetInterface> &c
         }
 
         auto newConnection = std::make_shared<NetInterface>(io_service);
-        using std::placeholders::_1;
         acceptor->async_accept(newConnection->getSocket(),
                                [shared_this = shared_from_this(), newConnection](auto &&PH1) {
                                    shared_this->accept_connection(newConnection, PH1);
