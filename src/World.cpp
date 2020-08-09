@@ -47,6 +47,7 @@
 #include "tuningConstants.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <ctime>
 #include <iterator>
 #include <memory>
@@ -382,7 +383,7 @@ void World::checkMonsters() {
 
                                     // if walking out of range, mirroring dir. at spawn area border lets the char stay
                                     // in range with L_inf metric
-                                    if (abs(xoffs) > spawn->getRange()) {
+                                    if (std::abs(xoffs) > spawn->getRange()) {
                                         switch (dir) {
                                         case dir_northeast:
                                             dir = dir_northwest;
@@ -413,7 +414,7 @@ void World::checkMonsters() {
                                         }
                                     }
 
-                                    if (abs(yoffs) > spawn->getRange()) {
+                                    if (std::abs(yoffs) > spawn->getRange()) {
                                         switch (dir) {
                                         case dir_north:
                                             dir = dir_south;

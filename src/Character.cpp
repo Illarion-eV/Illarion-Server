@@ -1196,7 +1196,7 @@ void Character::turn(const position &posi) {
     Coordinate xoffs = posi.x - pos.x;
     Coordinate yoffs = posi.y - pos.y;
 
-    if (abs(xoffs) > abs(yoffs)) {
+    if (std::abs(xoffs) > std::abs(yoffs)) {
         turn(xoffs > 0 ? dir_east : dir_west);
     } else {
         turn(yoffs > 0 ? dir_south : dir_north);

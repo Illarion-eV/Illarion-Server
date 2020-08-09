@@ -22,6 +22,8 @@
 
 #include "constants.hpp"
 
+#include <cmath>
+
 auto QuestTable::getTableName() -> std::string { return "quests"; }
 
 auto QuestTable::getColumnNames() -> std::vector<std::string> { return {"qst_id", "qst_script"}; }
@@ -68,7 +70,7 @@ auto QuestTable::getQuestsInRange(const position &pos, Coordinate radius) const 
         Coordinate dy = start.y - pos.y;
         Coordinate dz = start.z - pos.z;
 
-        if ((abs(dx) + abs(dy) <= radius) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+        if ((std::abs(dx) + std::abs(dy) <= radius) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
             result[id] = start;
         }
     }

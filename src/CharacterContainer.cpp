@@ -23,6 +23,7 @@
 #include "Player.hpp"
 #include "globals.hpp"
 
+#include <cmath>
 #include <map>
 #include <range/v3/all.hpp>
 #include <unordered_map>
@@ -130,7 +131,8 @@ auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, cons
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
 
-        if (abs(dx) <= range.radius && abs(dy) <= range.radius && -range.zRadius <= dz && dz <= range.zRadius) {
+        if (std::abs(dx) <= range.radius && std::abs(dy) <= range.radius && -range.zRadius <= dz &&
+            dz <= range.zRadius) {
             if (auto *character = find(id)) {
                 temp.push_back(character);
             }
@@ -172,7 +174,8 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
 
-        if (abs(dx) <= range.radius && abs(dy) <= range.radius && -range.zRadius <= dz && dz <= range.zRadius) {
+        if (std::abs(dx) <= range.radius && std::abs(dy) <= range.radius && -range.zRadius <= dz &&
+            dz <= range.zRadius) {
             if (auto *character = find(id)) {
                 if (character->isAlive()) {
                     temp.push_back(character);
