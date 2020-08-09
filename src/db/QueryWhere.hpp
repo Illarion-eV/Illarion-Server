@@ -48,7 +48,7 @@ public:
 
     template <typename T> void addEqualCondition(const std::string &table, const std::string &column, const T &value) {
         conditionsStack.push(
-                std::move(std::string(Query::escapeAndChainKeys(table, column) + " = " + connection.quote<T>(value))));
+                std::string(Query::escapeAndChainKeys(table, column) + " = " + connection.quote<T>(value)));
     }
 
     template <typename T> void addNotEqualCondition(const std::string &column, const T &value) {
@@ -58,7 +58,7 @@ public:
     template <typename T>
     void addNotEqualCondition(const std::string &table, const std::string &column, const T &value) {
         conditionsStack.push(
-                std::move(std::string(Query::escapeAndChainKeys(table, column) + " != " + connection.quote<T>(value))));
+                std::string(Query::escapeAndChainKeys(table, column) + " != " + connection.quote<T>(value)));
     }
 
     void andConditions();
