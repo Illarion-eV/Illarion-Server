@@ -25,16 +25,16 @@
 #include <string>
 #include <vector>
 
-class position;
-class ArmorStruct;
-class AttackBoni;
-class BlockingObject;
+struct position;
+struct ArmorStruct;
+struct AttackBoni;
+struct BlockingObject;
 class Character;
 class Monster;
-class MonsterArmor;
+struct MonsterArmor;
 class NPC;
 class Player;
-class WeaponStruct;
+struct WeaponStruct;
 
 class WorldScriptInterface {
 public:

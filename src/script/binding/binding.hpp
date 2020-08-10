@@ -20,13 +20,13 @@
 
 #include "luabind/luabind.hpp"
 
-class ArmorStruct;
-class AttackBoni;
+struct ArmorStruct;
+struct AttackBoni;
 class Character;
 class Character;
-class SkillValue;
-class Colour;
-class ItemStruct;
+struct SkillValue;
+struct Colour;
+struct ItemStruct;
 class Container;
 class CraftingDialog;
 namespace map {
@@ -38,22 +38,22 @@ class ItemLookAt;
 class LongTimeAction;
 class LongTimeCharacterEffects;
 class LongTimeEffect;
-class LongTimeEffectStruct;
+struct LongTimeEffectStruct;
 class MerchantDialog;
 class MessageDialog;
 class Monster;
-class MonsterArmor;
+struct MonsterArmor;
 class NPC;
 class Player;
-class position;
+struct position;
 class Random;
 class ScriptItem;
 class ScriptVariablesTable;
 class SelectionDialog;
-class TilesStruct;
+struct TilesStruct;
 class WaypointList;
-class WeaponStruct;
-class WeatherStruct;
+struct WeaponStruct;
+struct WeatherStruct;
 class World;
 
 namespace binding {
