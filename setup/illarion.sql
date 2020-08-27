@@ -17,33 +17,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: illarion; Type: DATABASE; Schema: -; Owner: -
---
-
-CREATE DATABASE illarion WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C' LC_CTYPE = 'C';
-
-
-\connect illarion
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: DATABASE illarion; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON DATABASE illarion IS 'contains all illarion data';
-
-
---
 -- Name: accounts; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -1479,6 +1452,13 @@ CREATE TABLE server.player (
 );
 
 
+--
+-- Name: COLUMN player.ply_body_height; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN server.player.ply_body_height IS 'in inches';
+
+
 SET default_with_oids = false;
 
 --
@@ -1594,8 +1574,8 @@ CREATE TABLE server.race (
     race_age_max smallint DEFAULT 80 NOT NULL,
     race_weight_min integer DEFAULT 40000 NOT NULL,
     race_weight_max integer DEFAULT 120000 NOT NULL,
-    race_height_min smallint DEFAULT 140 NOT NULL,
-    race_height_max smallint DEFAULT 220 NOT NULL,
+    race_height_min smallint DEFAULT 100 NOT NULL,
+    race_height_max smallint DEFAULT 100 NOT NULL,
     race_agility_min smallint DEFAULT 2 NOT NULL,
     race_agility_max smallint DEFAULT 20 NOT NULL,
     race_constitution_min smallint DEFAULT 2 NOT NULL,
@@ -1661,14 +1641,14 @@ COMMENT ON COLUMN server.race.race_weight_max IS 'The maximal weight for this ra
 -- Name: COLUMN race.race_height_min; Type: COMMENT; Schema: server; Owner: -
 --
 
-COMMENT ON COLUMN server.race.race_height_min IS 'The minimal height for this race measured in centimeter.';
+COMMENT ON COLUMN server.race.race_height_min IS 'The minimal height for this race measured in inches.';
 
 
 --
 -- Name: COLUMN race.race_height_max; Type: COMMENT; Schema: server; Owner: -
 --
 
-COMMENT ON COLUMN server.race.race_height_max IS 'The maximal height for this race measured in centimeter.';
+COMMENT ON COLUMN server.race.race_height_max IS 'The maximal height for this race measured in inches.';
 
 
 --
