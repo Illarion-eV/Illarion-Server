@@ -89,14 +89,18 @@ auto RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const -> ui
 
     const auto maxSize = sizes.maxSize;
 
-    constexpr auto minRelativeSize = 40;
+    constexpr auto minRelativeSize = 80;
     constexpr auto maxRelativeSize = 120;
 
-    if (size >= minSize && size <= maxSize) {
-        return uint8_t((minRelativeSize * (size - minSize)) / (maxSize - minSize) + maxRelativeSize - minRelativeSize);
+    if (size < minSize) {
+        return minRelativeSize;
     }
 
-    return defaultRelativeSize;
+    if (size > maxSize) {
+        return maxRelativeSize;
+    }
+
+    return uint8_t(((maxRelativeSize - minRelativeSize) * (size - minSize)) / (maxSize - minSize) + minRelativeSize);
 }
 
 auto RaceTable::isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute,
