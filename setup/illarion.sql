@@ -2,14 +2,46 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 11.7 (Debian 11.7-0+deb10u1)
+-- Dumped by pg_dump version 11.7 (Debian 11.7-0+deb10u1)
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: illarion; Type: DATABASE; Schema: -; Owner: -
+--
+
+CREATE DATABASE illarion WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C' LC_CTYPE = 'C';
+
+
+\connect illarion
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: DATABASE illarion; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON DATABASE illarion IS 'contains all illarion data';
+
 
 --
 -- Name: accounts; Type: SCHEMA; Schema: -; Owner: -
@@ -86,19 +118,6 @@ end loop;
 return 0;
 end
 $$;
-
-
---
--- Name: includes_all_tiles(integer, smallint, smallint); Type: FUNCTION; Schema: server; Owner: -
---
-
-CREATE FUNCTION server.includes_all_tiles(map integer, width smallint, height smallint) RETURNS boolean
-    LANGUAGE sql
-    AS $_$SELECT not exists (
-    SELECT 1
-    FROM owned_map_tiles
-    WHERE $1 = omt_map_id AND (omt_x >= $2 OR omt_y >= $3)
-);$_$;
 
 
 --
@@ -247,7 +266,7 @@ SET default_tablespace = '';
 SET default_with_oids = true;
 
 --
--- Name: account; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.account (
@@ -276,7 +295,7 @@ CREATE TABLE accounts.account (
 SET default_with_oids = false;
 
 --
--- Name: account_groups; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account_groups; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.account_groups (
@@ -287,7 +306,7 @@ CREATE TABLE accounts.account_groups (
 
 
 --
--- Name: account_log; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account_log; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.account_log (
@@ -320,7 +339,7 @@ CREATE SEQUENCE accounts.account_seq
 
 
 --
--- Name: account_sessions; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account_sessions; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.account_sessions (
@@ -332,7 +351,7 @@ CREATE TABLE accounts.account_sessions (
 
 
 --
--- Name: account_unconfirmed; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account_unconfirmed; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.account_unconfirmed (
@@ -371,7 +390,7 @@ COMMENT ON COLUMN accounts.account_unconfirmed.au_mail IS 'The new e-mail addres
 
 
 --
--- Name: attribtemp; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: attribtemp; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.attribtemp (
@@ -399,7 +418,7 @@ COMMENT ON TABLE accounts.attribtemp IS 'Attribute Voreinstellung bei Charaktere
 SET default_with_oids = true;
 
 --
--- Name: bad_ips; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: bad_ips; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.bad_ips (
@@ -436,7 +455,7 @@ CREATE SEQUENCE accounts.bad_value_seq
 SET default_with_oids = false;
 
 --
--- Name: bad_values; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: bad_values; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.bad_values (
@@ -458,7 +477,7 @@ COMMENT ON TABLE accounts.bad_values IS 'Invalid or banned values for account an
 SET default_with_oids = true;
 
 --
--- Name: badname_full; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: badname_full; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.badname_full (
@@ -467,7 +486,7 @@ CREATE TABLE accounts.badname_full (
 
 
 --
--- Name: badname_partial; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: badname_partial; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.badname_partial (
@@ -476,7 +495,7 @@ CREATE TABLE accounts.badname_partial (
 
 
 --
--- Name: gm_stats; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: gm_stats; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.gm_stats (
@@ -491,7 +510,7 @@ CREATE TABLE accounts.gm_stats (
 
 
 --
--- Name: gm_stats_accs; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: gm_stats_accs; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.gm_stats_accs (
@@ -502,7 +521,7 @@ CREATE TABLE accounts.gm_stats_accs (
 
 
 --
--- Name: gm_stats_chars; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: gm_stats_chars; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.gm_stats_chars (
@@ -513,7 +532,7 @@ CREATE TABLE accounts.gm_stats_chars (
 
 
 --
--- Name: gm_stats_race; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: gm_stats_race; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.gm_stats_race (
@@ -526,7 +545,7 @@ CREATE TABLE accounts.gm_stats_race (
 SET default_with_oids = false;
 
 --
--- Name: groups; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: groups; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.groups (
@@ -542,7 +561,7 @@ CREATE TABLE accounts.groups (
 SET default_with_oids = true;
 
 --
--- Name: legtimulti; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: legtimulti; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.legtimulti (
@@ -565,7 +584,7 @@ CREATE SEQUENCE accounts.question_seq
 
 
 --
--- Name: raceapplys; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: raceapplys; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.raceapplys (
@@ -581,7 +600,7 @@ CREATE TABLE accounts.raceapplys (
 SET default_with_oids = false;
 
 --
--- Name: rights; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: rights; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.rights (
@@ -592,6 +611,20 @@ CREATE TABLE accounts.rights (
     r_desc_de text NOT NULL,
     r_desc_us text NOT NULL
 );
+
+
+--
+-- Name: roles; Type: VIEW; Schema: accounts; Owner: -
+--
+
+CREATE VIEW accounts.roles AS
+ SELECT groups.g_name_us,
+    account.acc_id,
+    account.acc_name,
+    account.acc_login
+   FROM ((accounts.account_groups
+     JOIN accounts.groups ON ((account_groups.ag_group_id = groups.g_id)))
+     JOIN accounts.account ON ((account_groups.ag_acc_id = account.acc_id)));
 
 
 --
@@ -622,7 +655,7 @@ CREATE VIEW accounts.test AS
 SET default_with_oids = true;
 
 --
--- Name: warnings; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+-- Name: warnings; Type: TABLE; Schema: accounts; Owner: -
 --
 
 CREATE TABLE accounts.warnings (
@@ -634,7 +667,7 @@ CREATE TABLE accounts.warnings (
 
 
 --
--- Name: armor; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: armor; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.armor (
@@ -661,7 +694,7 @@ CREATE TABLE server.armor (
 SET default_with_oids = false;
 
 --
--- Name: attribute_packages; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: attribute_packages; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.attribute_packages (
@@ -687,7 +720,7 @@ COMMENT ON TABLE server.attribute_packages IS 'Attribute packages for character 
 
 
 --
--- Name: char_log; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: char_log; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.char_log (
@@ -716,7 +749,7 @@ CREATE SEQUENCE server.char_log_seq
 SET default_with_oids = true;
 
 --
--- Name: chars; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: chars; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.chars (
@@ -739,7 +772,7 @@ CREATE TABLE server.chars (
 
 
 --
--- Name: container; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: container; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.container (
@@ -752,7 +785,7 @@ CREATE TABLE server.container (
 SET default_with_oids = false;
 
 --
--- Name: deleted_chars; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: deleted_chars; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.deleted_chars (
@@ -778,7 +811,7 @@ CREATE SEQUENCE server.gmpager_seq
 SET default_with_oids = true;
 
 --
--- Name: gmpager; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: gmpager; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.gmpager (
@@ -807,7 +840,7 @@ COMMENT ON COLUMN server.gmpager.pager_gm IS 'CharID';
 
 
 --
--- Name: gms; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: gms; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.gms (
@@ -854,7 +887,7 @@ CREATE VIEW server.gmrights AS
 SET default_with_oids = false;
 
 --
--- Name: introduction; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: introduction; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.introduction (
@@ -866,7 +899,7 @@ CREATE TABLE server.introduction (
 SET default_with_oids = true;
 
 --
--- Name: items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: items; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.items (
@@ -891,7 +924,7 @@ CREATE TABLE server.items (
     CONSTRAINT common_afterrot_check CHECK (((itm_objectafterrot > 0) OR (itm_id = 0))),
     CONSTRAINT common_aging_check CHECK ((itm_agingspeed >= 0)),
     CONSTRAINT common_buystack_check CHECK ((itm_buystack >= 1)),
-    CONSTRAINT common_check CHECK ((((itm_worth >= 20) OR (itm_worth = 0)) OR ((itm_id = 3076) AND (itm_worth = 1)))),
+    CONSTRAINT common_check CHECK (((itm_worth >= 20) OR (itm_worth = 0) OR ((itm_id = 3076) AND (itm_worth = 1)))),
     CONSTRAINT common_com_light_brightness_check CHECK (((itm_brightness >= 0) AND (itm_brightness <= 9))),
     CONSTRAINT common_com_maxstack_check CHECK ((itm_maxstack <> 0)),
     CONSTRAINT common_script_check CHECK ((btrim((itm_script)::text) <> ''::text)),
@@ -934,7 +967,7 @@ COMMENT ON COLUMN server.items.itm_buystack IS 'Default stack size a vendor will
 
 
 --
--- Name: longtimeeffects; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: longtimeeffects; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.longtimeeffects (
@@ -948,7 +981,7 @@ CREATE TABLE server.longtimeeffects (
 SET default_with_oids = false;
 
 --
--- Name: map_item_data; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: map_item_data; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.map_item_data (
@@ -962,7 +995,7 @@ CREATE TABLE server.map_item_data (
 
 
 --
--- Name: map_items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: map_items; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.map_items (
@@ -981,7 +1014,7 @@ CREATE TABLE server.map_items (
 
 
 --
--- Name: map_tiles; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: map_tiles; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.map_tiles (
@@ -994,7 +1027,7 @@ CREATE TABLE server.map_tiles (
 
 
 --
--- Name: map_warps; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: map_warps; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.map_warps (
@@ -1029,7 +1062,7 @@ COMMENT ON SEQUENCE server.mon_drop_seq IS 'The sequence for the index in the mo
 SET default_with_oids = true;
 
 --
--- Name: monster; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: monster; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.monster (
@@ -1044,13 +1077,13 @@ CREATE TABLE server.monster (
     mob_minsize integer DEFAULT 0 NOT NULL,
     mob_maxsize integer DEFAULT 0 NOT NULL,
     mob_name_de character varying(50) NOT NULL,
-    CONSTRAINT "$1" CHECK (((((mob_movementtype)::text = 'walk'::text) OR ((mob_movementtype)::text = 'fly'::text)) OR ((mob_movementtype)::text = 'crawl'::text))),
+    CONSTRAINT "$1" CHECK ((((mob_movementtype)::text = 'walk'::text) OR ((mob_movementtype)::text = 'fly'::text) OR ((mob_movementtype)::text = 'crawl'::text))),
     CONSTRAINT monster_script_check CHECK ((btrim((script)::text) <> ''::text))
 );
 
 
 --
--- Name: monster_attributes; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_attributes; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.monster_attributes (
@@ -1058,12 +1091,12 @@ CREATE TABLE server.monster_attributes (
     mobattr_name character varying(20) NOT NULL,
     mobattr_min smallint NOT NULL,
     mobattr_max smallint NOT NULL,
-    CONSTRAINT "$1" CHECK (((((((((((mobattr_name)::text = 'luck'::text) OR ((mobattr_name)::text = 'strength'::text)) OR ((mobattr_name)::text = 'dexterity'::text)) OR ((mobattr_name)::text = 'constitution'::text)) OR ((mobattr_name)::text = 'agility'::text)) OR ((mobattr_name)::text = 'intelligence'::text)) OR ((mobattr_name)::text = 'perception'::text)) OR ((mobattr_name)::text = 'willpower'::text)) OR ((mobattr_name)::text = 'essence'::text)))
+    CONSTRAINT "$1" CHECK ((((mobattr_name)::text = 'luck'::text) OR ((mobattr_name)::text = 'strength'::text) OR ((mobattr_name)::text = 'dexterity'::text) OR ((mobattr_name)::text = 'constitution'::text) OR ((mobattr_name)::text = 'agility'::text) OR ((mobattr_name)::text = 'intelligence'::text) OR ((mobattr_name)::text = 'perception'::text) OR ((mobattr_name)::text = 'willpower'::text) OR ((mobattr_name)::text = 'essence'::text)))
 );
 
 
 --
--- Name: monster_drop; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_drop; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.monster_drop (
@@ -1175,7 +1208,7 @@ COMMENT ON COLUMN server.monster_drop.md_durability_max IS 'The maximal durabili
 
 
 --
--- Name: monster_drop_data; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_drop_data; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.monster_drop_data (
@@ -1216,7 +1249,7 @@ COMMENT ON COLUMN server.monster_drop_data.mdd_value IS 'The value of the data e
 
 
 --
--- Name: monster_items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_items; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.monster_items (
@@ -1225,13 +1258,13 @@ CREATE TABLE server.monster_items (
     mobit_itemid integer NOT NULL,
     mobit_mincount smallint NOT NULL,
     mobit_maxcount smallint NOT NULL,
-    CONSTRAINT "$1" CHECK (((((((((((((((((((mobit_position)::text = 'head'::text) OR ((mobit_position)::text = 'neck'::text)) OR ((mobit_position)::text = 'breast'::text)) OR ((mobit_position)::text = 'hands'::text)) OR ((mobit_position)::text = 'left hand'::text)) OR ((mobit_position)::text = 'right hand'::text)) OR ((mobit_position)::text = 'left finger'::text)) OR ((mobit_position)::text = 'right finger'::text)) OR ((mobit_position)::text = 'legs'::text)) OR ((mobit_position)::text = 'feet'::text)) OR ((mobit_position)::text = 'coat'::text)) OR ((mobit_position)::text = 'belt1'::text)) OR ((mobit_position)::text = 'belt2'::text)) OR ((mobit_position)::text = 'belt3'::text)) OR ((mobit_position)::text = 'belt4'::text)) OR ((mobit_position)::text = 'belt5'::text)) OR ((mobit_position)::text = 'belt6'::text))),
+    CONSTRAINT "$1" CHECK ((((mobit_position)::text = 'head'::text) OR ((mobit_position)::text = 'neck'::text) OR ((mobit_position)::text = 'breast'::text) OR ((mobit_position)::text = 'hands'::text) OR ((mobit_position)::text = 'left hand'::text) OR ((mobit_position)::text = 'right hand'::text) OR ((mobit_position)::text = 'left finger'::text) OR ((mobit_position)::text = 'right finger'::text) OR ((mobit_position)::text = 'legs'::text) OR ((mobit_position)::text = 'feet'::text) OR ((mobit_position)::text = 'coat'::text) OR ((mobit_position)::text = 'belt1'::text) OR ((mobit_position)::text = 'belt2'::text) OR ((mobit_position)::text = 'belt3'::text) OR ((mobit_position)::text = 'belt4'::text) OR ((mobit_position)::text = 'belt5'::text) OR ((mobit_position)::text = 'belt6'::text))),
     CONSTRAINT monster_items_check CHECK (((mobit_mincount >= 1) AND (mobit_mincount <= mobit_maxcount)))
 );
 
 
 --
--- Name: monster_skills; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_skills; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.monster_skills (
@@ -1239,12 +1272,12 @@ CREATE TABLE server.monster_skills (
     mobsk_minvalue smallint DEFAULT (0)::smallint NOT NULL,
     mobsk_maxvalue smallint DEFAULT (0)::smallint NOT NULL,
     mobsk_skill_id integer NOT NULL,
-    CONSTRAINT monster_skills_amount_check CHECK (((((mobsk_minvalue <= mobsk_maxvalue) AND (mobsk_minvalue >= 0)) AND (mobsk_maxvalue <= 100)) AND (mobsk_maxvalue > 0)))
+    CONSTRAINT monster_skills_amount_check CHECK (((mobsk_minvalue <= mobsk_maxvalue) AND (mobsk_minvalue >= 0) AND (mobsk_maxvalue <= 100) AND (mobsk_maxvalue > 0)))
 );
 
 
 --
--- Name: monsterattack; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: monsterattack; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.monsterattack (
@@ -1268,7 +1301,7 @@ COMMENT ON COLUMN server.monsterattack.mat_attack_type IS '1-slashing, 2-concuss
 SET default_with_oids = false;
 
 --
--- Name: naming; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: naming; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.naming (
@@ -1281,7 +1314,7 @@ CREATE TABLE server.naming (
 SET default_with_oids = true;
 
 --
--- Name: naturalarmor; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: naturalarmor; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.naturalarmor (
@@ -1289,7 +1322,7 @@ CREATE TABLE server.naturalarmor (
     nar_strokearmor smallint DEFAULT 0 NOT NULL,
     nar_puncturearmor smallint DEFAULT 0 NOT NULL,
     nar_thrustarmor smallint DEFAULT 0 NOT NULL,
-    CONSTRAINT naturalarmor_armorvalues_check CHECK ((((nar_strokearmor >= 0) AND (nar_puncturearmor >= 0)) AND (nar_thrustarmor >= 0)))
+    CONSTRAINT naturalarmor_armorvalues_check CHECK (((nar_strokearmor >= 0) AND (nar_puncturearmor >= 0) AND (nar_thrustarmor >= 0)))
 );
 
 
@@ -1306,7 +1339,7 @@ CREATE SEQUENCE server.npc_seq
 
 
 --
--- Name: npc; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: npc; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.npc (
@@ -1333,18 +1366,18 @@ CREATE TABLE server.npc (
     CONSTRAINT npc_beard_check CHECK ((npc_beard >= 0)),
     CONSTRAINT npc_faceto_check CHECK (((npc_faceto >= 0) AND (npc_faceto <= 7))),
     CONSTRAINT npc_hair_check CHECK ((npc_hair >= 0)),
-    CONSTRAINT npc_hair_color_check CHECK ((((npc_hairred >= 0) AND (npc_hairblue >= 0)) AND (npc_hairgreen >= 0))),
+    CONSTRAINT npc_hair_color_check CHECK (((npc_hairred >= 0) AND (npc_hairblue >= 0) AND (npc_hairgreen >= 0))),
     CONSTRAINT npc_npc_hairalpha_check CHECK (((npc_hairalpha >= 0) AND (npc_hairalpha <= 255))),
     CONSTRAINT npc_npc_skinalpha_check CHECK (((npc_skinalpha >= 0) AND (npc_skinalpha <= 255))),
     CONSTRAINT npc_script_check CHECK ((btrim((npc_script)::text) <> ''::text)),
     CONSTRAINT npc_sex_check CHECK (((npc_sex = 0) OR (npc_sex = 1))),
-    CONSTRAINT npc_skincolor_check CHECK ((((npc_skinred >= 0) AND (npc_skinblue >= 0)) AND (npc_skingreen >= 0))),
+    CONSTRAINT npc_skincolor_check CHECK (((npc_skinred >= 0) AND (npc_skinblue >= 0) AND (npc_skingreen >= 0))),
     CONSTRAINT npc_type_check CHECK ((npc_type >= 0))
 );
 
 
 --
--- Name: onlineplayer; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: onlineplayer; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.onlineplayer (
@@ -1365,7 +1398,7 @@ CREATE SEQUENCE server.owned_maps_seq
 
 
 --
--- Name: player; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: player; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.player (
@@ -1422,16 +1455,16 @@ CREATE TABLE server.player (
     CONSTRAINT player_faceto_check CHECK (((ply_faceto >= 0) AND (ply_faceto <= 7))),
     CONSTRAINT player_foodlevel_check CHECK (((ply_foodlevel >= 0) AND (ply_foodlevel <= 60000))),
     CONSTRAINT player_hair_check CHECK ((ply_hair >= 0)),
-    CONSTRAINT player_haircolor_check CHECK ((((ply_hairred >= 0) AND (ply_hairgreen >= 0)) AND (ply_hairblue >= 0))),
+    CONSTRAINT player_haircolor_check CHECK (((ply_hairred >= 0) AND (ply_hairgreen >= 0) AND (ply_hairblue >= 0))),
     CONSTRAINT player_height_check CHECK ((ply_body_height >= 0)),
     CONSTRAINT player_hitpoints_check CHECK (((ply_hitpoints >= 0) AND (ply_hitpoints <= 10000))),
     CONSTRAINT player_intelligence_check CHECK (((ply_intelligence >= 0) AND (ply_intelligence <= 250))),
     CONSTRAINT player_lastmusic_check CHECK ((ply_lastmusic >= 0)),
     CONSTRAINT player_lifestate_check CHECK (((ply_lifestate = 0) OR (ply_lifestate = 1))),
-    CONSTRAINT player_magicflagsbard_check CHECK (((ply_magicflagsbard >= 0) AND (ply_magicflagsbard <= 8589934591::bigint))),
-    CONSTRAINT player_magicflagsdruid_check CHECK (((ply_magicflagsdruid >= 0) AND (ply_magicflagsdruid <= 8589934591::bigint))),
-    CONSTRAINT player_magicflagsmage_check CHECK (((ply_magicflagsmage >= 0) AND (ply_magicflagsmage <= 8589934591::bigint))),
-    CONSTRAINT player_magicflagspriest_check CHECK (((ply_magicflagspriest >= 0) AND (ply_magicflagspriest <= 8589934591::bigint))),
+    CONSTRAINT player_magicflagsbard_check CHECK (((ply_magicflagsbard >= 0) AND (ply_magicflagsbard <= '8589934591'::bigint))),
+    CONSTRAINT player_magicflagsdruid_check CHECK (((ply_magicflagsdruid >= 0) AND (ply_magicflagsdruid <= '8589934591'::bigint))),
+    CONSTRAINT player_magicflagsmage_check CHECK (((ply_magicflagsmage >= 0) AND (ply_magicflagsmage <= '8589934591'::bigint))),
+    CONSTRAINT player_magicflagspriest_check CHECK (((ply_magicflagspriest >= 0) AND (ply_magicflagspriest <= '8589934591'::bigint))),
     CONSTRAINT player_magictype_check CHECK (((ply_magictype >= 0) AND (ply_magictype <= 3))),
     CONSTRAINT player_mana_check CHECK (((ply_mana >= 0) AND (ply_mana <= 10000))),
     CONSTRAINT player_mental_capacity_check CHECK ((ply_mental_capacity >= 0)),
@@ -1439,7 +1472,7 @@ CREATE TABLE server.player (
     CONSTRAINT player_ply_hairalpha_check CHECK (((ply_hairalpha >= 0) AND (ply_hairalpha <= 255))),
     CONSTRAINT player_ply_skinalpha_check CHECK (((ply_skinalpha >= 0) AND (ply_skinalpha <= 255))),
     CONSTRAINT player_poison_check CHECK (((ply_poison >= 0) AND (ply_poison <= 10000))),
-    CONSTRAINT player_skincolor_check CHECK ((((ply_skinred >= 0) AND (ply_skingreen >= 0)) AND (ply_skinblue >= 0))),
+    CONSTRAINT player_skincolor_check CHECK (((ply_skinred >= 0) AND (ply_skingreen >= 0) AND (ply_skinblue >= 0))),
     CONSTRAINT player_strength_check CHECK (((ply_strength >= 0) AND (ply_strength <= 250))),
     CONSTRAINT player_weight_check CHECK ((ply_weight >= 0)),
     CONSTRAINT player_willpower_check CHECK (((ply_willpower >= 0) AND (ply_willpower <= 250)))
@@ -1449,7 +1482,7 @@ CREATE TABLE server.player (
 SET default_with_oids = false;
 
 --
--- Name: playeritem_datavalues; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: playeritem_datavalues; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.playeritem_datavalues (
@@ -1463,7 +1496,7 @@ CREATE TABLE server.playeritem_datavalues (
 SET default_with_oids = true;
 
 --
--- Name: playeritems; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: playeritems; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.playeritems (
@@ -1485,7 +1518,7 @@ CREATE TABLE server.playeritems (
 
 
 --
--- Name: playerlteffects; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: playerlteffects; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.playerlteffects (
@@ -1497,7 +1530,7 @@ CREATE TABLE server.playerlteffects (
 
 
 --
--- Name: playerlteffectvalues; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: playerlteffectvalues; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.playerlteffectvalues (
@@ -1509,7 +1542,7 @@ CREATE TABLE server.playerlteffectvalues (
 
 
 --
--- Name: playerskills; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: playerskills; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.playerskills (
@@ -1526,7 +1559,7 @@ CREATE TABLE server.playerskills (
 SET default_with_oids = false;
 
 --
--- Name: questprogress; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: questprogress; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.questprogress (
@@ -1538,7 +1571,7 @@ CREATE TABLE server.questprogress (
 
 
 --
--- Name: quests; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: quests; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.quests (
@@ -1550,7 +1583,7 @@ CREATE TABLE server.quests (
 SET default_with_oids = true;
 
 --
--- Name: race; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: race; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.race (
@@ -1648,7 +1681,7 @@ COMMENT ON COLUMN server.race.race_name IS 'This is the name used to refer to th
 SET default_with_oids = false;
 
 --
--- Name: race_beard; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: race_beard; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.race_beard (
@@ -1664,7 +1697,7 @@ CREATE TABLE server.race_beard (
 
 
 --
--- Name: race_hair; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: race_hair; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.race_hair (
@@ -1680,7 +1713,7 @@ CREATE TABLE server.race_hair (
 
 
 --
--- Name: race_hair_colour; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: race_hair_colour; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.race_hair_colour (
@@ -1698,7 +1731,7 @@ CREATE TABLE server.race_hair_colour (
 
 
 --
--- Name: race_skin_colour; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: race_skin_colour; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.race_skin_colour (
@@ -1716,7 +1749,7 @@ CREATE TABLE server.race_skin_colour (
 
 
 --
--- Name: race_types; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: race_types; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.race_types (
@@ -1728,7 +1761,7 @@ CREATE TABLE server.race_types (
 SET default_with_oids = true;
 
 --
--- Name: raceattr; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: raceattr; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.raceattr (
@@ -1766,7 +1799,7 @@ CREATE TABLE server.raceattr (
 
 
 --
--- Name: scheduledscripts; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: scheduledscripts; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.scheduledscripts (
@@ -1783,7 +1816,7 @@ CREATE TABLE server.scheduledscripts (
 SET default_with_oids = false;
 
 --
--- Name: scriptvariables; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: scriptvariables; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.scriptvariables (
@@ -1793,7 +1826,7 @@ CREATE TABLE server.scriptvariables (
 
 
 --
--- Name: skillgroups; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: skillgroups; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.skillgroups (
@@ -1812,7 +1845,7 @@ COMMENT ON TABLE server.skillgroups IS 'This table contains the groups a skill c
 
 
 --
--- Name: skills; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: skills; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.skills (
@@ -1849,7 +1882,7 @@ CREATE SEQUENCE server.spawnpoint_seq
 SET default_with_oids = true;
 
 --
--- Name: spawnpoint; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: spawnpoint; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.spawnpoint (
@@ -1882,7 +1915,7 @@ COMMENT ON COLUMN server.spawnpoint.spp_maxspawntime IS 'in minutes';
 
 
 --
--- Name: spawnpoint_monster; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: spawnpoint_monster; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.spawnpoint_monster (
@@ -1894,7 +1927,7 @@ CREATE TABLE server.spawnpoint_monster (
 
 
 --
--- Name: spells; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: spells; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.spells (
@@ -1909,7 +1942,7 @@ CREATE TABLE server.spells (
 SET default_with_oids = false;
 
 --
--- Name: startpack_items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: startpack_items; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.startpack_items (
@@ -1968,7 +2001,7 @@ COMMENT ON COLUMN server.startpack_items.spi_quality IS 'The quality of the item
 
 
 --
--- Name: startpack_skills; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: startpack_skills; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.startpack_skills (
@@ -2008,7 +2041,7 @@ COMMENT ON COLUMN server.startpack_skills.sps_skill_value IS 'The value of the s
 
 
 --
--- Name: startpacks; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: startpacks; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.startpacks (
@@ -2061,7 +2094,7 @@ CREATE SEQUENCE server.stat_type_seq
 
 
 --
--- Name: statistics; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: statistics; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.statistics (
@@ -2109,7 +2142,7 @@ COMMENT ON COLUMN server.statistics.stat_count IS 'number of samples in bin';
 
 
 --
--- Name: statistics_types; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: statistics_types; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.statistics_types (
@@ -2121,7 +2154,7 @@ CREATE TABLE server.statistics_types (
 SET default_with_oids = true;
 
 --
--- Name: tiles; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: tiles; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.tiles (
@@ -2138,7 +2171,7 @@ CREATE TABLE server.tiles (
 
 
 --
--- Name: tilesmodificators; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: tilesmodificators; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.tilesmodificators (
@@ -2153,7 +2186,7 @@ CREATE TABLE server.tilesmodificators (
 
 
 --
--- Name: triggerfields; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: triggerfields; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.triggerfields (
@@ -2180,7 +2213,7 @@ CREATE SEQUENCE server.version_seq
 SET default_with_oids = false;
 
 --
--- Name: versions; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: versions; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.versions (
@@ -2192,7 +2225,7 @@ CREATE TABLE server.versions (
 SET default_with_oids = true;
 
 --
--- Name: weapon; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: weapon; Type: TABLE; Schema: server; Owner: -
 --
 
 CREATE TABLE server.weapon (
@@ -2227,7 +2260,7 @@ COMMENT ON COLUMN server.weapon.wp_fightingscript IS 'script name';
 
 
 --
--- Name: acc_name_unique; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account acc_name_unique; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account
@@ -2235,7 +2268,7 @@ ALTER TABLE ONLY accounts.account
 
 
 --
--- Name: account_groups_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account_groups account_groups_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_groups
@@ -2243,7 +2276,7 @@ ALTER TABLE ONLY accounts.account_groups
 
 
 --
--- Name: account_log_al_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account_log account_log_al_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_log
@@ -2251,7 +2284,7 @@ ALTER TABLE ONLY accounts.account_log
 
 
 --
--- Name: account_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account account_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account
@@ -2259,7 +2292,7 @@ ALTER TABLE ONLY accounts.account
 
 
 --
--- Name: account_sessions_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account_sessions account_sessions_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_sessions
@@ -2267,7 +2300,7 @@ ALTER TABLE ONLY accounts.account_sessions
 
 
 --
--- Name: account_unconfirmed_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: account_unconfirmed account_unconfirmed_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_unconfirmed
@@ -2275,7 +2308,7 @@ ALTER TABLE ONLY accounts.account_unconfirmed
 
 
 --
--- Name: attribtemp_attr_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: attribtemp attribtemp_attr_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.attribtemp
@@ -2283,7 +2316,7 @@ ALTER TABLE ONLY accounts.attribtemp
 
 
 --
--- Name: bad_values_bv_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: bad_values bad_values_bv_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.bad_values
@@ -2291,7 +2324,7 @@ ALTER TABLE ONLY accounts.bad_values
 
 
 --
--- Name: badname_full_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: badname_full badname_full_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.badname_full
@@ -2299,7 +2332,7 @@ ALTER TABLE ONLY accounts.badname_full
 
 
 --
--- Name: badname_partial_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: badname_partial badname_partial_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.badname_partial
@@ -2307,7 +2340,7 @@ ALTER TABLE ONLY accounts.badname_partial
 
 
 --
--- Name: groups_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: groups groups_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.groups
@@ -2315,7 +2348,7 @@ ALTER TABLE ONLY accounts.groups
 
 
 --
--- Name: legtimulti_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: legtimulti legtimulti_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.legtimulti
@@ -2323,7 +2356,7 @@ ALTER TABLE ONLY accounts.legtimulti
 
 
 --
--- Name: rights_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+-- Name: rights rights_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.rights
@@ -2331,7 +2364,7 @@ ALTER TABLE ONLY accounts.rights
 
 
 --
--- Name: armor_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: armor armor_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.armor
@@ -2339,7 +2372,7 @@ ALTER TABLE ONLY server.armor
 
 
 --
--- Name: attribute_packages_attr_id_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: attribute_packages attribute_packages_attr_id_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.attribute_packages
@@ -2347,7 +2380,7 @@ ALTER TABLE ONLY server.attribute_packages
 
 
 --
--- Name: attribute_packages_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: attribute_packages attribute_packages_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.attribute_packages
@@ -2355,7 +2388,7 @@ ALTER TABLE ONLY server.attribute_packages
 
 
 --
--- Name: char_log_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: char_log char_log_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.char_log
@@ -2363,7 +2396,7 @@ ALTER TABLE ONLY server.char_log
 
 
 --
--- Name: chars_pk; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: chars chars_pk; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.chars
@@ -2371,7 +2404,7 @@ ALTER TABLE ONLY server.chars
 
 
 --
--- Name: common_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: items common_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.items
@@ -2379,7 +2412,7 @@ ALTER TABLE ONLY server.items
 
 
 --
--- Name: container_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: container container_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.container
@@ -2387,7 +2420,7 @@ ALTER TABLE ONLY server.container
 
 
 --
--- Name: gms_pk; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: gms gms_pk; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.gms
@@ -2395,7 +2428,7 @@ ALTER TABLE ONLY server.gms
 
 
 --
--- Name: introduction_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: introduction introduction_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.introduction
@@ -2403,7 +2436,7 @@ ALTER TABLE ONLY server.introduction
 
 
 --
--- Name: items_itm_name_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: items items_itm_name_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.items
@@ -2411,7 +2444,7 @@ ALTER TABLE ONLY server.items
 
 
 --
--- Name: longtimeeffects_lte_effectname_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: longtimeeffects longtimeeffects_lte_effectname_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.longtimeeffects
@@ -2419,7 +2452,7 @@ ALTER TABLE ONLY server.longtimeeffects
 
 
 --
--- Name: longtimeeffects_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: longtimeeffects longtimeeffects_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.longtimeeffects
@@ -2427,7 +2460,7 @@ ALTER TABLE ONLY server.longtimeeffects
 
 
 --
--- Name: map_item_data_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: map_item_data map_item_data_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.map_item_data
@@ -2435,7 +2468,7 @@ ALTER TABLE ONLY server.map_item_data
 
 
 --
--- Name: map_items_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: map_items map_items_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.map_items
@@ -2443,7 +2476,7 @@ ALTER TABLE ONLY server.map_items
 
 
 --
--- Name: map_tiles_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: map_tiles map_tiles_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.map_tiles
@@ -2451,7 +2484,7 @@ ALTER TABLE ONLY server.map_tiles
 
 
 --
--- Name: map_warps_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: map_warps map_warps_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.map_warps
@@ -2459,7 +2492,7 @@ ALTER TABLE ONLY server.map_warps
 
 
 --
--- Name: monster_attributes_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_attributes monster_attributes_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_attributes
@@ -2467,7 +2500,7 @@ ALTER TABLE ONLY server.monster_attributes
 
 
 --
--- Name: monster_drop_data_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_drop_data monster_drop_data_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_drop_data
@@ -2475,7 +2508,7 @@ ALTER TABLE ONLY server.monster_drop_data
 
 
 --
--- Name: monster_drop_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_drop monster_drop_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_drop
@@ -2483,7 +2516,7 @@ ALTER TABLE ONLY server.monster_drop
 
 
 --
--- Name: monster_items_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_items monster_items_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_items
@@ -2491,7 +2524,7 @@ ALTER TABLE ONLY server.monster_items
 
 
 --
--- Name: monster_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: monster monster_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster
@@ -2499,7 +2532,7 @@ ALTER TABLE ONLY server.monster
 
 
 --
--- Name: monster_skills_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: monster_skills monster_skills_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_skills
@@ -2507,7 +2540,7 @@ ALTER TABLE ONLY server.monster_skills
 
 
 --
--- Name: monsterattack_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: monsterattack monsterattack_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monsterattack
@@ -2515,7 +2548,7 @@ ALTER TABLE ONLY server.monsterattack
 
 
 --
--- Name: naming_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: naming naming_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.naming
@@ -2523,7 +2556,7 @@ ALTER TABLE ONLY server.naming
 
 
 --
--- Name: naturalarmor_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: naturalarmor naturalarmor_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.naturalarmor
@@ -2531,7 +2564,7 @@ ALTER TABLE ONLY server.naturalarmor
 
 
 --
--- Name: npc_npc_posx_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: npc npc_npc_posx_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.npc
@@ -2539,7 +2572,7 @@ ALTER TABLE ONLY server.npc
 
 
 --
--- Name: npc_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: npc npc_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.npc
@@ -2547,7 +2580,7 @@ ALTER TABLE ONLY server.npc
 
 
 --
--- Name: onlineplayer_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: onlineplayer onlineplayer_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.onlineplayer
@@ -2555,7 +2588,7 @@ ALTER TABLE ONLY server.onlineplayer
 
 
 --
--- Name: player_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: player player_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.player
@@ -2563,7 +2596,7 @@ ALTER TABLE ONLY server.player
 
 
 --
--- Name: playeritem_datavalues_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: playeritem_datavalues playeritem_datavalues_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playeritem_datavalues
@@ -2571,7 +2604,7 @@ ALTER TABLE ONLY server.playeritem_datavalues
 
 
 --
--- Name: playeritems_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: playeritems playeritems_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playeritems
@@ -2581,7 +2614,7 @@ ALTER TABLE server.playeritems CLUSTER ON playeritems_pkey;
 
 
 --
--- Name: playerlteffectvalues_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: playerlteffectvalues playerlteffectvalues_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playerlteffectvalues
@@ -2589,7 +2622,7 @@ ALTER TABLE ONLY server.playerlteffectvalues
 
 
 --
--- Name: playerskills_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: playerskills playerskills_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playerskills
@@ -2597,7 +2630,7 @@ ALTER TABLE ONLY server.playerskills
 
 
 --
--- Name: primary_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: playerlteffects primary_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playerlteffects
@@ -2605,7 +2638,7 @@ ALTER TABLE ONLY server.playerlteffects
 
 
 --
--- Name: questprogress_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: questprogress questprogress_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.questprogress
@@ -2613,7 +2646,7 @@ ALTER TABLE ONLY server.questprogress
 
 
 --
--- Name: quests_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: quests quests_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.quests
@@ -2621,7 +2654,7 @@ ALTER TABLE ONLY server.quests
 
 
 --
--- Name: race_beard_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race_beard race_beard_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_beard
@@ -2629,7 +2662,7 @@ ALTER TABLE ONLY server.race_beard
 
 
 --
--- Name: race_beard_rb_race_id_rb_sex_id_rb_name_de_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race_beard race_beard_rb_race_id_rb_sex_id_rb_name_de_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_beard
@@ -2637,7 +2670,7 @@ ALTER TABLE ONLY server.race_beard
 
 
 --
--- Name: race_beard_rb_race_id_rb_sex_id_rb_name_en_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race_beard race_beard_rb_race_id_rb_sex_id_rb_name_en_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_beard
@@ -2645,7 +2678,7 @@ ALTER TABLE ONLY server.race_beard
 
 
 --
--- Name: race_hair_color_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race_hair_colour race_hair_color_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_hair_colour
@@ -2653,7 +2686,7 @@ ALTER TABLE ONLY server.race_hair_colour
 
 
 --
--- Name: race_hair_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race_hair race_hair_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_hair
@@ -2661,7 +2694,7 @@ ALTER TABLE ONLY server.race_hair
 
 
 --
--- Name: race_hair_rh_race_id_rh_sex_id_rh_name_de_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race_hair race_hair_rh_race_id_rh_sex_id_rh_name_de_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_hair
@@ -2669,7 +2702,7 @@ ALTER TABLE ONLY server.race_hair
 
 
 --
--- Name: race_hair_rh_race_id_rh_sex_id_rh_name_en_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race_hair race_hair_rh_race_id_rh_sex_id_rh_name_en_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_hair
@@ -2677,7 +2710,7 @@ ALTER TABLE ONLY server.race_hair
 
 
 --
--- Name: race_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race race_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race
@@ -2685,7 +2718,7 @@ ALTER TABLE ONLY server.race
 
 
 --
--- Name: race_race_name_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race race_race_name_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race
@@ -2693,7 +2726,7 @@ ALTER TABLE ONLY server.race
 
 
 --
--- Name: race_skin_color_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race_skin_colour race_skin_color_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_skin_colour
@@ -2701,7 +2734,7 @@ ALTER TABLE ONLY server.race_skin_colour
 
 
 --
--- Name: race_types_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: race_types race_types_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_types
@@ -2709,7 +2742,7 @@ ALTER TABLE ONLY server.race_types
 
 
 --
--- Name: raceattr_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: raceattr raceattr_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.raceattr
@@ -2717,7 +2750,7 @@ ALTER TABLE ONLY server.raceattr
 
 
 --
--- Name: scheduledscripts_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: scheduledscripts scheduledscripts_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.scheduledscripts
@@ -2725,7 +2758,7 @@ ALTER TABLE ONLY server.scheduledscripts
 
 
 --
--- Name: scriptvariables_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: scriptvariables scriptvariables_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.scriptvariables
@@ -2733,7 +2766,7 @@ ALTER TABLE ONLY server.scriptvariables
 
 
 --
--- Name: skillgroups_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: skillgroups skillgroups_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.skillgroups
@@ -2741,7 +2774,7 @@ ALTER TABLE ONLY server.skillgroups
 
 
 --
--- Name: skills_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: skills skills_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.skills
@@ -2749,7 +2782,7 @@ ALTER TABLE ONLY server.skills
 
 
 --
--- Name: skl_name_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: skills skl_name_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.skills
@@ -2757,7 +2790,7 @@ ALTER TABLE ONLY server.skills
 
 
 --
--- Name: spawnpoint_monster_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: spawnpoint_monster spawnpoint_monster_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.spawnpoint_monster
@@ -2765,7 +2798,7 @@ ALTER TABLE ONLY server.spawnpoint_monster
 
 
 --
--- Name: spawnpoint_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: spawnpoint spawnpoint_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.spawnpoint
@@ -2773,7 +2806,7 @@ ALTER TABLE ONLY server.spawnpoint
 
 
 --
--- Name: spawnpoint_spp_x_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: spawnpoint spawnpoint_spp_x_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.spawnpoint
@@ -2781,7 +2814,7 @@ ALTER TABLE ONLY server.spawnpoint
 
 
 --
--- Name: spells_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: spells spells_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.spells
@@ -2789,7 +2822,7 @@ ALTER TABLE ONLY server.spells
 
 
 --
--- Name: startpack_items_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: startpack_items startpack_items_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.startpack_items
@@ -2797,7 +2830,7 @@ ALTER TABLE ONLY server.startpack_items
 
 
 --
--- Name: startpack_skills_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: startpack_skills startpack_skills_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.startpack_skills
@@ -2805,7 +2838,7 @@ ALTER TABLE ONLY server.startpack_skills
 
 
 --
--- Name: startpacks_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: startpacks startpacks_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.startpacks
@@ -2813,7 +2846,7 @@ ALTER TABLE ONLY server.startpacks
 
 
 --
--- Name: startpacks_stp_english_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: startpacks startpacks_stp_english_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.startpacks
@@ -2821,7 +2854,7 @@ ALTER TABLE ONLY server.startpacks
 
 
 --
--- Name: startpacks_stp_german_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: startpacks startpacks_stp_german_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.startpacks
@@ -2829,7 +2862,7 @@ ALTER TABLE ONLY server.startpacks
 
 
 --
--- Name: statistics_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: statistics statistics_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.statistics
@@ -2837,7 +2870,7 @@ ALTER TABLE ONLY server.statistics
 
 
 --
--- Name: statistics_types_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: statistics_types statistics_types_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.statistics_types
@@ -2845,7 +2878,7 @@ ALTER TABLE ONLY server.statistics_types
 
 
 --
--- Name: statistics_types_stat_type_name_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: statistics_types statistics_types_stat_type_name_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.statistics_types
@@ -2853,7 +2886,7 @@ ALTER TABLE ONLY server.statistics_types
 
 
 --
--- Name: tiles_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: tiles tiles_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.tiles
@@ -2861,7 +2894,7 @@ ALTER TABLE ONLY server.tiles
 
 
 --
--- Name: tilesmodificators_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: tilesmodificators tilesmodificators_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.tilesmodificators
@@ -2869,7 +2902,7 @@ ALTER TABLE ONLY server.tilesmodificators
 
 
 --
--- Name: triggerfields_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: triggerfields triggerfields_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.triggerfields
@@ -2877,7 +2910,7 @@ ALTER TABLE ONLY server.triggerfields
 
 
 --
--- Name: unique_name; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: chars unique_name; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.chars
@@ -2885,7 +2918,7 @@ ALTER TABLE ONLY server.chars
 
 
 --
--- Name: versions_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: versions versions_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.versions
@@ -2893,7 +2926,7 @@ ALTER TABLE ONLY server.versions
 
 
 --
--- Name: versions_version_name_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: versions versions_version_name_key; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.versions
@@ -2901,7 +2934,7 @@ ALTER TABLE ONLY server.versions
 
 
 --
--- Name: weapon_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: weapon weapon_pkey; Type: CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.weapon
@@ -2909,28 +2942,28 @@ ALTER TABLE ONLY server.weapon
 
 
 --
--- Name: name_password_index; Type: INDEX; Schema: accounts; Owner: -; Tablespace: 
+-- Name: name_password_index; Type: INDEX; Schema: accounts; Owner: -
 --
 
 CREATE UNIQUE INDEX name_password_index ON accounts.account USING btree (acc_login, acc_passwd);
 
 
 --
--- Name: mobit_monster_idx; Type: INDEX; Schema: server; Owner: -; Tablespace: 
+-- Name: mobit_monster_idx; Type: INDEX; Schema: server; Owner: -
 --
 
 CREATE INDEX mobit_monster_idx ON server.monster_items USING btree (mobit_monsterid);
 
 
 --
--- Name: playeritems_searchindex; Type: INDEX; Schema: server; Owner: -; Tablespace: 
+-- Name: playeritems_searchindex; Type: INDEX; Schema: server; Owner: -
 --
 
 CREATE INDEX playeritems_searchindex ON server.playeritems USING btree (pit_playerid);
 
 
 --
--- Name: playerskills_searchindex; Type: INDEX; Schema: server; Owner: -; Tablespace: 
+-- Name: playerskills_searchindex; Type: INDEX; Schema: server; Owner: -
 --
 
 CREATE INDEX playerskills_searchindex ON server.playerskills USING btree (psk_playerid);
@@ -2946,14 +2979,14 @@ CREATE RULE gmrights_update AS
 
 
 --
--- Name: protect_itm_name; Type: TRIGGER; Schema: server; Owner: -
+-- Name: items protect_itm_name; Type: TRIGGER; Schema: server; Owner: -
 --
 
 CREATE TRIGGER protect_itm_name BEFORE UPDATE ON server.items FOR EACH ROW EXECUTE PROCEDURE server.protect_itm_name();
 
 
 --
--- Name: acc_id_1_account_key; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+-- Name: legtimulti acc_id_1_account_key; Type: FK CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.legtimulti
@@ -2961,7 +2994,7 @@ ALTER TABLE ONLY accounts.legtimulti
 
 
 --
--- Name: acc_id_2_account_key; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+-- Name: legtimulti acc_id_2_account_key; Type: FK CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.legtimulti
@@ -2969,7 +3002,7 @@ ALTER TABLE ONLY accounts.legtimulti
 
 
 --
--- Name: account_groups_ag_acc_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+-- Name: account_groups account_groups_ag_acc_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_groups
@@ -2977,7 +3010,7 @@ ALTER TABLE ONLY accounts.account_groups
 
 
 --
--- Name: account_groups_ag_group_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+-- Name: account_groups account_groups_ag_group_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_groups
@@ -2985,7 +3018,7 @@ ALTER TABLE ONLY accounts.account_groups
 
 
 --
--- Name: account_log_al_gm_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+-- Name: account_log account_log_al_gm_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_log
@@ -2993,7 +3026,7 @@ ALTER TABLE ONLY accounts.account_log
 
 
 --
--- Name: account_log_al_user_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+-- Name: account_log account_log_al_user_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_log
@@ -3001,7 +3034,7 @@ ALTER TABLE ONLY accounts.account_log
 
 
 --
--- Name: account_sessions_as_account_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+-- Name: account_sessions account_sessions_as_account_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_sessions
@@ -3009,7 +3042,7 @@ ALTER TABLE ONLY accounts.account_sessions
 
 
 --
--- Name: account_unconfirmed_au_acc_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+-- Name: account_unconfirmed account_unconfirmed_au_acc_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
 --
 
 ALTER TABLE ONLY accounts.account_unconfirmed
@@ -3017,7 +3050,7 @@ ALTER TABLE ONLY accounts.account_unconfirmed
 
 
 --
--- Name: $1; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: container $1; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.container
@@ -3025,7 +3058,7 @@ ALTER TABLE ONLY server.container
 
 
 --
--- Name: $1; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: playerskills $1; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playerskills
@@ -3033,7 +3066,7 @@ ALTER TABLE ONLY server.playerskills
 
 
 --
--- Name: $1; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: gmpager $1; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.gmpager
@@ -3041,7 +3074,7 @@ ALTER TABLE ONLY server.gmpager
 
 
 --
--- Name: account_id; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: chars account_id; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.chars
@@ -3049,7 +3082,7 @@ ALTER TABLE ONLY server.chars
 
 
 --
--- Name: armor_arm_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: armor armor_arm_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.armor
@@ -3057,7 +3090,7 @@ ALTER TABLE ONLY server.armor
 
 
 --
--- Name: chars_chr_race_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: chars chars_chr_race_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.chars
@@ -3065,7 +3098,7 @@ ALTER TABLE ONLY server.chars
 
 
 --
--- Name: common_com_objectafterrot_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: items common_com_objectafterrot_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.items
@@ -3073,7 +3106,7 @@ ALTER TABLE ONLY server.items
 
 
 --
--- Name: deleted_chars_dc_acc_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: deleted_chars deleted_chars_dc_acc_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.deleted_chars
@@ -3081,7 +3114,7 @@ ALTER TABLE ONLY server.deleted_chars
 
 
 --
--- Name: effect_avaiable; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: playerlteffectvalues effect_avaiable; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playerlteffectvalues
@@ -3089,7 +3122,7 @@ ALTER TABLE ONLY server.playerlteffectvalues
 
 
 --
--- Name: gmpager_pager_gm_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: gmpager gmpager_pager_gm_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.gmpager
@@ -3097,7 +3130,7 @@ ALTER TABLE ONLY server.gmpager
 
 
 --
--- Name: gms_gm_charid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: gms gms_gm_charid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.gms
@@ -3105,7 +3138,7 @@ ALTER TABLE ONLY server.gms
 
 
 --
--- Name: introduction_intro_known_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: introduction introduction_intro_known_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.introduction
@@ -3113,7 +3146,7 @@ ALTER TABLE ONLY server.introduction
 
 
 --
--- Name: introduction_intro_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: introduction introduction_intro_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.introduction
@@ -3121,7 +3154,7 @@ ALTER TABLE ONLY server.introduction
 
 
 --
--- Name: map_item_data_mid_x_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: map_item_data map_item_data_mid_x_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.map_item_data
@@ -3129,7 +3162,7 @@ ALTER TABLE ONLY server.map_item_data
 
 
 --
--- Name: map_items_mi_item_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: map_items map_items_mi_item_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.map_items
@@ -3137,7 +3170,7 @@ ALTER TABLE ONLY server.map_items
 
 
 --
--- Name: map_items_mi_x_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: map_items map_items_mi_x_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.map_items
@@ -3145,7 +3178,7 @@ ALTER TABLE ONLY server.map_items
 
 
 --
--- Name: map_warps_mw_start_x_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: map_warps map_warps_mw_start_x_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.map_warps
@@ -3153,7 +3186,7 @@ ALTER TABLE ONLY server.map_warps
 
 
 --
--- Name: md_itemid_itm_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: monster_drop md_itemid_itm_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_drop
@@ -3161,7 +3194,7 @@ ALTER TABLE ONLY server.monster_drop
 
 
 --
--- Name: md_monsterid_mon_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: monster_drop md_monsterid_mon_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_drop
@@ -3169,7 +3202,7 @@ ALTER TABLE ONLY server.monster_drop
 
 
 --
--- Name: mdd_id_md_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: monster_drop_data mdd_id_md_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_drop_data
@@ -3177,7 +3210,7 @@ ALTER TABLE ONLY server.monster_drop_data
 
 
 --
--- Name: mobsk_skill_id_key; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: monster_skills mobsk_skill_id_key; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_skills
@@ -3185,7 +3218,7 @@ ALTER TABLE ONLY server.monster_skills
 
 
 --
--- Name: monster_attributes_mobattr_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: monster_attributes monster_attributes_mobattr_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_attributes
@@ -3193,7 +3226,7 @@ ALTER TABLE ONLY server.monster_attributes
 
 
 --
--- Name: monster_items_mobit_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: monster_items monster_items_mobit_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_items
@@ -3201,7 +3234,7 @@ ALTER TABLE ONLY server.monster_items
 
 
 --
--- Name: monster_items_mobit_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: monster_items monster_items_mobit_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_items
@@ -3209,7 +3242,7 @@ ALTER TABLE ONLY server.monster_items
 
 
 --
--- Name: monster_mob_race_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: monster monster_mob_race_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster
@@ -3217,7 +3250,7 @@ ALTER TABLE ONLY server.monster
 
 
 --
--- Name: monster_skills_mobsk_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: monster_skills monster_skills_mobsk_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.monster_skills
@@ -3225,7 +3258,7 @@ ALTER TABLE ONLY server.monster_skills
 
 
 --
--- Name: naming_name_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: naming naming_name_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.naming
@@ -3233,7 +3266,7 @@ ALTER TABLE ONLY server.naming
 
 
 --
--- Name: npc_npc_type_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: npc npc_npc_type_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.npc
@@ -3241,7 +3274,7 @@ ALTER TABLE ONLY server.npc
 
 
 --
--- Name: onlineplayer_on_playerid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: onlineplayer onlineplayer_on_playerid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.onlineplayer
@@ -3249,7 +3282,7 @@ ALTER TABLE ONLY server.onlineplayer
 
 
 --
--- Name: player; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: playerlteffects player; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playerlteffects
@@ -3257,7 +3290,7 @@ ALTER TABLE ONLY server.playerlteffects
 
 
 --
--- Name: player_ply_playerid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: player player_ply_playerid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.player
@@ -3265,7 +3298,7 @@ ALTER TABLE ONLY server.player
 
 
 --
--- Name: playeritem_datavalues_idv_playerid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: playeritem_datavalues playeritem_datavalues_idv_playerid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playeritem_datavalues
@@ -3273,7 +3306,7 @@ ALTER TABLE ONLY server.playeritem_datavalues
 
 
 --
--- Name: playeritems_pit_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: playeritems playeritems_pit_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playeritems
@@ -3281,7 +3314,7 @@ ALTER TABLE ONLY server.playeritems
 
 
 --
--- Name: playeritems_pit_playerid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: playeritems playeritems_pit_playerid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playeritems
@@ -3289,7 +3322,7 @@ ALTER TABLE ONLY server.playeritems
 
 
 --
--- Name: playerlteffects_plte_effectid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: playerlteffects playerlteffects_plte_effectid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playerlteffects
@@ -3297,7 +3330,7 @@ ALTER TABLE ONLY server.playerlteffects
 
 
 --
--- Name: psk_skill_id_key; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: playerskills psk_skill_id_key; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.playerskills
@@ -3305,7 +3338,7 @@ ALTER TABLE ONLY server.playerskills
 
 
 --
--- Name: questprogress_qpg_userid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: questprogress questprogress_qpg_userid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.questprogress
@@ -3313,7 +3346,7 @@ ALTER TABLE ONLY server.questprogress
 
 
 --
--- Name: race_beard_rb_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: race_beard race_beard_rb_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_beard
@@ -3321,7 +3354,7 @@ ALTER TABLE ONLY server.race_beard
 
 
 --
--- Name: race_hair_color_rhc_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: race_hair_colour race_hair_color_rhc_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_hair_colour
@@ -3329,7 +3362,7 @@ ALTER TABLE ONLY server.race_hair_colour
 
 
 --
--- Name: race_hair_rh_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: race_hair race_hair_rh_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_hair
@@ -3337,7 +3370,7 @@ ALTER TABLE ONLY server.race_hair
 
 
 --
--- Name: race_skin_color_rsc_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: race_skin_colour race_skin_color_rsc_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_skin_colour
@@ -3345,7 +3378,7 @@ ALTER TABLE ONLY server.race_skin_colour
 
 
 --
--- Name: race_types_rs_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: race_types race_types_rs_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.race_types
@@ -3353,7 +3386,7 @@ ALTER TABLE ONLY server.race_types
 
 
 --
--- Name: skl_group_key; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: skills skl_group_key; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.skills
@@ -3361,7 +3394,7 @@ ALTER TABLE ONLY server.skills
 
 
 --
--- Name: spawnpoint_monster_spm_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: spawnpoint_monster spawnpoint_monster_spm_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.spawnpoint_monster
@@ -3369,7 +3402,7 @@ ALTER TABLE ONLY server.spawnpoint_monster
 
 
 --
--- Name: spawnpoint_monster_spm_race_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: spawnpoint_monster spawnpoint_monster_spm_race_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.spawnpoint_monster
@@ -3377,7 +3410,7 @@ ALTER TABLE ONLY server.spawnpoint_monster
 
 
 --
--- Name: startpack_items_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: startpack_items startpack_items_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.startpack_items
@@ -3385,7 +3418,7 @@ ALTER TABLE ONLY server.startpack_items
 
 
 --
--- Name: startpack_items_item_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: startpack_items startpack_items_item_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.startpack_items
@@ -3393,7 +3426,7 @@ ALTER TABLE ONLY server.startpack_items
 
 
 --
--- Name: startpack_skills_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: startpack_skills startpack_skills_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.startpack_skills
@@ -3401,7 +3434,7 @@ ALTER TABLE ONLY server.startpack_skills
 
 
 --
--- Name: startpack_skills_skill_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: startpack_skills startpack_skills_skill_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.startpack_skills
@@ -3409,7 +3442,7 @@ ALTER TABLE ONLY server.startpack_skills
 
 
 --
--- Name: statistics_stat_type_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: statistics statistics_stat_type_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.statistics
@@ -3417,7 +3450,7 @@ ALTER TABLE ONLY server.statistics
 
 
 --
--- Name: statistics_stat_version_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: statistics statistics_stat_version_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.statistics
@@ -3425,7 +3458,7 @@ ALTER TABLE ONLY server.statistics
 
 
 --
--- Name: status_gm; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: chars status_gm; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.chars
@@ -3433,7 +3466,7 @@ ALTER TABLE ONLY server.chars
 
 
 --
--- Name: tilesmodificators_tim_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: tilesmodificators tilesmodificators_tim_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.tilesmodificators
@@ -3441,7 +3474,7 @@ ALTER TABLE ONLY server.tilesmodificators
 
 
 --
--- Name: weapon_wp_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: weapon weapon_wp_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY server.weapon
