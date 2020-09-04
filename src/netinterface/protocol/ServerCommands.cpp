@@ -243,23 +243,32 @@ CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, const std::string &des
 }
 
 AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : BasicServerCommand(SC_APPEARANCE_TC) {
+    uint8_t height = 0;
     addIntToBuffer(cc->getId());
 
     if (cc->getType() == Character::player) {
         auto *player = dynamic_cast<Player *>(cc);
 
+        height = Data::races().getRelativeSize(cc->getRace(), cc->getAttribute(Character::height));
+
         if (receivingPlayer->knows(player)) {
             addStringToBuffer(player->getName());
-        } else {
+        }
+        else {
             addStringToBuffer("");
         }
 
         addStringToBuffer(receivingPlayer->getCustomNameOf(player));
     } else if (cc->getType() == Character::monster) {
         auto *monster = dynamic_cast<Monster *>(cc);
+
+        // monsters store height in percent already
+        height = cc->getAttribute(Character::height);
+
         addStringToBuffer(receivingPlayer->nls(monster->nameDe, monster->getName()));
         addStringToBuffer("");
     } else {
+        height = Data::races().getRelativeSize(cc->getRace(), cc->getAttribute(Character::height));
         addStringToBuffer(cc->getName());
         addStringToBuffer("");
     }
@@ -267,7 +276,7 @@ AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : Basic
     addShortIntToBuffer(cc->getRace());
     addUnsignedCharToBuffer(cc->getAttribute(Character::sex));
     addShortIntToBuffer(cc->getAttribute(Character::hitpoints));
-    addUnsignedCharToBuffer(Data::races().getRelativeSize(cc->getRace(), cc->getAttribute(Character::height)));
+    addUnsignedCharToBuffer(height);
     const Character::appearance appearance = cc->getAppearance();
     addUnsignedCharToBuffer(appearance.hairtype);
     addUnsignedCharToBuffer(appearance.beardtype);
