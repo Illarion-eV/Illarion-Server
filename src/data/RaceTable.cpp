@@ -79,6 +79,11 @@ auto RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const -> ui
     // relative size is between 40 and 120 (in percent) and a linear interpolation between min and max size
     constexpr auto defaultRelativeSize = 100;
 
+    if (size == 0) {
+        // size not set
+        return defaultRelativeSize;
+    }
+
     if (!exists(race)) {
         return defaultRelativeSize;
     }
