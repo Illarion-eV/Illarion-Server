@@ -1056,6 +1056,20 @@ CREATE TABLE server.monster (
 
 
 --
+-- Name: COLUMN monster.mob_minsize; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN server.monster.mob_minsize IS 'in percent of graphic size';
+
+
+--
+-- Name: COLUMN monster.mob_maxsize; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN server.monster.mob_maxsize IS 'in percent of graphic size';
+
+
+--
 -- Name: monster_attributes; Type: TABLE; Schema: server; Owner: -
 --
 
