@@ -1551,8 +1551,6 @@ auto Player::load() noexcept -> bool {
 
             if (depotIt != depotContents.end()) {
                 depotIt->second = depot.second;
-            } else {
-                depotIt->second = nullptr;
             }
         }
     } catch (std::exception &e) {
