@@ -328,3 +328,8 @@ auto world_getMonstersInRangeOf(const World *world, const position &posi, uint8_
 auto world_getNPCSInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object {
     return convert_to_fuselist(world->getNPCSInRangeOf(posi, range));
 }
+
+auto field_isWarp(const map::Field *field, position &target) -> bool {
+    field->getWarp(target);
+    return field->isWarp();
+}

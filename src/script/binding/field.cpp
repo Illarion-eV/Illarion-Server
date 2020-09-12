@@ -21,6 +21,9 @@
 #include "map/Field.hpp"
 
 #include "script/binding/binding.hpp"
+#include "script/forwarder.hpp"
+
+#include <luabind/out_value_policy.hpp>
 
 namespace binding {
 
@@ -31,7 +34,10 @@ auto field() -> Binding<Field> {
             .def("tile", &Field::getTileId)
             .def("getStackItem", &Field::getStackItem)
             .def("countItems", &Field::itemCount)
-            .def("isPassable", &Field::isWalkable);
+            .def("isPassable", &Field::isWalkable)
+            .def("isWarp", &field_isWarp, luabind::pure_out_value(_2))
+            .def("setWarp", &Field::setWarp)
+            .def("removeWarp", &Field::removeWarp);
 }
 
 } // namespace binding

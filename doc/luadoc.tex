@@ -44,7 +44,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.23}
+\title{Lua documentation for Illarion scripting\\v5.24}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -1263,6 +1263,18 @@ In general, these functions will be combined with \comm{world}:\com{getField}{\p
 \begin{quote}
        Determines whether a field allows a character to pass over it or having items dropped on it.
 \end{quote}
+\bool, \position \var{destination} \var{field}:\com{isWarp}{}
+\begin{quote}
+       Returns whether or not a field is a warp as well as the warp \var{destination}.
+\end{quote}
+\void \var{field}:\com{setWarp}{\position \var{destination}}
+\begin{quote}
+       Enables the field's warp and sets its \var{destination}.
+\end{quote}
+\void \var{field}:\com{removeWarp}{}
+\begin{quote}
+       Removes the field's warp.
+\end{quote}
 
 \section{Variables}
 \lua{r}: \integer \comm{tile}
@@ -2393,6 +2405,11 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.24 (12.9.20)\\
+* Add field:isWarp\\
+* Add field:setWarp\\
+* Add field:removeWarp\\
+\\
 Version 5.23 (9.7.20)\\
 * Remove character:alterMessage\\
 \\

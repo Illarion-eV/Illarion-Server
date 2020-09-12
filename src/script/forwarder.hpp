@@ -80,4 +80,5 @@ auto world_getPlayersInRangeOf(const World *world, const position &posi, uint8_t
 auto world_getMonstersInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object;
 auto world_getNPCSInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object;
 
+auto field_isWarp(const map::Field *field, position &target) -> bool;
 #endif
