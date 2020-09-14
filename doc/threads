@@ -1,0 +1,12 @@
+The server runs four threads:
+
+1. The main game loop in main.cpp
+
+2. InitialConnection::run_service in InitialConnection.cpp
+   - waits for new incoming connections
+
+3. PlayerManager::loginLoop in PlayerManager.cpp
+   - handles player login
+
+4. PlayerManager::playerSaveLoop in PlayerManager.cpp
+   - handles player logout
