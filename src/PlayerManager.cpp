@@ -30,6 +30,7 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "script/LuaLogoutScript.hpp"
 
+#include <chrono>
 #include <memory>
 #include <range/v3/all.hpp>
 
@@ -83,10 +84,6 @@ void PlayerManager::setLoginLogout(bool val) {
 void PlayerManager::loginLoop(PlayerManager *pmanager) {
     try {
         auto &newplayers = pmanager->incon->getNewPlayers();
-        timespec waittime{};
-        waittime.tv_sec = 0;
-        static constexpr auto tenthOfSecond = 100000000;
-        waittime.tv_nsec = tenthOfSecond;
         pmanager->threadOk = true;
 
         while (pmanager->running) {
@@ -159,7 +156,8 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
 
             } // get new players
 
-            nanosleep(&waittime, nullptr);
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(100ms);
         }
     } catch (std::exception &e) {
     } catch (...) {
@@ -170,10 +168,6 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
 void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
     try {
         World *world = World::get();
-        timespec waittime{};
-        waittime.tv_sec = 0;
-        static constexpr auto tenthOfSecond = 100000000;
-        waittime.tv_nsec = tenthOfSecond;
         pmanager->threadOk = true;
         Player *tmpPl = nullptr;
 
@@ -207,7 +201,8 @@ void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                 Logger::debug(LogFacility::World) << "update player list [end]" << Log::end;
             }
 
-            nanosleep(&waittime, nullptr);
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(100ms);
         }
 
     } catch (std::exception &e) {
