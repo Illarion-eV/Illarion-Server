@@ -51,7 +51,6 @@
 #include <iterator>
 #include <memory>
 #include <regex>
-#include <sys/types.h>
 
 extern ScheduledScriptsTable *scheduledScripts;
 extern MonsterTable *monsterDescriptions;

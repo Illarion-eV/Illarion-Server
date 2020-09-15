@@ -50,13 +50,9 @@
 #include "script/server.hpp"
 #include "tuningConstants.hpp"
 
-#include <arpa/inet.h>
 #include <memory>
-#include <netinet/in.h>
 #include <range/v3/all.hpp>
 #include <sstream>
-#include <sys/socket.h>
-#include <unistd.h>
 #include <utility>
 
 Player::Player(std::shared_ptr<NetInterface> newConnection) : Connection(std::move(newConnection)) {

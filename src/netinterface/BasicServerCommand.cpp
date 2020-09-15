@@ -26,7 +26,6 @@
 #include <cassert>
 #include <climits>
 #include <iostream>
-#include <sys/socket.h>
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(defByte) {
     buffer.resize(baseBufferSize);

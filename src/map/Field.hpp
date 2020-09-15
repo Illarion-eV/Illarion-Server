@@ -24,7 +24,6 @@
 #include "constants.hpp"
 #include "globals.hpp"
 
-#include <sys/socket.h>
 #include <vector>
 
 namespace map {

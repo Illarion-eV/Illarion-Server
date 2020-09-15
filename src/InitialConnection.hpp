@@ -23,9 +23,6 @@
 
 #include <boost/asio.hpp>
 #include <memory>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
 
 class NetInterface;
 
