@@ -54,16 +54,16 @@ void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, const SouT
 auto LongTimeAction::checkAction() -> bool {
     if (_actionrunning) {
         // check if timetowaittimer is initialized and if we hit the next time
-        if (_timetowaitTimer && _timetowaitTimer->Next()) {
+        if (_timetowaitTimer && _timetowaitTimer->intervalExceeded()) {
             successAction();
             return true;
         }
 
-        if ((_redoaniTimer) && (_redoaniTimer->Next()) && (_ani != 0)) {
+        if ((_redoaniTimer) && (_redoaniTimer->intervalExceeded()) && (_ani != 0)) {
             _world->gfx(_ani, _owner->getPosition());
         }
 
-        if ((_redosoundTimer) && (_redosoundTimer->Next()) && (_sound != 0)) {
+        if ((_redosoundTimer) && (_redosoundTimer->intervalExceeded()) && (_sound != 0)) {
             _world->makeSound(_sound, _owner->getPosition());
         }
     }
@@ -78,15 +78,16 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
     _ani = ani;
     _sound = sound;
     constexpr auto dsToMsFactor = 100;
+    using std::chrono::milliseconds;
 
-    _timetowaitTimer = std::make_unique<MilTimer>(timetowait * dsToMsFactor);
+    _timetowaitTimer = std::make_unique<Timer>(milliseconds(timetowait * dsToMsFactor));
 
     if (_redoaniTimer) {
         _redoaniTimer.reset();
     }
 
     if (_ani != 0 && redoani != 0) {
-        _redoaniTimer = std::make_unique<MilTimer>(redoani * dsToMsFactor);
+        _redoaniTimer = std::make_unique<Timer>(milliseconds(redoani * dsToMsFactor));
     }
 
     if (_redosoundTimer) {
@@ -94,7 +95,7 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
     }
 
     if (_sound != 0 && redosound != 0) {
-        _redosoundTimer = std::make_unique<MilTimer>(redosound * dsToMsFactor);
+        _redosoundTimer = std::make_unique<Timer>(milliseconds(redosound * dsToMsFactor));
     }
 
     if (_sound != 0) {

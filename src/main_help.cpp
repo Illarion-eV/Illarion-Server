@@ -29,7 +29,6 @@
 #include "script/server.hpp"
 
 #include <csignal>
-#include <ctime>
 #include <memory>
 #include <sstream>
 #include <string>

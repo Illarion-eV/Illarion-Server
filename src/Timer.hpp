@@ -16,27 +16,23 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMER_HH
-#define TIMER_HH
+#ifndef TIMER_HPP
+#define TIMER_HPP
 
-#include <ctime>
+#include <chrono>
 
-//! Timer f�r Sekundenabst�nde
 class Timer {
 public:
-    // \param timegap Anzahl der Sekunden zwischen zwei Timer-Ereignissen
-    explicit Timer(long timegap);
+    using clock = std::chrono::steady_clock;
+    using timePoint = clock::time_point;
+    using duration = clock::duration;
 
-    //! pr�ft, ob schon gen�gend Zeit seit dem letzten Timer-Ereignis
-    // (bzw. dem Konstruktor) vergangen ist
-    // \return true, falls das n�chste Ereignis anliegt, false sonst
-    auto next() -> bool;
+    explicit Timer(duration interval);
+    auto intervalExceeded() -> bool;
 
 private:
-    //! Zeitpunkt der letzten Alterung (Anzahl der Sekunden seit 1.1.1970)
-    time_t last; //(32 Bit Integer)
-
-    //! Anzahl der Sekunden zwischen den Schritten
-    long gap;
+    timePoint lastIntervalExceeded;
+    duration interval;
 };
+
 #endif

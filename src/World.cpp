@@ -48,7 +48,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <ctime>
 #include <iterator>
 #include <memory>
 #include <regex>
@@ -87,11 +86,7 @@ World::World() {
 
     usedAP = 0;
 
-    // save starting time
-    time_t starttime = 0;
-    time(&starttime);
-    constexpr auto sToMsFactor = 1000;
-    timeStart = starttime * sToMsFactor;
+    startTime = std::chrono::steady_clock::now();
 
     currentScript = nullptr;
 
@@ -101,11 +96,12 @@ World::World() {
 }
 
 void World::turntheworld() {
-    ftime(&now);
-    constexpr auto sToMsFactor = 1000;
-    unsigned long timeNow = now.time * sToMsFactor + now.millitm;
+    auto now = std::chrono::steady_clock::now();
+    using std::chrono::duration_cast;
+    using std::chrono::milliseconds;
+    auto elapsed = duration_cast<milliseconds>(now - startTime).count();
 
-    ap = static_cast<int>(timeNow / MIN_AP_UPDATE - timeStart / MIN_AP_UPDATE - usedAP);
+    ap = static_cast<int>(elapsed / MIN_AP_UPDATE - usedAP);
 
     if (ap > 0) {
         usedAP += ap;
@@ -240,7 +236,7 @@ auto World::initRespawns() -> bool {
 }
 
 void World::checkMonsters() {
-    if (monstertimer.next()) {
+    if (monstertimer.intervalExceeded()) {
         if (isSpawnEnabled()) {
             for (auto &spawn : SpawnList) {
                 spawn.spawn();

@@ -26,7 +26,6 @@
 #include "Character.hpp"
 #include "CharacterContainer.hpp"
 #include "Language.hpp"
-#include "MilTimer.hpp"
 #include "MonitoringClients.hpp"
 #include "NewClientView.hpp"
 #include "Scheduler.hpp"
@@ -39,9 +38,9 @@
 #include "data/MonsterTable.hpp"
 #include "map/WorldMap.hpp"
 
+#include <chrono>
 #include <list>
 #include <memory>
-#include <sys/timeb.h>
 #include <unordered_map>
 
 class Player;
@@ -163,9 +162,7 @@ public:
      */
     std::unique_ptr<MonitoringClients> monitoringClientList = nullptr;
 
-    timeb now{}; /**< current time of the server used in @see turntheworld() **/
-
-    unsigned long int timeStart;
+    std::chrono::steady_clock::time_point startTime;
     long usedAP;
 
     int ap{}; /**< actionpoints since the last loop call **/
@@ -727,8 +724,7 @@ private:
     //! IG day of last turntheworld
     int lastTurnIGDay;
 
-    static constexpr auto minute = 60;
-    Timer monstertimer{minute};
+    Timer monstertimer{std::chrono::minutes(1)};
 
     void ageMaps();
     void ageInventory() const;

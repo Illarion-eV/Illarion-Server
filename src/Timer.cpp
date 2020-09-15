@@ -18,15 +18,16 @@
 
 #include "Timer.hpp"
 
-Timer::Timer(long timegap) : last(time(nullptr) - timegap), gap(timegap) {}
+Timer::Timer(duration interval) : lastIntervalExceeded(clock::now() - interval), interval(interval) {}
 
-auto Timer::next() -> bool {
-    time_t temp = time(nullptr); // liefert die Sekunden seit dem 1.1.1970
-    long realgap = temp - last;
+auto Timer::intervalExceeded() -> bool {
+    auto now = clock::now();
+    auto timePassed = now - lastIntervalExceeded;
 
-    if (realgap >= gap) {
-        last = temp;
+    if (timePassed >= interval) {
+        lastIntervalExceeded = now;
         return true;
     }
+
     return false;
 }

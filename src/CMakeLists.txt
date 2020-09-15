@@ -219,8 +219,6 @@ add_library(server
     LongTimeEffect.hpp
     main_help.cpp
     main_help.hpp
-    MilTimer.cpp
-    MilTimer.hpp
     MonitoringClients.cpp
     MonitoringClients.hpp
     Monster.cpp

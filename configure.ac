@@ -35,7 +35,7 @@ LT_INIT
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h errno.h netdb.h netinet/in.h stdlib.h string.h sys/socket.h sys/time.h sys/timeb.h unistd.h])
+AC_CHECK_HEADERS([arpa/inet.h errno.h netdb.h netinet/in.h stdlib.h string.h sys/socket.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -45,7 +45,7 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 
 # Checks for library functions.
-AC_CHECK_FUNCS([bzero ftime gethostbyname inet_ntoa memset select socket strerror strtol strtoul])
+AC_CHECK_FUNCS([bzero gethostbyname inet_ntoa memset select socket strerror strtol strtoul])
 
 BOOST_REQUIRE([1.67])
 BOOST_SYSTEM

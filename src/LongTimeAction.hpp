@@ -20,7 +20,7 @@
 #define CLONGTIMEACTION_HPP
 
 #include "Item.hpp"
-#include "MilTimer.hpp"
+#include "Timer.hpp"
 #include "script/LuaScript.hpp"
 
 #include <memory>
@@ -181,11 +181,11 @@ private:
 
     bool _actionrunning = false; /**< boolean value, if true there is currently a action running*/
 
-    std::unique_ptr<MilTimer> _timetowaitTimer =
-            nullptr; /**< timer which determines how many ms the action has to wait until it is sucessfull*/
-    std::unique_ptr<MilTimer> _redoaniTimer =
+    std::unique_ptr<Timer> _timetowaitTimer =
+            nullptr; /**< timer which determines how many ms the action has to wait until it is sucessful*/
+    std::unique_ptr<Timer> _redoaniTimer =
             nullptr; /**< timer which determines after how many ms the animation is shown again*/
-    std::unique_ptr<MilTimer> _redosoundTimer =
+    std::unique_ptr<Timer> _redosoundTimer =
             nullptr; /**< timer which determines how many ms the sound is played again.*/
 
     ActionType _at = ACTION_USE; /**< type of the action @see ActionType*/

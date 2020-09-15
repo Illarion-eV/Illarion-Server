@@ -47,7 +47,7 @@ World.cpp \
 WorldIMPLAdmin.cpp WorldIMPLCharacterMoves.cpp WorldIMPLItemMoves.cpp WorldIMPLTalk.cpp \
 WorldIMPLTools.cpp WorldIMPLScriptHelp.cpp WorldIMPLPlayer.cpp \
 \
-Timer.cpp MilTimer.cpp \
+Timer.cpp \
 LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp \
 \
 Attribute.cpp Character.cpp CharacterContainer.cpp \
@@ -89,7 +89,7 @@ illarion_SOURCES = main.cpp
 noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 dialog/CraftingDialog.hpp dialog/MessageDialog.hpp \
 		 dialog/SelectionDialog.hpp dialog/InputDialog.hpp \
-		 dialog/MerchantDialog.hpp MilTimer.hpp a_star.hpp \
+		 dialog/MerchantDialog.hpp a_star.hpp \
 		 tuningConstants.hpp db/Result.hpp db/SchemaHelper.hpp \
 		 db/QueryColumns.hpp db/DeleteQuery.hpp db/QueryWhere.hpp \
 		 db/QueryAssign.hpp db/Query.hpp db/Connection.hpp \
