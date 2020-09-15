@@ -91,8 +91,6 @@ World::World() {
     currentScript = nullptr;
 
     scriptDir = Config::instance().datadir() + std::string(SCRIPTSDIR);
-
-    srand((unsigned)time(nullptr));
 }
 
 void World::turntheworld() {

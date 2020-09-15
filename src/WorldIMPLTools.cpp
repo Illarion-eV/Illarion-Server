@@ -37,7 +37,6 @@
 #include "script/server.hpp"
 
 #include <algorithm>
-#include <cstdlib>
 #include <list>
 #include <range/v3/all.hpp>
 

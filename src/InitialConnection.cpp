@@ -22,7 +22,6 @@
 #include "Logger.hpp"
 #include "netinterface/NetInterface.hpp"
 
-#include <cstdlib>
 #include <memory>
 #include <thread>
 

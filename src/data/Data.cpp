@@ -24,8 +24,6 @@
 #include "Logger.hpp"
 #include "script/LuaLongTimeEffectScript.hpp"
 
-#include <cstdlib>
-
 namespace Data {
 
 namespace {
