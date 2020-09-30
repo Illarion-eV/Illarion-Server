@@ -119,7 +119,7 @@ public:
     static constexpr uint8_t maxItemPos = 255;
 
     itemtype type{notdefined};
-    position pos;
+    position pos{0, 0, 0};
     unsigned char itempos{maxItemPos};
     Character *owner{nullptr};
     auto getOwnerForLua() const -> character_ptr {
@@ -127,14 +127,9 @@ public:
         return fuse_owner;
     };
     Container *inside{nullptr};
-    ScriptItem() : Item(0, 0, 0), pos(position(0, 0, 0)) {}
+    ScriptItem() : Item(0, 0, 0) {}
     auto getType() const -> unsigned char { return type; }
-    explicit ScriptItem(const Item &source) : Item(source), pos(position(0, 0, 0)) {
-        itempos = 0;
-        type = notdefined;
-        owner = nullptr;
-        inside = nullptr;
-    }
+    explicit ScriptItem(const Item &source) : Item(source), itempos(0) {}
 
     auto getLookAt(Character * /*character*/) const -> ItemLookAt;
 

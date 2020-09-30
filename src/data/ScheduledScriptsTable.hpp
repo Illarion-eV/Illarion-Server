@@ -33,27 +33,18 @@
 class World;
 
 struct ScriptData {
-    uint32_t minCycleTime;
-    uint32_t maxCycleTime;
-    uint32_t nextCycleTime;
-    uint32_t lastCycleTime;
+    uint32_t minCycleTime = 0;
+    uint32_t maxCycleTime = 0;
+    uint32_t nextCycleTime = 0;
+    uint32_t lastCycleTime = 0;
     std::string functionName;
     std::string scriptName;
     std::shared_ptr<LuaScheduledScript> scriptptr;
 
-    ScriptData() {
-        minCycleTime = 0;
-        maxCycleTime = 0;
-        nextCycleTime = 0;
-        lastCycleTime = 0;
-    }
+    ScriptData() = default;
     ScriptData(uint32_t minCT, uint32_t maxCT, uint32_t nextCT, uint32_t lastCT, std::string fname, std::string sname)
-            : functionName(std::move(fname)), scriptName(std::move(sname)) {
-        minCycleTime = minCT;
-        maxCycleTime = maxCT;
-        nextCycleTime = nextCT;
-        lastCycleTime = lastCT;
-    }
+            : minCycleTime(minCT), maxCycleTime(maxCT), nextCycleTime(nextCT), lastCycleTime(lastCT),
+              functionName(std::move(fname)), scriptName(std::move(sname)) {}
 };
 
 class ScheduledScriptsTable {

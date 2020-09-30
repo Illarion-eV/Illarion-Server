@@ -166,8 +166,6 @@ Character::Character(const appearance &appearance)
     attributes[attitude] = Attribute(0);
     attributes[luck] = Attribute(0);
 
-    backPackContents = nullptr;
-
     magic.type = MAGE;
     magic.flags[MAGE] = 0x00000000;
     magic.flags[PRIEST] = 0x00000000;

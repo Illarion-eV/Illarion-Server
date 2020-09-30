@@ -35,9 +35,8 @@
 SpawnPoint::SpawnPoint(const position &pos, Coordinate Range, Coordinate Spawnrange, uint16_t Min_Spawntime,
                        uint16_t Max_Spawntime, bool Spawnall)
         : world(World::get()), spawnpos(pos), range(Range), spawnrange(Spawnrange), min_spawntime(Min_Spawntime),
-          max_spawntime(Max_Spawntime), spawnall(Spawnall) {
-    nextspawntime = Random::uniform(min_spawntime, max_spawntime);
-}
+          max_spawntime(Max_Spawntime), nextspawntime(Random::uniform(Min_Spawntime, Max_Spawntime)),
+          spawnall(Spawnall) {}
 
 //! add new Monstertyp to SpawnList...
 void SpawnPoint::addMonster(TYPE_OF_CHARACTER_ID type, int count) {

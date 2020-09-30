@@ -52,11 +52,11 @@ private:
     static const uint32_t MAXOPTIONS = 256;
     options_type options;
 
-    bool success;
+    bool success{false};
 
-    index_type selectedIndex;
+    index_type selectedIndex{0};
 
-    bool close;
+    bool close{false};
 
 public:
     SelectionDialog(const string &title, string text, const luabind::object &callback);

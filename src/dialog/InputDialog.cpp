@@ -25,9 +25,7 @@
 InputDialog::InputDialog(const string &title, string description, bool multiline, short maxChars,
                          const luabind::object &callback)
         : Dialog(title, "InputDialog", callback), description(std::move(description)), multiline(multiline),
-          maxChars(maxChars) {
-    success = false;
-}
+          maxChars(maxChars) {}
 
 auto InputDialog::getDescription() const -> const string & { return description; }
 

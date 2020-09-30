@@ -83,11 +83,7 @@ auto World::get() -> World * {
 World::World() {
     lastTurnIGDay = getTime("day");
 
-    usedAP = 0;
-
     startTime = std::chrono::steady_clock::now();
-
-    currentScript = nullptr;
 
     scriptDir = Config::instance().datadir() + std::string(SCRIPTSDIR);
 }

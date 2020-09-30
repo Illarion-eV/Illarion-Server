@@ -60,11 +60,10 @@ struct TilesModificatorStruct {
 };
 
 struct LongTimeEffectStruct {
-    uint16_t effectid;
+    uint16_t effectid = 0;
     std::string effectname;
     std::string scriptname;
     std::shared_ptr<LuaLongTimeEffectScript> script;
-    LongTimeEffectStruct() { effectid = 0; }
 };
 
 struct WeaponStruct {

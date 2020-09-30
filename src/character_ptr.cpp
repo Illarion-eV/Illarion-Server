@@ -23,8 +23,6 @@
 
 #include <stdexcept>
 
-character_ptr::character_ptr() { id = 0; }
-
 character_ptr::character_ptr(Character *p) {
     if (p != nullptr) {
         id = p->getId();

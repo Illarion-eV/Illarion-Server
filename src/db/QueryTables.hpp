@@ -30,7 +30,7 @@ namespace Database {
 class QueryTables {
 private:
     std::string tables;
-    bool oneTable;
+    bool oneTable{false};
 
 public:
     QueryTables(const QueryTables &org) = delete;
@@ -46,7 +46,7 @@ public:
     void setAccountTable(const std::string &table);
 
 protected:
-    QueryTables();
+    QueryTables() = default;
 
     void setOnlyOneTable(const bool &enabled);
     [[nodiscard]] auto buildQuerySegment() const -> const std::string &;

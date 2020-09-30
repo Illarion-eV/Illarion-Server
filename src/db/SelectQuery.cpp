@@ -28,12 +28,10 @@ using namespace Database;
 
 SelectQuery::SelectQuery() : QueryWhere(*Query::getConnection()) {
     setOnlyOneTable(false);
-    isDistinct = false;
 }
 
 SelectQuery::SelectQuery(const PConnection &connection) : Query(connection), QueryWhere(*connection) {
     setOnlyOneTable(false);
-    isDistinct = false;
 }
 
 void SelectQuery::addOrderBy(const std::string &column, const OrderDirection &dir) { addOrderBy("", column, dir); }

@@ -26,12 +26,12 @@ public:
     using attribute_t = unsigned short;
 
 private:
-    attribute_t baseValue;
-    int offset = 0;
-    attribute_t maximum;
+    attribute_t baseValue{0};
+    int offset{0};
+    attribute_t maximum{0};
 
 public:
-    Attribute();
+    Attribute() = default;
     explicit Attribute(attribute_t value);
     Attribute(attribute_t value, attribute_t maximum);
     void setBaseValue(attribute_t value);

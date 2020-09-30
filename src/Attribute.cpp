@@ -20,20 +20,9 @@
 
 #include "Attribute.hpp"
 
-Attribute::Attribute() {
-    baseValue = 0;
-    maximum = 0;
-}
+Attribute::Attribute(attribute_t value) : baseValue(value) {}
 
-Attribute::Attribute(attribute_t value) {
-    baseValue = value;
-    maximum = 0;
-}
-
-Attribute::Attribute(attribute_t value, attribute_t maximum) {
-    baseValue = value;
-    this->maximum = maximum;
-}
+Attribute::Attribute(attribute_t value, attribute_t maximum) : baseValue(value), maximum(maximum) {}
 
 void Attribute::setBaseValue(attribute_t value) {
     if (value > maximum && maximum != 0) {

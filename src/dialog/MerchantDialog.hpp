@@ -70,14 +70,14 @@ private:
     product_list primaryRequests;
     product_list secondaryRequests;
 
-    Result result;
+    Result result{playerAborts};
 
-    index_type purchaseIndex;
-    Item::number_type purchaseAmount;
+    index_type purchaseIndex{0};
+    Item::number_type purchaseAmount{0};
 
     ScriptItem saleItem;
 
-    ListType lookAtList;
+    ListType lookAtList{listSell};
 
 public:
     MerchantDialog(const string &title, const luabind::object &callback);

@@ -372,7 +372,7 @@ public:
      */
     std::array<Item, MAX_BODY_ITEMS + MAX_BELT_SLOTS> items = {};
 
-    Container *backPackContents;
+    Container *backPackContents{nullptr};
 
     /**
      * map to the different depots

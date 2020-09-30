@@ -88,6 +88,8 @@ public:
     void workoutCommands();
     void checkFightMode();
 
+    std::shared_ptr<NetInterface> Connection;
+
     //! die letzte IP des Spielers als std::string
     std::string last_ip;
 
@@ -126,16 +128,10 @@ public:
     std::string realname;
 
     //! Screen resolution;
-    uint8_t screenwidth{};
-    uint8_t screenheight{};
+    uint8_t screenwidth{0};
+    uint8_t screenheight{0};
 
     auto getScreenRange() const -> Coordinate override;
-
-    //! die Verbindung zum Spieler, -- Achtung ! Die Verbindung wird NICHT im Destruktor gel�cht
-    // , da sie auch extern erstellt wird und durch das Einfgen in diverse
-    // Vektoren oft Destruktoren fr tempor�e Player aufgerufen werden, die noch
-    // ben�igte Verbindungen l�chen wrden!
-    std::shared_ptr<NetInterface> Connection;
 
 private:
     std::set<uint32_t> visibleChars;

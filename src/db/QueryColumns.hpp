@@ -39,8 +39,8 @@ public:
 
 private:
     std::string columns;
-    bool hideTable;
-    columnIndex nextColumn;
+    bool hideTable{false};
+    columnIndex nextColumn{0};
 
 public:
     auto addColumn(const std::string &column) -> columnIndex;
@@ -60,7 +60,7 @@ public:
     }
 
 protected:
-    QueryColumns();
+    QueryColumns() = default;
 
     [[nodiscard]] auto buildQuerySegment() const -> const std::string &;
     [[nodiscard]] auto getColumnCount() const -> uint32_t;

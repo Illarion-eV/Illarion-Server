@@ -23,12 +23,7 @@
 #include "data/Data.hpp"
 
 MerchantDialog::MerchantDialog(const string &title, const luabind::object &callback)
-        : Dialog(title, "MerchantDialog", callback) {
-    lookAtList = listSell;
-    result = playerAborts;
-    purchaseIndex = 0;
-    purchaseAmount = 0;
-}
+        : Dialog(title, "MerchantDialog", callback) {}
 
 auto MerchantDialog::getOffersSize() const -> index_type { return offers.size(); }
 

@@ -32,8 +32,8 @@ BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(def
     initHeader();
 }
 
-BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize) : BasicCommand(defByte) {
-    baseBufferSize = bsize;
+BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize)
+        : BasicCommand(defByte), baseBufferSize(bsize) {
     buffer.resize(baseBufferSize);
     initHeader();
 }

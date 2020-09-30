@@ -25,8 +25,6 @@
 
 using namespace Database;
 
-QueryTables::QueryTables() { oneTable = false; }
-
 void QueryTables::addServerTable(const std::string &table) {
     if (oneTable && !tables.empty()) {
         throw std::logic_error("Only one table is allowed for this query.");

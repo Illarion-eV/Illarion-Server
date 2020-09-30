@@ -35,7 +35,7 @@ namespace Database {
 class SelectQuery : Query, public QueryColumns, public QueryTables, public QueryWhere {
 private:
     std::string orderBy;
-    bool isDistinct;
+    bool isDistinct{false};
 
 public:
     enum OrderDirection { ASC, DESC };

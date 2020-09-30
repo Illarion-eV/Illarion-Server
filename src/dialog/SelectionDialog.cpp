@@ -23,11 +23,7 @@
 #include <utility>
 
 SelectionDialog::SelectionDialog(const string &title, string text, const luabind::object &callback)
-        : Dialog(title, "SelectionDialog", callback), text(std::move(text)) {
-    success = false;
-    close = false;
-    selectedIndex = 0;
-}
+        : Dialog(title, "SelectionDialog", callback), text(std::move(text)) {}
 
 auto SelectionDialog::getText() const -> const string & { return text; }
 

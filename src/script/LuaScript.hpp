@@ -193,8 +193,8 @@ private:
         return T();
     }
 
-    std::string _filename;
-    std::string luafile = {};
+    std::string _filename{};
+    std::string luafile{};
     using QuestScripts = std::multimap<const std::string, std::shared_ptr<LuaScript>>;
     QuestScripts questScripts;
 };

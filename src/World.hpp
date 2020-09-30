@@ -78,13 +78,9 @@ struct WeatherStruct {
 
 struct BlockingObject {
     enum BlockingType { BT_ITEM = 0, BT_CHARACTER = 1, BT_NONE = 2 };
-    BlockingType blockingType;
-    Character *blockingChar;
+    BlockingType blockingType = BT_NONE;
+    Character *blockingChar = nullptr;
     ScriptItem blockingItem;
-    BlockingObject() {
-        blockingType = BT_NONE;
-        blockingChar = nullptr;
-    }
 };
 
 /**
@@ -163,7 +159,7 @@ public:
     std::unique_ptr<MonitoringClients> monitoringClientList = nullptr;
 
     std::chrono::steady_clock::time_point startTime;
-    long usedAP;
+    long usedAP{0};
 
     int ap{}; /**< actionpoints since the last loop call **/
 
@@ -187,7 +183,7 @@ public:
     /**
      *the current script which is called
      */
-    LuaScript *currentScript;
+    LuaScript *currentScript{nullptr};
 
     ~World() override = default;
 

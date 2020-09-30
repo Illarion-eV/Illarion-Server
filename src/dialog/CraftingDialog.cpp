@@ -21,15 +21,7 @@
 #include "dialog/CraftingDialog.hpp"
 
 CraftingDialog::CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDuration, const luabind::object &callback)
-        : Dialog(title, "CraftingDialog", callback) {
-    this->sfx = sfx;
-    this->sfxDuration = sfxDuration;
-    result = playerAborts;
-    craftableId = 0;
-    craftableAmount = 0;
-    ingredientIndex = 0;
-    lastAddedCraftableId = 0;
-}
+        : Dialog(title, "CraftingDialog", callback), sfx(sfx), sfxDuration(sfxDuration) {}
 
 auto CraftingDialog::getSfx() const -> uint16_t { return sfx; }
 

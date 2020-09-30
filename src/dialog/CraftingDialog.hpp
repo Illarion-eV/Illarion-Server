@@ -109,13 +109,13 @@ private:
     groups_t groups;
     craftables_t craftables;
 
-    Result result{};
+    Result result{playerAborts};
 
-    uint8_t craftableId{};
-    Item::number_type craftableAmount{};
-    index_t ingredientIndex{};
+    uint8_t craftableId{0};
+    Item::number_type craftableAmount{0};
+    index_t ingredientIndex{0};
 
-    uint8_t lastAddedCraftableId{};
+    uint8_t lastAddedCraftableId{0};
 
 public:
     CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDuration, const luabind::object &callback);

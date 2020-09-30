@@ -34,7 +34,7 @@ class ConnectionManager {
 private:
     static ConnectionManager instance;
     string connectionString;
-    bool isOperational;
+    bool isOperational{false};
 
 public:
     ConnectionManager(const ConnectionManager &org) = delete;
@@ -48,7 +48,7 @@ public:
     auto getConnection() -> PConnection;
 
 private:
-    ConnectionManager();
+    ConnectionManager() = default;
     void addConnectionParameterIfValid(const string &param, const string &value);
 };
 } // namespace Database

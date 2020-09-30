@@ -26,10 +26,10 @@
 class Character;
 
 class character_ptr {
-    TYPE_OF_CHARACTER_ID id;
+    TYPE_OF_CHARACTER_ID id{0};
 
 public:
-    character_ptr();
+    character_ptr() = default;
     explicit character_ptr(Character *p);
 
     [[nodiscard]] auto get() const -> Character *;

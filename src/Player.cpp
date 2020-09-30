@@ -55,9 +55,8 @@
 #include <sstream>
 #include <utility>
 
-Player::Player(std::shared_ptr<NetInterface> newConnection) : Connection(std::move(newConnection)) {
-    screenwidth = 0;
-    screenheight = 0;
+Player::Player(std::shared_ptr<NetInterface> newConnection)
+        : Connection(std::move(newConnection)), pw(Connection->getLoginData()->getPassword()) {
     Character::setAlive(true);
     SetMovement(movement_type::walk);
 
@@ -68,7 +67,6 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) : Connection(std::mo
 
     const auto loginCommand = Connection->getLoginData();
     setName(loginCommand->getLoginName());
-    pw = loginCommand->getPassword();
 
     check_logindata();
 

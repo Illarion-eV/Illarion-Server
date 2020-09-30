@@ -44,16 +44,10 @@ extern "C" {
 lua_State *LuaScript::_luaState = nullptr;
 bool LuaScript::initialized = false;
 
-LuaScript::LuaScript() {
+LuaScript::LuaScript() { initialize(); }
+
+LuaScript::LuaScript(std::string filename) : _filename(filename) {
     initialize();
-
-    _filename = "";
-}
-
-LuaScript::LuaScript(std::string filename) {
-    initialize();
-
-    _filename = filename;
 
     luafile = Config::instance().scriptdir();
     std::replace(filename.begin(), filename.end(), '.', '/');

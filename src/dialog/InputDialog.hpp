@@ -28,7 +28,7 @@ private:
     string description;
     bool multiline{};
     short maxChars{};
-    bool success{};
+    bool success{false};
     string input;
 
 public:
