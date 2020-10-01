@@ -263,7 +263,7 @@ add_library(server
 
 target_link_libraries(server db)
 
-find_package(Lua 5.2 REQUIRED)
+find_package(Lua 5.2 EXACT REQUIRED)
 include_directories(${LUA_INCLUDE_DIR})
 target_link_libraries(server ${LUA_LIBRARIES})
 target_link_libraries(server /usr/lib/x86_64-linux-gnu/libluabind.so)
