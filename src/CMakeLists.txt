@@ -19,6 +19,8 @@ configure_file(
     "${CMAKE_CURRENT_BINARY_DIR}/version.hpp"
 )
 
+add_compile_definitions(LUABIND_USE_CXX11)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -275,10 +277,12 @@ target_link_libraries(server ${Boost_LIBRARIES})
 find_package(Threads REQUIRED)
 target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT})
 target_compile_options(server PRIVATE ${WARNINGS})
+target_compile_features(server PRIVATE cxx_std_17)
 
 add_executable(illarion main.cpp)
 target_link_libraries(illarion server)
 target_link_libraries(illarion stdc++fs)
+target_compile_features(illarion PRIVATE cxx_std_17)
 
 install (TARGETS illarion DESTINATION bin)
 

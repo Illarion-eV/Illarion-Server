@@ -15,6 +15,7 @@ file(COPY maps DESTINATION ${CMAKE_BINARY_DIR}/test/data/map/import)
 macro (run_test name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries(${name} server db gtest gmock gmock_main stdc++fs)
+    target_compile_features(${name} PRIVATE cxx_std_17)
     add_test(${name} ${name})
 endmacro(run_test)
 
