@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.13)
-project(illarion)
+
+project(illarion
+        VERSION 0.9.15
+        DESCRIPTION "Server for the Illarion MORPG"
+        HOMEPAGE_URL "https://github.com/Illarion-eV/Illarion-Server")
 
 enable_testing()
 include(GoogleTest)

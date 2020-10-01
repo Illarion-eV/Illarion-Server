@@ -282,8 +282,7 @@ target_link_libraries(illarion stdc++fs)
 
 install (TARGETS illarion DESTINATION bin)
 
-include (InstallRequiredSystemLibraries)
-set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
-set (CPACK_PACKAGE_VERSION_MAJOR "0")
-set (CPACK_PACKAGE_VERSION_MINOR "9")
-include (CPack)
+include(InstallRequiredSystemLibraries)
+SET(CPACK_GENERATOR "DEB")
+set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/CPackConfig.cmake")
+include(CPack)
