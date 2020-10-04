@@ -284,7 +284,14 @@ target_link_libraries(illarion server)
 target_link_libraries(illarion stdc++fs)
 target_compile_features(illarion PRIVATE cxx_std_17)
 
-install (TARGETS illarion DESTINATION bin)
+install(TARGETS illarion
+        DESTINATION bin
+        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+                    GROUP_EXECUTE GROUP_WRITE GROUP_READ)
+install(FILES ../setup/illarion.conf
+        DESTINATION /etc
+        PERMISSIONS OWNER_WRITE OWNER_READ
+                    GROUP_WRITE GROUP_READ)
 
 include(InstallRequiredSystemLibraries)
 SET(CPACK_GENERATOR "DEB")
