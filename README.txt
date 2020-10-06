@@ -19,7 +19,7 @@ Requirements
 
    GCC 8.3
    GNU Make 4.2.1
-   Automake 1.16.1 or CMake 3.13.4
+   CMake 3.13.4
    Boost 1.67.0
    PostgreSQL 11.9
    libpqxx 6.2.5
@@ -33,21 +33,24 @@ Requirements
 
 Build
 
-   With Automake:
+   mkdir ../build
+   cd ../build
+   cmake ../<repo dir>
+   cmake --build .
+   (add -j at the end to use as many threads as possible)
 
-     ./bootstrap
-     mkdir .build
-     cd .build
-     ../configure
-     make
+Test
 
-   With CMake:
+   ctest
 
-     mkdir .build
-     cd .build
-     cmake ..
-     make
+Install
+
+   cmake --install
+
+Debian Packaging
+
+   cpack
 
      ______________________________________________________________________
 
-   Last modified: Jun 24, 2020
+   Last modified: Oct 6, 2020

@@ -18,10 +18,6 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "Config.hpp"
 #include "InitialConnection.hpp"
 #include "Logger.hpp"
