@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+
+  db:
+    image: vilarion/illarion-postgres
+    restart: always
+    volumes:
+      - type: volume
+        source: illarion-db
+        target: /var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: illarion
+      POSTGRES_PASSWORD: illarion
+      POSTGRES_DB: illarion
+
+  illarion:
+    image: vilarion/illarion
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "3012:3012"
+    volumes:
+      - type: bind
+        source: /home/andreas/src/scripts
+        target: /scripts
+        read_only: true
+      - type: bind
+        source: /home/andreas/src/maps
+        target: /maps
+        read_only: true
+
+
+  phppgadmin:
+    restart: always
+    image: dockage/phppgadmin:latest
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      - PHP_PG_ADMIN_SERVER_DESC=Local Illarion
+      - PHP_PG_ADMIN_SERVER_HOST=db
+      - PHP_PG_ADMIN_SERVER_DEFAULT_DB=illarion
+
+volumes:
+  illarion-db:
