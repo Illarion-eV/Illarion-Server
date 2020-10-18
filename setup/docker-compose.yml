@@ -14,7 +14,7 @@ services:
       POSTGRES_PASSWORD: illarion
       POSTGRES_DB: illarion
 
-  illarion:
+  game-server:
     image: vilarion/illarion
     restart: unless-stopped
     depends_on:
@@ -23,11 +23,11 @@ services:
       - "3012:3012"
     volumes:
       - type: bind
-        source: /home/andreas/src/scripts
+        source: ${SCRIPT_PATH}
         target: /scripts
         read_only: true
       - type: bind
-        source: /home/andreas/src/maps
+        source: ${MAP_PATH}
         target: /maps
         read_only: true
 
@@ -44,5 +44,19 @@ services:
       - PHP_PG_ADMIN_SERVER_HOST=db
       - PHP_PG_ADMIN_SERVER_DEFAULT_DB=illarion
 
+  website:
+     build:
+       context: ${WEBSITE_PATH}/setup
+       dockerfile: ${WEBSITE_PATH}/setup/Dockerfile
+     restart: always
+     depends_on:
+       - db
+     ports:
+       - "443:443"
+     volumes:
+       - type: bind
+         source: ${WEBSITE_PATH}
+         target: /var/www/illarion
+         read_only: true
 volumes:
   illarion-db:
