@@ -1,4 +1,17 @@
-find_package(Git)
+find_package( Boost 1.67.0 REQUIRED COMPONENTS system graph )
+find_package( Filesystem REQUIRED )
+find_package( Git )
+find_package( Pqxx 6.2 REQUIRED )
+find_package( Luabind REQUIRED )
+find_package( Threads REQUIRED )
+
+add_subdirectory( data )
+add_subdirectory( db )
+add_subdirectory( dialog )
+add_subdirectory( map )
+add_subdirectory( netinterface )
+add_subdirectory( script )
+
 if (GIT_FOUND)
     execute_process(
         COMMAND ${GIT_EXECUTABLE} describe --long
@@ -21,268 +34,59 @@ configure_file(
 
 add_compile_definitions(LUABIND_USE_CXX11)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+add_library( server STATIC "" )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/db)
-add_subdirectory(db)
+target_sources( server 
+    PRIVATE
+        Attribute.cpp
+        a_star.cpp
+        Character.cpp
+        CharacterContainer.cpp
+        character_ptr.cpp
+        Config.cpp
+        Container.cpp
+        InitialConnection.cpp
+        Item.cpp
+        Logger.cpp
+        LongTimeAction.cpp
+        LongTimeCharacterEffects.cpp
+        LongTimeEffect.cpp
+        main_help.cpp
+        MonitoringClients.cpp
+        Monster.cpp
+        NewClientView.cpp
+        NPC.cpp
+        Player.cpp
+        PlayerManager.cpp
+        PlayerWorkoutCommands.cpp
+        Random.cpp
+        Showcase.cpp
+        SpawnPoint.cpp
+        Timer.cpp
+        utility.cpp
+        WaypointList.cpp
+        World.cpp
+        WorldIMPLAdmin.cpp
+        WorldIMPLCharacterMoves.cpp
+        WorldIMPLItemMoves.cpp
+        WorldIMPLPlayer.cpp
+        WorldIMPLScriptHelp.cpp
+        WorldIMPLTalk.cpp
+        WorldIMPLTools.cpp
+)
 
-add_library(server
-    data/ArmorObjectTable.cpp
-    data/ArmorObjectTable.hpp
-    data/ContainerObjectTable.cpp
-    data/ContainerObjectTable.hpp
-    data/Data.cpp
-    data/Data.hpp
-    data/ItemTable.cpp
-    data/ItemTable.hpp
-    data/LongTimeEffectTable.cpp
-    data/LongTimeEffectTable.hpp
-    data/MonsterAttackTable.cpp
-    data/MonsterAttackTable.hpp
-    data/MonsterTable.cpp
-    data/MonsterTable.hpp
-    data/NaturalArmorTable.cpp
-    data/NaturalArmorTable.hpp
-    data/NPCTable.cpp
-    data/NPCTable.hpp
-    data/QuestNodeTable.cpp
-    data/QuestNodeTable.hpp
-    data/QuestScriptStructTable.hpp
-    data/QuestTable.cpp
-    data/QuestTable.hpp
-    data/RaceTable.cpp
-    data/RaceTable.hpp
-    data/RaceTypeTable.cpp
-    data/RaceTypeTable.hpp
-    data/ScheduledScriptsTable.cpp
-    data/ScheduledScriptsTable.hpp
-    data/ScriptStructTable.hpp
-    data/ScriptVariablesTable.cpp
-    data/ScriptVariablesTable.hpp
-    data/SkillTable.cpp
-    data/SkillTable.hpp
-    data/SpellTable.cpp
-    data/SpellTable.hpp
-    data/StructTable.hpp
-    data/Table.hpp
-    data/TilesModificatorTable.cpp
-    data/TilesModificatorTable.hpp
-    data/TilesTable.cpp
-    data/TilesTable.hpp
-    data/TriggerTable.cpp
-    data/TriggerTable.hpp
-    data/WeaponObjectTable.cpp
-    data/WeaponObjectTable.hpp
-    dialog/CraftingDialog.cpp
-    dialog/CraftingDialog.hpp
-    dialog/Dialog.cpp
-    dialog/Dialog.hpp
-    dialog/InputDialog.cpp
-    dialog/InputDialog.hpp
-    dialog/MerchantDialog.cpp
-    dialog/MerchantDialog.hpp
-    dialog/MessageDialog.cpp
-    dialog/MessageDialog.hpp
-    dialog/SelectionDialog.cpp
-    dialog/SelectionDialog.hpp
-    map/Field.cpp
-    map/Field.hpp
-    map/Map.cpp
-    map/Map.hpp
-    map/WorldMap.cpp
-    map/WorldMap.hpp
-    netinterface/protocol/BBIWIClientCommands.cpp
-    netinterface/protocol/BBIWIClientCommands.hpp
-    netinterface/protocol/BBIWIServerCommands.cpp
-    netinterface/protocol/BBIWIServerCommands.hpp
-    netinterface/protocol/ClientCommands.cpp
-    netinterface/protocol/ClientCommands.hpp
-    netinterface/protocol/ServerCommands.cpp
-    netinterface/protocol/ServerCommands.hpp
-    netinterface/BasicClientCommand.cpp
-    netinterface/BasicClientCommand.hpp
-    netinterface/BasicCommand.cpp
-    netinterface/BasicCommand.hpp
-    netinterface/BasicServerCommand.cpp
-    netinterface/BasicServerCommand.hpp
-    netinterface/ByteBuffer.cpp
-    netinterface/ByteBuffer.hpp
-    netinterface/CommandFactory.cpp
-    netinterface/CommandFactory.hpp
-    netinterface/NetInterface.cpp
-    netinterface/NetInterface.hpp
-    script/binding/armor_struct.cpp
-    script/binding/attack_boni.cpp
-    script/binding/binding.hpp
-    script/binding/character.cpp
-    script/binding/character_skillvalue.cpp
-    script/binding/colour.cpp
-    script/binding/item_struct.cpp
-    script/binding/container.cpp
-    script/binding/crafting_dialog.cpp
-    script/binding/field.cpp
-    script/binding/input_dialog.cpp
-    script/binding/item.cpp
-    script/binding/item_look_at.cpp
-    script/binding/long_time_action.cpp
-    script/binding/long_time_character_effects.cpp
-    script/binding/long_time_effect.cpp
-    script/binding/long_time_effect_struct.cpp
-    script/binding/merchant_dialog.cpp
-    script/binding/message_dialog.cpp
-    script/binding/monster.cpp
-    script/binding/monster_armor.cpp
-    script/binding/npc.cpp
-    script/binding/player.cpp
-    script/binding/position.cpp
-    script/binding/random.cpp
-    script/binding/script_item.cpp
-    script/binding/script_variables_table.cpp
-    script/binding/selection_dialog.cpp
-    script/binding/tiles_struct.cpp
-    script/binding/waypoint_list.cpp
-    script/binding/weapon_struct.cpp
-    script/binding/weather_struct.cpp
-    script/binding/world.cpp
-    script/forwarder.cpp
-    script/forwarder.hpp
-    script/LuaDepotScript.cpp
-    script/LuaDepotScript.hpp
-    script/LuaItemScript.cpp
-    script/LuaItemScript.hpp
-    script/LuaLearnScript.cpp
-    script/LuaLearnScript.hpp
-    script/LuaLoginScript.cpp
-    script/LuaLoginScript.hpp
-    script/LuaLogoutScript.cpp
-    script/LuaLogoutScript.hpp
-    script/LuaLongTimeEffectScript.cpp
-    script/LuaLongTimeEffectScript.hpp
-    script/LuaLookAtItemScript.cpp
-    script/LuaLookAtItemScript.hpp
-    script/LuaLookAtPlayerScript.cpp
-    script/LuaLookAtPlayerScript.hpp
-    script/LuaMagicScript.cpp
-    script/LuaMagicScript.hpp
-    script/LuaMonsterScript.cpp
-    script/LuaMonsterScript.hpp
-    script/LuaNPCScript.cpp
-    script/LuaNPCScript.hpp
-    script/LuaPlayerDeathScript.cpp
-    script/LuaPlayerDeathScript.hpp
-    script/LuaQuestScript.cpp
-    script/LuaQuestScript.hpp
-    script/LuaReloadScript.cpp
-    script/LuaReloadScript.hpp
-    script/LuaScheduledScript.cpp
-    script/LuaScheduledScript.hpp
-    script/LuaScript.cpp
-    script/LuaScript.hpp
-    script/LuaTestSupportScript.cpp
-    script/LuaTestSupportScript.hpp
-    script/LuaTileScript.cpp
-    script/LuaTileScript.hpp
-    script/LuaTriggerScript.cpp
-    script/LuaTriggerScript.hpp
-    script/LuaWeaponScript.cpp
-    script/LuaWeaponScript.hpp
-    script/server.cpp
-    script/server.hpp
-    a_star.cpp
-    a_star.hpp
-    Attribute.cpp
-    Attribute.hpp
-    Character.cpp
-    Character.hpp
-    character_ptr.cpp
-    character_ptr.hpp
-    CharacterContainer.cpp
-    CharacterContainer.hpp
-    Config.cpp
-    Config.hpp
-    constants.hpp
-    Container.cpp
-    Container.hpp
-    globals.hpp
-    InitialConnection.cpp
-    InitialConnection.hpp
-    Item.cpp
-    Item.hpp
-    ItemLookAt.hpp
-    Language.hpp
-    Logger.cpp
-    Logger.hpp
-    LongTimeAction.cpp
-    LongTimeAction.hpp
-    LongTimeCharacterEffects.cpp
-    LongTimeCharacterEffects.hpp
-    LongTimeEffect.cpp
-    LongTimeEffect.hpp
-    main_help.cpp
-    main_help.hpp
-    MonitoringClients.cpp
-    MonitoringClients.hpp
-    Monster.cpp
-    Monster.hpp
-    NewClientView.cpp
-    NewClientView.hpp
-    NPC.cpp
-    NPC.hpp
-    Player.cpp
-    Player.hpp
-    PlayerManager.cpp
-    PlayerManager.hpp
-    PlayerWorkoutCommands.cpp
-    Random.cpp
-    Random.hpp
-    Scheduler.hpp
-    Scheduler.tcc
-    Showcase.cpp
-    Showcase.hpp
-    SpawnPoint.cpp
-    SpawnPoint.hpp
-    stream.hpp
-    TableStructs.hpp
-    thread_safe_vector.hpp
-    Timer.cpp
-    Timer.hpp
-    tuningConstants.hpp
-    types.hpp
-    utility.cpp
-    utility.hpp
-    WaypointList.cpp
-    WaypointList.hpp
-    World.cpp
-    World.hpp
-    WorldIMPLAdmin.cpp
-    WorldIMPLCharacterMoves.cpp
-    WorldIMPLItemMoves.cpp
-    WorldIMPLPlayer.cpp
-    WorldIMPLScriptHelp.cpp
-    WorldIMPLTalk.cpp
-    WorldIMPLTools.cpp)
+target_link_libraries( server PRIVATE data dialog map netinterface script )
+target_link_libraries( server PUBLIC db )
+target_link_libraries( server PUBLIC Boost::system Boost::graph Threads::Threads )
+# Additional links for the private interface libraries
+target_link_libraries( server PUBLIC Luabind::Luabind Pqxx::Pqxx std::filesystem )
 
-target_link_libraries(server db)
+target_include_directories( server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} )
+target_compile_features( server PUBLIC cxx_std_17 )
 
-find_package(Lua 5.2 EXACT REQUIRED)
-include_directories(${LUA_INCLUDE_DIR})
-target_link_libraries(server ${LUA_LIBRARIES})
-target_link_libraries(server /usr/lib/x86_64-linux-gnu/libluabind.so)
-
-find_package(Boost 1.67.0 REQUIRED COMPONENTS system graph)
-include_directories(${Boost_INCLUDE_DIRS})
-target_link_libraries(server ${Boost_LIBRARIES})
-
-find_package(Threads REQUIRED)
-target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT})
-target_compile_options(server PRIVATE ${WARNINGS})
-target_compile_features(server PRIVATE cxx_std_17)
-
-add_executable(illarion main.cpp)
-target_link_libraries(illarion server)
-target_link_libraries(illarion stdc++fs)
-target_compile_features(illarion PRIVATE cxx_std_17)
+add_executable( illarion main.cpp )
+target_link_libraries( illarion PRIVATE server )
+target_compile_features( illarion PRIVATE cxx_std_17 )
 
 install(TARGETS illarion
         DESTINATION bin
@@ -293,7 +97,7 @@ install(FILES ../setup/illarion.conf
         PERMISSIONS OWNER_WRITE OWNER_READ
                     GROUP_WRITE GROUP_READ)
 
-include(InstallRequiredSystemLibraries)
-SET(CPACK_GENERATOR "DEB")
-set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/CPackConfig.cmake")
-include(CPack)
+include( InstallRequiredSystemLibraries )
+set( CPACK_GENERATOR "DEB" )
+set( CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/CPackConfig.cmake" )
+include( CPack )
