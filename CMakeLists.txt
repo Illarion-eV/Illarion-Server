@@ -12,11 +12,7 @@ include(GoogleTest)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if( MSVC )
-        add_compile_options( /W4 /WX )
-else()
-        add_compile_options( -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -pedantic-errors )
-endif()
+add_compile_options( -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -pedantic-errors )
 
 add_subdirectory(src)
 add_subdirectory(test)
