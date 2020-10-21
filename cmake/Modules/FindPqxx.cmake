@@ -1,9 +1,3 @@
-if( Pqxx_FIND_REQUIRED )
-  find_package( PostgreSQL REQUIRED )
-else()
-  find_package( PostgreSQL )
-endif()
-
 # Find PostGreSQL C++ library and header file
 # Sets
 #   PQXX_FOUND         to 0 or 1 depending on result
@@ -53,10 +47,10 @@ if( NOT PQXX_INCLUDE_DIRS OR NOT PQXX_LIBRARIES )
     endif()
   endif()
 
-  if( PostgreSQL_FOUND AND PQXX_HEADER_DIR AND PQXX_LIBRARY )
+  if( PQXX_HEADER_DIR AND PQXX_LIBRARY )
     set( PQXX_FOUND TRUE CACHE BOOL "PQXX found" FORCE )
-    set( PQXX_INCLUDE_DIRS "${PQXX_HEADER_DIR};${PostgreSQL_INCLUDE_DIRS}" CACHE STRING "Include directories for PostGreSQL C++ library"  FORCE )
-    set( PQXX_LIBRARIES "${PQXX_LIBRARY};${PostgreSQL_LIBRARIES}" CACHE STRING "Link libraries for PostGreSQL C++ interface" FORCE )
+    set( PQXX_INCLUDE_DIRS "${PQXX_HEADER_DIR}" CACHE STRING "Include directories for PostGreSQL C++ library"  FORCE )
+    set( PQXX_LIBRARIES "${PQXX_LIBRARY}" CACHE STRING "Link libraries for PostGreSQL C++ interface" FORCE )
 
     mark_as_advanced( PQXX_INCLUDE_DIRS PQXX_LIBRARIES )
   endif()
@@ -69,13 +63,6 @@ endif()
 
 if( NOT TARGET Pqxx::Pqxx AND PQXX_FOUND )
   add_library( Pqxx::Pqxx INTERFACE IMPORTED )
-  target_include_directories( Pqxx::Pqxx INTERFACE ${PQXX_HEADER_PATH} )
-
-  if( TARGET PostgreSQL::PostgreSQL )
-    target_link_libraries( Pqxx::Pqxx INTERFACE ${PQXX_LIBRARY} PostgreSQL::PostgreSQL )
-  else()
-    # Support outdated cmake versions
-    target_link_libraries( Pqxx::Pqxx INTERFACE ${PQXX_LIBRARIES} )
-    target_include_directories( Pqxx::Pqxx INTERFACE ${PQXX_INCLUDE_DIRS} )
-  endif()
+  target_include_directories( Pqxx::Pqxx INTERFACE ${PQXX_INCLUDE_DIRS} )
+  target_link_libraries( Pqxx::Pqxx INTERFACE ${PQXX_LIBRARIES} )
 endif()
