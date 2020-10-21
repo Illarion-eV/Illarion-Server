@@ -22,7 +22,7 @@ class Player {};
 
 class MockMonster : public Monster {
 public:
-    MockMonster() = default;;
+    MockMonster() = default;
 
     MOCK_METHOD(bool, isNewPlayer, (), (const override));
     MOCK_METHOD(bool, pageGM, (const std::string &), (override));

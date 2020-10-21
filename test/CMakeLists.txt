@@ -6,17 +6,14 @@ mark_as_advanced(
     gtest_disable_pthreads gtest_force_shared_crt gtest_hide_internal_symbols
 )
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
-find_package(Lua 5.2 EXACT REQUIRED)
-include_directories(${LUA_INCLUDE_DIR})
-
-file(COPY maps DESTINATION ${CMAKE_BINARY_DIR}/test/data/map/import)
+file(COPY maps DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/map/import)
 
 macro (run_test name)
     add_executable(${name} ${name}.cpp)
-    target_link_libraries(${name} server db gtest gmock gmock_main stdc++fs)
-    target_compile_features(${name} PRIVATE cxx_std_17)
-    add_test(${name} ${name})
+    target_link_libraries( ${name} PRIVATE server )
+    target_link_libraries( ${name} PRIVATE gtest gmock gmock_main  )
+    target_compile_features( ${name} PRIVATE cxx_std_17 )
+    add_test( ${name} ${name} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
 endmacro(run_test)
 
 run_test(CharacterContainerTest)

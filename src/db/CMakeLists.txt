@@ -1,30 +1,22 @@
-add_library(db
-    Connection.cpp
-    Connection.hpp
-    ConnectionManager.cpp
-    ConnectionManager.hpp
-    DeleteQuery.cpp
-    DeleteQuery.hpp
-    InsertQuery.cpp
-    InsertQuery.hpp
-    Query.cpp
-    Query.hpp
-    QueryAssign.cpp
-    QueryAssign.hpp
-    QueryColumns.cpp
-    QueryColumns.hpp
-    QueryTables.cpp
-    QueryTables.hpp
-    QueryWhere.cpp
-    QueryWhere.hpp
-    Result.hpp
-    SchemaHelper.cpp
-    SchemaHelper.hpp
-    SelectQuery.cpp
-    SelectQuery.hpp
-    UpdateQuery.cpp
-    UpdateQuery.hpp)
+find_package( Pqxx 6.2 REQUIRED )
 
-target_link_libraries(db /usr/lib/x86_64-linux-gnu/libpqxx-6.2.so)
-target_compile_options(db PRIVATE ${WARNINGS})
-target_compile_features(db PRIVATE cxx_std_17)
+add_library( db STATIC "" )
+target_sources( db 
+    PRIVATE
+        Connection.cpp
+        ConnectionManager.cpp
+        DeleteQuery.cpp
+        InsertQuery.cpp
+        Query.cpp
+        QueryAssign.cpp
+        QueryColumns.cpp
+        QueryTables.cpp
+        QueryWhere.cpp
+        SchemaHelper.cpp
+        SelectQuery.cpp
+        UpdateQuery.cpp
+)
+
+target_link_libraries( db PUBLIC Pqxx::Pqxx )
+target_include_directories( db PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR} )
+target_compile_features( db PUBLIC cxx_std_17 )

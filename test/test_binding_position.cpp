@@ -113,7 +113,7 @@ TEST_F(position_bindings, test_constructors) {
 	auto retval = script.test<position, position>(pos);
 	EXPECT_EQ(23, retval.x);
 	}
-};
+}
 
 auto main(int argc, char **argv) -> int {
     ::testing::InitGoogleTest(&argc, argv);
