@@ -8,8 +8,6 @@
 #   LUABIND_VERSION_MINOR - the minor version of Luabind
 #   LUABIND_VERSION_PATCH - the patch version of Luabind
 
-find_package( Lua )
-
 if( TARGET Luabind::Luabind )
     return()
 endif()
@@ -58,6 +56,8 @@ if( NOT LUABIND_FOUND )
         endif()
     endif()
 
+    find_package( Lua )
+
     if( LUA_FOUND AND LUABIND_LIBRARY AND LUABIND_HEADER_DIR )
         set( LUABIND_FOUND 1 CACHE BOOL "Luabind found" FORCE )
         set( LUABIND_INCLUDE_DIRS "${LUABIND_HEADER_DIR};${LUA_INCLUDE_DIR}" CACHE STRING "Include directories for Luabind library" FORCE )
@@ -71,9 +71,7 @@ if( NOT LUABIND_FOUND )
 endif()
 
 if( LUABIND_INCLUDE_DIRS AND LUABIND_LIBRARIES )
-    if( NOT TARGET Luabind::Luabind )
-        add_library( Luabind::Luabind INTERFACE IMPORTED )
-        target_link_libraries( Luabind::Luabind INTERFACE ${LUABIND_LIBRARIES} )
-        target_include_directories( Luabind::Luabind INTERFACE ${LUABIND_INCLUDE_DIRS} )
-    endif()
+    add_library( Luabind::Luabind INTERFACE IMPORTED )
+    target_link_libraries( Luabind::Luabind INTERFACE ${LUABIND_LIBRARIES} )
+    target_include_directories( Luabind::Luabind INTERFACE ${LUABIND_INCLUDE_DIRS} )
 endif()
