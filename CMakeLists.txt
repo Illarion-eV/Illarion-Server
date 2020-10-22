@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 
+add_subdirectory( extern EXCLUDE_FROM_ALL )
 
 project(illarion
         VERSION 0.9.15
@@ -12,8 +13,6 @@ enable_testing()
 include(GoogleTest)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-add_subdirectory( extern EXCLUDE_FROM_ALL )
 
 add_compile_options( -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -pedantic-errors )
 
