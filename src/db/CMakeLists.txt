@@ -1,4 +1,4 @@
-find_package( Pqxx 6.2 REQUIRED )
+find_package( Pqxx REQUIRED )
 
 add_library( db STATIC "" )
 target_sources( db 

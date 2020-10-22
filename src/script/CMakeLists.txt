@@ -1,7 +1,7 @@
-add_subdirectory( binding )
-
 find_package( Boost REQUIRED )
 find_package( Luabind REQUIRED )
+
+add_subdirectory( binding )
 
 add_library( script INTERFACE )
 target_sources( script 

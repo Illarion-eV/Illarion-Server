@@ -1,6 +1,6 @@
-add_subdirectory( protocol )
+find_package( Boost REQUIRED )
 
-find_package( Boost 1.67.0 REQUIRED )
+add_subdirectory( protocol )
 
 add_library( netinterface INTERFACE )
 target_sources( netinterface 
