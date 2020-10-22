@@ -1,4 +1,4 @@
-find_package( Boost REQUIRED )
+find_package( Boost QUIET REQUIRED )
 
 add_subdirectory( protocol )
 

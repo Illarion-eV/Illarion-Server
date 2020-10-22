@@ -1,4 +1,4 @@
-find_package( Boost 1.67.0 REQUIRED )
+find_package( Boost QUIET REQUIRED )
 find_package( Filesystem REQUIRED )
 
 add_library( data INTERFACE )
