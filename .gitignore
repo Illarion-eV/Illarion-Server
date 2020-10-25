@@ -2,5 +2,6 @@
 *.*~
 *.log
 !.gitignore
+!.github
 *tags*
 compile_commands.json
