@@ -1,5 +1,4 @@
-
-  Illarion
+ Illarion
 
 Objectives
 
@@ -24,12 +23,14 @@ Requirements
    PostgreSQL 11.9
    libpqxx 6.2.5
    Lua 5.2.4
+
+Dependencies fetched automatically during the build
+
    Luabind 0.9.1 with some bugfixes from
         http://illarion.org/repos/apt/debian (binary)
      or https://github.com/vilarion/luabind/tree/illarion (source)
-   range-v3 0.4.0
-
-   googletest 1.10 is included as a git submodule
+   range-v3 0.11.0
+   googletest 1.10
 
 Build
 

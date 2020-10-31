@@ -25,7 +25,7 @@ jobs:
           apt-get update
           export DEBIAN_FRONTEND=noninteractive
           apt-get -y -qq install build-essential cmake git
-          apt-get -y -qq install libboost-graph-dev libboost-system-dev libpqxx-dev lua5.2-dev librange-v3-dev
+          apt-get -y -qq install libboost-graph-dev libboost-system-dev libpqxx-dev lua5.2-dev
       
       - uses: actions/checkout@v2
         with:

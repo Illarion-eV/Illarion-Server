@@ -78,7 +78,7 @@ target_sources( server
 
 target_link_libraries( server PRIVATE data dialog map netinterface script )
 target_link_libraries( server PUBLIC db )
-target_link_libraries( server PUBLIC Boost::system Boost::graph Threads::Threads )
+target_link_libraries( server PUBLIC Boost::system Boost::graph Threads::Threads range-v3::range-v3 )
 # Additional links for the private interface libraries
 target_link_libraries( server PUBLIC Luabind::Luabind Pqxx::Pqxx std::filesystem )
 
