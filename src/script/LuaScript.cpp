@@ -32,13 +32,13 @@ extern "C" {
 #include "Player.hpp"
 #include "World.hpp"
 #include "data/Data.hpp"
-#include "luabind/luabind.hpp"
 #include "script/binding/binding.hpp"
 #include "script/forwarder.hpp"
 
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
+#include <luabind/luabind.hpp>
 #include <luabind/raw_policy.hpp>
 
 lua_State *LuaScript::_luaState = nullptr;

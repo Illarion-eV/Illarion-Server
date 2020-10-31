@@ -22,9 +22,9 @@
 
 #include "Logger.hpp"
 #include "World.hpp"
-#include "luabind/luabind.hpp"
 
 #include <iostream>
+#include <luabind/luabind.hpp>
 
 LuaReloadScript::LuaReloadScript(const std::string &filename) : LuaScript(filename) {}
 

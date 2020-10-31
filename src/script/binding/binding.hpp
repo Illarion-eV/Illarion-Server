@@ -18,7 +18,7 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "luabind/luabind.hpp"
+#include <luabind/luabind.hpp>
 
 struct ArmorStruct;
 struct AttackBoni;

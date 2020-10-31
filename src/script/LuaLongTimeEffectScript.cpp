@@ -23,8 +23,8 @@
 #include "Character.hpp"
 #include "LongTimeEffect.hpp"
 #include "character_ptr.hpp"
-#include "luabind/luabind.hpp"
 
+#include <luabind/luabind.hpp>
 #include <utility>
 
 LuaLongTimeEffectScript::LuaLongTimeEffectScript(const std::string &filename, LongTimeEffectStruct effectStruct)
