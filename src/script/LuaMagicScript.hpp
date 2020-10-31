@@ -41,9 +41,6 @@ public:
     void CastMagicOnCharacter(Character *caster, Character *target, unsigned char ltastate);
     void CastMagicOnField(Character *caster, const position &pos, unsigned char ltastate);
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;
-
-private:
-    void init_functions();
 };
 
 #endif
