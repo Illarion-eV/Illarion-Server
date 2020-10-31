@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 3.13)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 
-add_subdirectory( extern EXCLUDE_FROM_ALL )
 
 project(illarion
         VERSION 0.9.15
         DESCRIPTION "Server for the Illarion MORPG"
         HOMEPAGE_URL "https://github.com/Illarion-eV/Illarion-Server")
+
+find_package( Boost REQUIRED )
+add_subdirectory( extern EXCLUDE_FROM_ALL )
 
 enable_testing()
 include(GoogleTest)

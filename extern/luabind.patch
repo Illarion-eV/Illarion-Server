@@ -1,0 +1,14 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -5,6 +5,11 @@
+ 
+ cmake_minimum_required(VERSION 2.8.3)
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
++
++if (POLICY CMP0048)
++  cmake_policy(SET CMP0048 NEW)
++endif (POLICY CMP0048)
++
+ project(LuaBind)
+ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+ 
