@@ -18,6 +18,10 @@
 
 #include "Logger.hpp"
 
+#include "constants.hpp"
+
+#include <iostream>
+
 LogType<LogPriority::EMERGENCY>::type Logger::emergency;
 LogType<LogPriority::ALERT>::type Logger::alert;
 LogType<LogPriority::CRITICAL>::type Logger::critical;
@@ -28,6 +32,10 @@ LogType<LogPriority::INFO>::type Logger::info;
 LogType<LogPriority::DEBUG>::type Logger::debug;
 
 void log_message(LogPriority priority, LogFacility facility, const std::string &message) {
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
-    syslog(static_cast<int>(priority) | static_cast<int>(facility), "%s", message.c_str());
+    if constexpr (useSysLog) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
+        syslog(static_cast<int>(priority) | static_cast<int>(facility), "%s", message.c_str());
+    } else {
+        std::cout << message << '\n';
+    }
 }

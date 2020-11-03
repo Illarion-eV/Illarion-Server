@@ -24,6 +24,12 @@
 #include <cstdint>
 #include <string>
 
+#ifdef SYSLOG
+constexpr bool useSysLog = true;
+#else
+constexpr bool useSysLog = false;
+#endif
+
 constexpr auto illarionBirthTime = 950742000; // 17.2.2000 (UTC+1)
 constexpr auto illarionTimeFactor = 3;
 
