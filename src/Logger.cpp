@@ -36,6 +36,6 @@ void log_message(LogPriority priority, LogFacility facility, const std::string &
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
         syslog(static_cast<int>(priority) | static_cast<int>(facility), "%s", message.c_str());
     } else {
-        std::cout << message << '\n';
+        std::cout << message << std::endl;
     }
 }
