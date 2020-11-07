@@ -1,0 +1,2 @@
+rsync -a --exclude=.git/ --delete /scripts/ /usr/share/illarion/scripts
+java -jar /opt/easyCompiler/compiler.jar --npc-dir=/usr/share/illarion/scripts/npc --quest-dir=/usr/share/illarion/scripts/questsystem /usr/share/illarion/scripts/npc /usr/share/illarion/scripts/questsystem/.quests > /dev/null

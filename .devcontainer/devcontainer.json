@@ -1,0 +1,43 @@
+{
+	"name": "Illarion",
+	
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "game-server",
+	"workspaceFolder": "/workspace",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": { 
+		"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+		"cmakeExplorer.buildDir": "../tmp/illarion/build",
+		"cmake.buildDirectory": "/tmp/illarion/build",
+		"cmake.generator": "Ninja",
+		"cmake.toolset": "GCC 8.3.0",
+		"cmake.debugConfig": {
+			"args": [ "${workspaceFolder}/setup/illarion.conf" ],
+		},
+		"terminal.integrated.shell.linux": null,
+		"sqltools.connections": [
+			{
+				"previewLimit": 50,
+				"server": "localhost",
+				"port": 5432,
+				"driver": "PostgreSQL",
+				"name": "Illarion",
+				"database": "illarion",
+				"username": "illarion",
+				"password": "illarion"
+			}
+		]
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"fredericbonnet.cmake-test-adapter",
+		"ms-vscode.cmake-tools",
+		"ms-vscode.cpptools",
+		"mtxr.sqltools-driver-pg",
+		"twxs.cmake"
+	],
+
+	"appPort": ["13000:3012"]
+}

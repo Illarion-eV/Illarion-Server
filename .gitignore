@@ -1,8 +1,12 @@
 .*
 *.*~
 *.log
+!.devcontainer
+!.vscode
+!.gitattributes
 !.gitignore
 !.github
+!.env.dist
 !.clang-format
 !.clang-tidy
 *tags*

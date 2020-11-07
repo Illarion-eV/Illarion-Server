@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  game-server:
+    build:
+      context: .
+      args:
+        VARIANT: buster
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - type: bind
+        source: ${SCRIPT_PATH}
+        target: /scripts
+        read_only: true
+      - type: bind
+        source: ${MAP_PATH}
+        target: /maps
+        read_only: true
+      - type: volume
+        source: pg-socket
+        target: /var/run/postgresql
+      - type: bind
+        source: ..
+        target: /workspace
+      - type: volume
+        source: build-dir
+        target: /tmp/illarion/build
+    
+    # Overrides default command so things don't shut down after the process ends.
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+    network_mode: service:db
+    
+  db:
+    image: ghcr.io/illarion-ev/illarion-dev-postgres
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: local-db
+        target: /var/lib/postgresql/data
+      - type: volume
+        source: pg-socket
+        target: /var/run/postgresql
+    environment:
+      POSTGRES_USER: illarion
+      POSTGRES_PASSWORD: illarion
+      POSTGRES_DB: illarion
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U illarion"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 100M
+        reservations:
+          memory: 20M
+      
+volumes:
+  local-db:
+  pg-socket:
+  build-dir:
