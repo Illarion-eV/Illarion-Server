@@ -50,7 +50,7 @@ auto operator<<(std::ostream &os, const ConfigEntryBase &config_entry) -> std::o
 
 template <typename T> class ConfigEntry : public ConfigEntryBase {
 public:
-    ConfigEntry(const std::string &config_name, T default_value = {})
+    explicit ConfigEntry(const std::string &config_name, T default_value = {})
             : ConfigEntryBase{config_name}, _item{std::move(default_value)} {}
 
     operator T() const { return _item; }
@@ -80,25 +80,25 @@ public:
         return *_instance;
     }
 
-    const ConfigEntry<std::string> datadir = {"datadir", "./data/"};
-    const ConfigEntry<std::string> scriptdir = {"scriptdir", "./script/"};
+    const ConfigEntry<std::string> datadir{"datadir", "./data/"};
+    const ConfigEntry<std::string> scriptdir{"scriptdir", "./script/"};
 
-    const ConfigEntry<uint16_t> port = {"port", 3012};
+    const ConfigEntry<uint16_t> port{"port", 3012};
 
-    const ConfigEntry<std::string> postgres_db = {"postgres_db", "illarion"};
-    const ConfigEntry<std::string> postgres_user = {"postgres_user", "illarion"};
-    const ConfigEntry<std::string> postgres_pwd = {"postgres_pwd", "illarion"};
-    const ConfigEntry<std::string> postgres_host = {"postgres_host", "/var/run/postgresql"};
-    const ConfigEntry<uint16_t> postgres_port = {"postgres_port", 5432};
-    const ConfigEntry<std::string> postgres_schema_server = {"postgres_schema_server", "server"};
-    const ConfigEntry<std::string> postgres_schema_account = {"postgres_schema_account", "accounts"};
+    const ConfigEntry<std::string> postgres_db{"postgres_db", "illarion"};
+    const ConfigEntry<std::string> postgres_user{"postgres_user", "illarion"};
+    const ConfigEntry<std::string> postgres_pwd{"postgres_pwd", "illarion"};
+    const ConfigEntry<std::string> postgres_host{"postgres_host", "/var/run/postgresql"};
+    const ConfigEntry<uint16_t> postgres_port{"postgres_port", 5432};
+    const ConfigEntry<std::string> postgres_schema_server{"postgres_schema_server", "server"};
+    const ConfigEntry<std::string> postgres_schema_account{"postgres_schema_account", "accounts"};
 
-    const ConfigEntry<int16_t> debug = {"debug", 0};
+    const ConfigEntry<int16_t> debug{"debug", 0};
 
-    const ConfigEntry<uint16_t> clientversion = {"clientversion", 122};
-    const ConfigEntry<int16_t> playerstart_x = {"playerstart_x", 0};
-    const ConfigEntry<int16_t> playerstart_y = {"playerstart_y", 0};
-    const ConfigEntry<int16_t> playerstart_z = {"playerstart_z", 0};
+    const ConfigEntry<uint16_t> clientversion{"clientversion", 122};
+    const ConfigEntry<int16_t> playerstart_x{"playerstart_x", 0};
+    const ConfigEntry<int16_t> playerstart_y{"playerstart_y", 0};
+    const ConfigEntry<int16_t> playerstart_z{"playerstart_z", 0};
 
 private:
     static std::unique_ptr<Config> _instance;
