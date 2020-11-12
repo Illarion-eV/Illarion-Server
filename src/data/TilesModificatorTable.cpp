@@ -47,7 +47,7 @@ auto TilesModificatorTable::assignTable(const Database::ResultTuple &row) -> Til
 
 auto TilesModificatorTable::passable(TYPE_OF_ITEM_ID id) -> bool {
     if (exists(id)) {
-        const auto &modStruct = (*this)[id];
+        const auto &modStruct = this->operator[](id);
         return (modStruct.Modificator & FLAG_BLOCKPATH) == 0 || (modStruct.Modificator & FLAG_MAKEPASSABLE) != 0;
     }
 

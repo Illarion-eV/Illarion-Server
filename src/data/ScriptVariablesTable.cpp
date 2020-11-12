@@ -41,7 +41,7 @@ auto ScriptVariablesTable::assignTable(const Database::ResultTuple &row) -> std:
 
 auto ScriptVariablesTable::find(const std::string &id, std::string &ret) -> bool {
     if (exists(id)) {
-        ret = (*this)[id];
+        ret = this->operator[](id);
         return true;
     }
     ret = "";
