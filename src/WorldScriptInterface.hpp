@@ -84,7 +84,8 @@ public:
 
     // Related to WorldMap
 
-    [[nodiscard]] virtual auto blockingLineOfSight(const position &start, const position &end) const -> std::list<BlockingObject> = 0;
+    [[nodiscard]] virtual auto blockingLineOfSight(const position &start, const position &end) const
+            -> std::list<BlockingObject> = 0;
     virtual void changeTile(short int tileid, const position &pos) = 0;
     virtual auto createSavedArea(uint16_t tile, const position &origin, uint16_t height, uint16_t width) -> bool = 0;
     virtual auto fieldAt(const position &pos) -> map::Field & = 0;

@@ -118,10 +118,10 @@ protected:
     bool dataOk = true; /*<true if data is ok, will set to false if a command wants to read more data from the buffer as
                     is in it, or if the checksum isn't the same*/
     std::vector<unsigned char> msg_buffer{}; /*< the current buffer for this command*/
-    uint16_t length = 0;       /*< the length of this command */
-    uint16_t bytesRetrieved = 0; /*< how much bytes are currently decoded */
-    uint16_t checkSum = 0;       /*< the checksum transmitted in the header*/
-    uint32_t crc = 0;            /*< the checksum of the data*/
+    uint16_t length = 0;                     /*< the length of this command */
+    uint16_t bytesRetrieved = 0;             /*< how much bytes are currently decoded */
+    uint16_t checkSum = 0;                   /*< the checksum transmitted in the header*/
+    uint32_t crc = 0;                        /*< the checksum of the data*/
 
     uint16_t minAP; /*< number of ap necessary to perform command */
     std::chrono::steady_clock::time_point incomingTime;

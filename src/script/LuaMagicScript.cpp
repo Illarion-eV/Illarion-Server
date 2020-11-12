@@ -24,8 +24,7 @@
 #include "Item.hpp"
 #include "character_ptr.hpp"
 
-LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct & /*unused*/) : LuaScript(filename) {
-}
+LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct & /*unused*/) : LuaScript(filename) {}
 
 void LuaMagicScript::CastMagic(Character *caster, unsigned char ltastate) {
     character_ptr fuse_caster(caster);

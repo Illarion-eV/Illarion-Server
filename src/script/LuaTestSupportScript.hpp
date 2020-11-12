@@ -36,9 +36,9 @@ public:
     LuaTestSupportScript(LuaTestSupportScript &&) = default;
     auto operator=(LuaTestSupportScript &&) -> LuaTestSupportScript & = default;
 
-    template <typename... Args> void test(const Args &... args) { callEntrypoint("test", args...); }
+    template <typename... Args> void test(const Args &...args) { callEntrypoint("test", args...); }
 
-    template <typename T, typename... Args> auto test(const Args &... args) -> T {
+    template <typename T, typename... Args> auto test(const Args &...args) -> T {
         return callEntrypoint<T, Args...>("test", args...);
     }
 };

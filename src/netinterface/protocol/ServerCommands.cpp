@@ -253,8 +253,7 @@ AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : Basic
 
         if (receivingPlayer->knows(player)) {
             addStringToBuffer(player->getName());
-        }
-        else {
+        } else {
             addStringToBuffer("");
         }
 

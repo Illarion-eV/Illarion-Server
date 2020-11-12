@@ -133,7 +133,7 @@ protected:
     static lua_State *_luaState;
     static bool initialized;
 
-    template <typename... Args> void callEntrypoint(const std::string &entrypoint, const Args &... args) {
+    template <typename... Args> void callEntrypoint(const std::string &entrypoint, const Args &...args) {
         setCurrentWorldScript();
 
         if (!callQuestEntrypoint(entrypoint, args...)) {
@@ -141,7 +141,7 @@ protected:
         }
     }
     template <typename T, typename... Args>
-    auto callEntrypoint(const std::string &entrypoint, const Args &... args) -> T {
+    auto callEntrypoint(const std::string &entrypoint, const Args &...args) -> T {
         setCurrentWorldScript();
         callQuestEntrypoint(entrypoint, args...);
         return safeCall<T, Args...>(entrypoint, args...);
@@ -160,7 +160,7 @@ private:
     auto buildEntrypoint(const std::string &entrypoint) -> luabind::object;
     [[nodiscard]] auto existsQuestEntrypoint(const std::string &entrypoint) const -> bool;
 
-    template <typename... Args> auto callQuestEntrypoint(const std::string &entrypoint, const Args &... args) -> bool {
+    template <typename... Args> auto callQuestEntrypoint(const std::string &entrypoint, const Args &...args) -> bool {
         auto entrypointRange = questScripts.equal_range(entrypoint);
         bool foundQuest = false;
 
@@ -171,7 +171,7 @@ private:
         return foundQuest;
     }
 
-    template <typename... Args> void safeCall(const std::string &entrypoint, const Args &... args) {
+    template <typename... Args> void safeCall(const std::string &entrypoint, const Args &...args) {
         try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
             luaEntrypoint(args...);
@@ -179,7 +179,7 @@ private:
             writeErrorMsg();
         }
     }
-    template <typename T, typename... Args> auto safeCall(const std::string &entrypoint, const Args &... args) -> T {
+    template <typename T, typename... Args> auto safeCall(const std::string &entrypoint, const Args &...args) -> T {
         try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
             auto result = luaEntrypoint(args...);

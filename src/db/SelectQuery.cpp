@@ -26,9 +26,7 @@
 
 using namespace Database;
 
-SelectQuery::SelectQuery() : QueryWhere(*Query::getConnection()) {
-    setOnlyOneTable(false);
-}
+SelectQuery::SelectQuery() : QueryWhere(*Query::getConnection()) { setOnlyOneTable(false); }
 
 SelectQuery::SelectQuery(const PConnection &connection) : Query(connection), QueryWhere(*connection) {
     setOnlyOneTable(false);
