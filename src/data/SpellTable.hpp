@@ -55,7 +55,7 @@ struct SpellStruct {};
 
 class SpellTable : public ScriptStructTable<Spell, SpellStruct, LuaMagicScript> {
 public:
-    auto getTableName() -> std::string override;
+    auto getTableName() const -> std::string override;
     auto getColumnNames() -> std::vector<std::string> override;
     auto assignId(const Database::ResultTuple &row) -> Spell override;
     auto assignTable(const Database::ResultTuple &row) -> SpellStruct override;

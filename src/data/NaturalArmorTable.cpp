@@ -22,7 +22,7 @@
 
 #include "types.hpp"
 
-auto NaturalArmorTable::getTableName() -> std::string { return "naturalarmor"; }
+auto NaturalArmorTable::getTableName() const -> std::string { return "naturalarmor"; }
 
 auto NaturalArmorTable::getColumnNames() -> std::vector<std::string> {
     return {"nar_race", "nar_strokearmor", "nar_puncturearmor", "nar_thrustarmor"};

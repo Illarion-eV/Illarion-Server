@@ -27,7 +27,7 @@
 
 class RaceTable : public StructTable<uint16_t, RaceStruct> {
 public:
-    auto getTableName() -> std::string override;
+    auto getTableName() const -> std::string override;
     auto getColumnNames() -> std::vector<std::string> override;
     auto assignId(const Database::ResultTuple &row) -> uint16_t override;
     auto assignTable(const Database::ResultTuple &row) -> RaceStruct override;

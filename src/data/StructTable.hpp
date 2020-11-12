@@ -89,7 +89,7 @@ public:
     auto end() const -> typename ContainerType::const_iterator { return structs.cend(); }
 
 protected:
-    virtual auto getTableName() -> std::string = 0;
+    virtual auto getTableName() const -> std::string = 0;
     virtual auto getColumnNames() -> std::vector<std::string> = 0;
     virtual auto assignId(const Database::ResultTuple &row) -> IdType = 0;
     virtual auto assignTable(const Database::ResultTuple &row) -> StructType = 0;

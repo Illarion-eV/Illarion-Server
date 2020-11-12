@@ -22,7 +22,7 @@
 
 #include "constants.hpp"
 
-auto TilesTable::getTableName() -> std::string { return "tiles"; }
+auto TilesTable::getTableName() const -> std::string { return "tiles"; }
 
 auto TilesTable::getColumnNames() -> std::vector<std::string> {
     return {"til_id", "til_isnotpassable", "til_german", "til_english", "til_walkingcost", "til_script"};

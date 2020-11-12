@@ -28,7 +28,7 @@
 
 class TilesTable : public ScriptStructTable<TYPE_OF_TILE_ID, TilesStruct, LuaTileScript> {
 public:
-    auto getTableName() -> std::string override;
+    auto getTableName() const -> std::string override;
     auto getColumnNames() -> std::vector<std::string> override;
     auto assignId(const Database::ResultTuple &row) -> TYPE_OF_TILE_ID override;
     auto assignTable(const Database::ResultTuple &row) -> TilesStruct override;

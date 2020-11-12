@@ -20,7 +20,7 @@
 
 #include "ItemTable.hpp"
 
-auto ItemTable::getTableName() -> std::string { return "items"; }
+auto ItemTable::getTableName() const -> std::string { return "items"; }
 
 auto ItemTable::getColumnNames() -> std::vector<std::string> {
     return {"itm_id",

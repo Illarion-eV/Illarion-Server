@@ -35,7 +35,7 @@ private:
     using quest_starts_type = std::multimap<position, TYPE_OF_QUEST_ID, PositionComparison>;
 
 public:
-    auto getTableName() -> std::string override;
+    auto getTableName() const -> std::string override;
     auto getColumnNames() -> std::vector<std::string> override;
     auto assignId(const Database::ResultTuple &row) -> TYPE_OF_QUEST_ID override;
     auto assignTable(const Database::ResultTuple &row) -> QuestStruct override;

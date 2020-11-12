@@ -20,7 +20,7 @@
 
 #include "data/ArmorObjectTable.hpp"
 
-auto ArmorObjectTable::getTableName() -> std::string { return "armor"; }
+auto ArmorObjectTable::getTableName() const -> std::string { return "armor"; }
 
 auto ArmorObjectTable::getColumnNames() -> std::vector<std::string> {
     return {"arm_itemid",           "arm_bodyparts", "arm_puncture",  "arm_stroke", "arm_thrust",

@@ -20,7 +20,7 @@
 
 #include "data/SpellTable.hpp"
 
-auto SpellTable::getTableName() -> std::string { return "spells"; }
+auto SpellTable::getTableName() const -> std::string { return "spells"; }
 
 auto SpellTable::getColumnNames() -> std::vector<std::string> {
     return {"spl_spellid", "spl_magictype", "spl_scriptname"};

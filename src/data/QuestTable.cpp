@@ -24,7 +24,7 @@
 
 #include <cmath>
 
-auto QuestTable::getTableName() -> std::string { return "quests"; }
+auto QuestTable::getTableName() const -> std::string { return "quests"; }
 
 auto QuestTable::getColumnNames() -> std::vector<std::string> { return {"qst_id", "qst_script"}; }
 

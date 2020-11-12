@@ -20,7 +20,7 @@
 
 #include "data/LongTimeEffectTable.hpp"
 
-auto LongTimeEffectTable::getTableName() -> std::string { return "longtimeeffects"; }
+auto LongTimeEffectTable::getTableName() const -> std::string { return "longtimeeffects"; }
 
 auto LongTimeEffectTable::getColumnNames() -> std::vector<std::string> {
     return {"lte_effectid", "lte_effectname", "lte_scriptname"};

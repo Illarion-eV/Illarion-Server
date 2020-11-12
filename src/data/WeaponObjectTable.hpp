@@ -28,7 +28,7 @@
 
 class WeaponObjectTable : public ScriptStructTable<TYPE_OF_ITEM_ID, WeaponStruct, LuaWeaponScript> {
 public:
-    auto getTableName() -> std::string override;
+    auto getTableName() const -> std::string override;
     auto getColumnNames() -> std::vector<std::string> override;
     auto assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID override;
     auto assignTable(const Database::ResultTuple &row) -> WeaponStruct override;

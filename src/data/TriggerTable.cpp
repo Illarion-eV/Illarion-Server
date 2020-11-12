@@ -20,7 +20,7 @@
 
 #include "data/TriggerTable.hpp"
 
-auto TriggerTable::getTableName() -> std::string { return "triggerfields"; }
+auto TriggerTable::getTableName() const -> std::string { return "triggerfields"; }
 
 auto TriggerTable::getColumnNames() -> std::vector<std::string> {
     return {"tgf_posx", "tgf_posy", "tgf_posz", "tgf_script"};

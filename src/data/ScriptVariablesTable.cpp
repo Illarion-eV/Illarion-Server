@@ -27,7 +27,7 @@
 
 #include <iostream>
 
-auto ScriptVariablesTable::getTableName() -> std::string { return "scriptvariables"; }
+auto ScriptVariablesTable::getTableName() const -> std::string { return "scriptvariables"; }
 
 auto ScriptVariablesTable::getColumnNames() -> std::vector<std::string> { return {"svt_ids", "svt_string"}; }
 

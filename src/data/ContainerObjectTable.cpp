@@ -20,7 +20,7 @@
 
 #include "data/ContainerObjectTable.hpp"
 
-auto ContainerObjectTable::getTableName() -> std::string { return "container"; }
+auto ContainerObjectTable::getTableName() const -> std::string { return "container"; }
 
 auto ContainerObjectTable::getColumnNames() -> std::vector<std::string> { return {"con_itemid", "con_slots"}; }
 
