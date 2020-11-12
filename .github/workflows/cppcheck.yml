@@ -1,0 +1,25 @@
+name: cppcheck
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+  # Run tests for any PRs.
+  pull_request:
+
+env:
+  CHECKS: --std=c++17 --enable=warning,style,performance,portability --inconclusive
+
+jobs:
+  # Run tests.
+  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run cppcheck
+        run: docker run -v $GITHUB_WORKSPACE/src:/src ghcr.io/illarion-ev/illarion-server-tools-cppcheck cppcheck $CHECKS -j $(nproc) --error-exitcode=1 -q -I. .
