@@ -86,7 +86,7 @@ auto reloadTables() -> bool {
     Logger::notice(LogFacility::Script) << "Loading data and scripts ..." << Log::end;
 
     for (auto &table : getTables()) {
-        success = success && table->reloadBuffer();
+        success = table->reloadBuffer();
 
         if (!success) {
             break;
