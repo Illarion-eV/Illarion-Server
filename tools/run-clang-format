@@ -1,0 +1,2 @@
+SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+docker run --rm -v $SCRIPTPATH/..:/src ghcr.io/illarion-ev/illarion-server-tools-clang sh -c "find src/ -iname '*.hpp' -o -iname '*.cpp' | xargs clang-format -i"
