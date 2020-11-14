@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+
+  clang-format:
+    image: ghcr.io/illarion-ev/illarion-server-tools-clang
+    volumes:
+      - type: bind
+        source: ..
+        target: /src
+    command: sh -c "find src/ -iname '*.hpp' -o -iname '*.cpp' | xargs clang-format -i"
+    network_mode: none
