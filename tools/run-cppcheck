@@ -1,4 +1,4 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 pushd $SCRIPTPATH > /dev/null
-docker-compose -f cppcheck.yml run -q --rm cppcheck
+docker-compose -f cppcheck.yml run --rm cppcheck
 popd > /dev/null
