@@ -1,4 +1,4 @@
-name: cppcheck
+name: Code Review
 
 on:
   push:
@@ -10,9 +10,7 @@ on:
   pull_request:
 
 jobs:
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
+  cppcheck:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,3 +18,12 @@ jobs:
 
       - name: Run cppcheck
         run: tools/run-cppcheck
+
+  clang-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run clang-format
+        run: tools/run-clang-format && git diff --exit-code
