@@ -3,8 +3,7 @@ name: Code Review
 on:
   push:
     branches:
-      - master
-      - develop
+      - '**'
 
   # Run tests for any PRs.
   pull_request:
