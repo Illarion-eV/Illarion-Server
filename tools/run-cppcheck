@@ -1,2 +1,2 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-docker run --rm -v $SCRIPTPATH/../src:/src ghcr.io/illarion-ev/illarion-server-tools-cppcheck cppcheck --std=c++17 --enable=warning,style,performance,portability --inconclusive -j $(nproc) --error-exitcode=1 -q -I. .
+docker run --rm -v $SCRIPTPATH/../src:/src ghcr.io/illarion-ev/illarion-server-tools-cppcheck cppcheck --std=c++17 --enable=warning,style,performance,portability --inconclusive -j $(nproc) --error-exitcode=1 -q --suppress=functionStatic:db/InsertQuery.hpp -I. .
