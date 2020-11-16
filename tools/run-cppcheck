@@ -1,4 +1,6 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 pushd $SCRIPTPATH > /dev/null
 docker-compose -f cppcheck.yml run --rm cppcheck
+exit_code=$?
 popd > /dev/null
+exit "$exit_code"
