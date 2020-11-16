@@ -26,3 +26,12 @@ jobs:
 
       - name: Run clang-format
         run: tools/run-clang-format && git diff --exit-code
+
+  clang-tidy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run clang-tidy
+        run: tools/run-clang-tidy
