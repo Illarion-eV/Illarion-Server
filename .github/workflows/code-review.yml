@@ -1,12 +1,6 @@
 name: Code Review
 
-on:
-  push:
-    branches:
-      - '**'
-
-  # Run tests for any PRs.
-  pull_request:
+on: [push, pull_request]
 
 jobs:
   cppcheck:
@@ -17,6 +11,9 @@ jobs:
 
       - name: Run cppcheck
         run: tools/run-cppcheck
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_ID: ${{ github.job }}
 
   clang-format:
     runs-on: ubuntu-latest
@@ -35,3 +32,6 @@ jobs:
 
       - name: Run clang-tidy
         run: tools/run-clang-tidy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_ID: ${{ github.job }}
