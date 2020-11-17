@@ -1,6 +1,15 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 pushd $SCRIPTPATH > /dev/null
-docker-compose -f clang-tidy.yml run --rm clang-tidy
+
+# Use named volume for build dir locally but bind it to /tmp on GitHub
+[ -z "$CI" ] || mkdir -p /tmp/build
+[ -z "$CI" ] && BIND_BUILD="build:/build" || BIND_BUILD="/tmp/build:/build"
+
+docker-compose -f clang-tidy.yml run --rm -v $BIND_BUILD clang-tidy
 exit_code=$?
+
+# Add check-run annotations on GitHub
+[ -z "$CI" ] || python3 annotate-clang-tidy.py
+
 popd > /dev/null
 exit "$exit_code"

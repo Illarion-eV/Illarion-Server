@@ -1,6 +1,16 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 pushd $SCRIPTPATH > /dev/null
-docker-compose -f cppcheck.yml run --rm cppcheck
+
+# Use XML output if run on GitHub and bind /tmp
+[ -z "$CI" ] || XML="--xml --xml-version=2 --output-file=/tmp/cppcheck.xml"
+[ -z "$CI" ] || BIND_TMP="-v /tmp:/tmp"
+
+docker-compose -f cppcheck.yml run --rm $BIND_TMP cppcheck sh -c "cppcheck --std=c++17 --enable=warning,style,performance,portability --inconclusive -j $(nproc) $XML --error-exitcode=1 -q --suppress=functionStatic:src/db/InsertQuery.hpp -Isrc/ src/"
 exit_code=$?
+
+# Print XML output and add check-run annotations on GitHub
+[ -z "$CI" ] || cat /tmp/cppcheck.xml
+[ -z "$CI" ] || python3 annotate-cppcheck.py
+
 popd > /dev/null
 exit "$exit_code"

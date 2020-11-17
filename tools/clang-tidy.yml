@@ -8,11 +8,5 @@ services:
       - type: bind
         source: ..
         target: /src
-      - type: volume
-        source: build
-        target: /build
 
     command: sh -c "run-clang-tidy.sh"
-
-volumes:
-  build:

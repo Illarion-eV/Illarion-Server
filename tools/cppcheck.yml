@@ -6,7 +6,6 @@ services:
     image: ghcr.io/illarion-ev/illarion-server-tools-cppcheck
     volumes:
       - type: bind
-        source: ../src
+        source: ..
         target: /src
-    command: sh -c "cppcheck --std=c++17 --enable=warning,style,performance,portability --inconclusive -j $$(nproc) --error-exitcode=1 -q --suppress=functionStatic:db/InsertQuery.hpp -I. ."
     network_mode: none
