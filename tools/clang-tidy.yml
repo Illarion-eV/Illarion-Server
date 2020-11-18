@@ -12,15 +12,7 @@ services:
         source: build
         target: /build
 
-        # deactivate until fixed:
-        # cppcoreguidelines-avoid-non-const-global-variables
-        # cppcoreguidelines-non-private-member-variables-in-classes
-        # cppcoreguidelines-owning-memory
-        # clang-analyzer-optin.cplusplus.VirtualCall
-        # cppcoreguidelines-pro-bounds-array-to-pointer-decay
-        # clang-analyzer-cplusplus.NewDeleteLeaks
-
-    command: sh -c "run-clang-tidy.sh '-*,cppcoreguidelines-*,modernize-*,bugprone-*,performance-*,readability-*,clang-analyzer-api*,clang-analyzer-core*,clang-analyzer-cplusplus*,clang-analyzer-dead*,clang-analyzer-fuchsia*,clang-analyzer-nullability*,clang-analyzer-optin*,clang-analyzer-security*,clang-analyzer-unix*,-cppcoreguidelines-avoid-non-const-global-variables,-cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-owning-memory,-clang-analyzer-optin.cplusplus.VirtualCall,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-clang-analyzer-cplusplus.NewDeleteLeaks'"
+    command: sh -c "run-clang-tidy.sh"
 
 volumes:
   build:

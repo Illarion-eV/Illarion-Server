@@ -3,5 +3,7 @@
 *.log
 !.gitignore
 !.github
+!.clang-format
+!.clang-tidy
 *tags*
 compile_commands.json
