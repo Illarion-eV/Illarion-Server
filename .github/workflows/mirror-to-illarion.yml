@@ -1,0 +1,31 @@
+name: mirror to illarion
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+    tags:
+
+jobs:
+  publish:
+    if: github.repository_owner == 'Illarion-eV'
+    runs-on: ubuntu-latest
+    env:
+      SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: setup ssh
+        run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.ILLARION_HOST_KEY }}" >> ~/.ssh/known_hosts
+            ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+            ssh-add - <<< "${{ secrets.ILLARION_GITOLITE }}"
+
+      - name: push to illarion
+        run: |
+            git push -f --tags ssh://git@illarion.org:1010/server.git ${GITHUB_REF}
