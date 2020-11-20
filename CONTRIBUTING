@@ -24,3 +24,8 @@ clang-analyzer-security*
 clang-analyzer-unix*
 
 New code must not add more cppcheck warnings, unless these are known false positives.
+
+You do not need to install these tools yourself. Using Docker, you can easily run the correct versions:
+* cppcheck: `tools/run-cppcheck`
+* clang-tidy: `tools/run-clang-tidy`
+* clang-format: `tools/run-clang-format`
