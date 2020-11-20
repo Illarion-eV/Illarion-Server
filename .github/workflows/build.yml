@@ -3,9 +3,7 @@ name: Build Illarion Server Image
 on:
   push:
     branches:
-      - '**'
     tags:
-      - 'v*.*.*.*'
   pull_request:
 
 env:
