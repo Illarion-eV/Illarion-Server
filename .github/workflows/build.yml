@@ -111,7 +111,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Login to GitHub
-        if: ${{ steps.docker-vars.outputs.has_docker_secret == 'true' }}
+        if: ${{ steps.docker-vars.outputs.has-docker-secret == 'true' }}
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
@@ -124,7 +124,7 @@ jobs:
           context: setup/docker/base
           file: setup/docker/base/Dockerfile
           platforms: linux/amd64
-          push: ${{ steps.docker-vars.outputs.has_docker_secret == 'true' }}
+          push: ${{ steps.docker-vars.outputs.has-docker-secret == 'true' }}
           tags: ${{ steps.docker-vars.outputs.tags }}
           labels: |
             org.opencontainers.image.title=${{ fromJson(steps.repo.outputs.result).name }}
