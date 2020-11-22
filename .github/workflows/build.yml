@@ -90,36 +90,14 @@ jobs:
           path: ${{runner.workspace}}
 
       - name: Prepare Docker environment
-        id: prepare
         shell: bash
-        run: |
-          mv ${{runner.workspace}}/illarion.deb $GITHUB_WORKSPACE/setup/docker/base/
-          DOCKER_IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}/base
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/}
-          elif [[ $GITHUB_REF == refs/heads/* ]]; then
-            VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
-          elif [[ $GITHUB_REF == refs/pull/* ]]; then
-            VERSION=pr-${{ github.event.number }}
-          fi
-          TAGS="${DOCKER_IMAGE}:${VERSION}"
-          if [[ $VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            PATCH=${VERSION%.*}
-            MINOR=${PATCH%.*}
-            MAJOR=${MINOR%.*}
-            TAGS="$TAGS,${DOCKER_IMAGE}:${PATCH},${DOCKER_IMAGE}:${MINOR},${DOCKER_IMAGE}:${MAJOR},${DOCKER_IMAGE}:latest"
-          elif [ "${{ github.event_name }}" = "push" ]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
-          fi
-          HAS_SECRET=false
-          DOCKER_SECRET=${{ secrets.GHCR_PAT }}
-          if [[ github.event_name != 'pull_request' && "${DOCKER_SECRET}" != '' ]]; then
-            HAS_SECRET=true
-          fi
-          echo ::set-output name=version::${VERSION}
-          echo ::set-output name=tags::${TAGS}
-          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-          echo ::set-output name=has_docker_secret::${HAS_SECRET}
+        run: mv ${{runner.workspace}}/illarion.deb $GITHUB_WORKSPACE/setup/docker/base/
+
+      - uses: Illarion-eV/Illarion-Docker-Version@v1
+        id: docker-vars
+        with:
+          image-name: ghcr.io/${{ github.repository }}/base
+          registry-secret: ${{ secrets.GHCR_PAT }}
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -133,12 +111,12 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Login to GitHub
-        if: ${{ steps.prepare.outputs.has_docker_secret == 'true' }}
+        if: ${{ steps.docker-vars.outputs.has_docker_secret == 'true' }}
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_PAT }}
+          password: ${{ steps.docker-vars.outputs.docker-secret }}
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -146,15 +124,15 @@ jobs:
           context: setup/docker/base
           file: setup/docker/base/Dockerfile
           platforms: linux/amd64
-          push: ${{ steps.prepare.outputs.has_docker_secret == 'true' }}
-          tags: ${{ steps.prepare.outputs.tags }}
+          push: ${{ steps.docker-vars.outputs.has_docker_secret == 'true' }}
+          tags: ${{ steps.docker-vars.outputs.tags }}
           labels: |
             org.opencontainers.image.title=${{ fromJson(steps.repo.outputs.result).name }}
             org.opencontainers.image.description=${{ fromJson(steps.repo.outputs.result).description }}
             org.opencontainers.image.url=${{ fromJson(steps.repo.outputs.result).html_url }}
             org.opencontainers.image.source=${{ fromJson(steps.repo.outputs.result).clone_url }}
-            org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
-            org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
+            org.opencontainers.image.version=${{ steps.docker-vars.outputs.version }}
+            org.opencontainers.image.created=${{ steps.docker-vars.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.licenses=${{ fromJson(steps.repo.outputs.result).license.spdx_id }}
           cache-from: type=local,src=/tmp/.buildx-cache
