@@ -18,7 +18,7 @@
 
 #include "Timer.hpp"
 
-Timer::Timer(duration interval) : lastIntervalExceeded(clock::now() - interval), interval(interval) {}
+Timer::Timer(duration interval) : lastIntervalExceeded(clock::now()), interval(interval) {}
 
 auto Timer::intervalExceeded() -> bool {
     auto now = clock::now();
