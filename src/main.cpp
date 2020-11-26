@@ -111,6 +111,8 @@ auto main(int argc, char *argv[]) -> int {
 
     running = true;
 
+    Logger::info(LogFacility::Other) << "Illarion is operational!" << Log::end;
+
     while (running) {
         // make sure we don't block the server with processing new players...
         int new_players_processed = 0;
@@ -158,7 +160,7 @@ auto main(int argc, char *argv[]) -> int {
 
     reset_sighandlers();
 
-    Logger::info(LogFacility::Other) << "Illarion has been successfully terminated! " << Log::end;
+    Logger::info(LogFacility::Other) << "Illarion has been terminated! " << Log::end;
 
     return 0;
 }
