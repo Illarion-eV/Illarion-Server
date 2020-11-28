@@ -134,8 +134,8 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ fromJson(steps.repo.outputs.result).name }}
             org.opencontainers.image.description=${{ fromJson(steps.repo.outputs.result).description }}
-            org.opencontainers.image.url=${{ fromJson(steps.repo.outputs.result).html_url }}
-            org.opencontainers.image.source=${{ fromJson(steps.repo.outputs.result).clone_url }}
+            org.opencontainers.image.url=${{ fromJson(steps.repo.outputs.result).homepage }}
+            org.opencontainers.image.source=${{ fromJson(steps.repo.outputs.result).html_url }}
             org.opencontainers.image.version=${{ steps.docker-vars.outputs.version }}
             org.opencontainers.image.created=${{ steps.docker-vars.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
