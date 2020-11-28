@@ -1,1 +1,1 @@
-#define SERVER_VERSION "@illarion_VERSION@"
+#define SERVER_VERSION "@illarion_VERSION_DESC@"
