@@ -6,13 +6,14 @@ on:
     tags:
   pull_request:
 
-env:
-  BUILD_TYPE: Release
-
 jobs:
   build:
     name: Compile and Test
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        build-type: [Release, RelWithDebInfo]
 
     container:
       image: debian:buster
@@ -22,50 +23,54 @@ jobs:
         run: |
           apt-get update
           export DEBIAN_FRONTEND=noninteractive
-          apt-get -y -qq install build-essential cmake git
+          apt-get -y -qq install build-essential cmake git file
           apt-get -y -qq install libboost-graph-dev libboost-system-dev libpqxx-dev lua5.2-dev
       
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
+      - name: Create Build Environment
+        id: cmake-setup
+        shell: bash
+        run: |
+          cmake -E make_directory ../build
+          cd ../build
+          echo ::set-output name=build-directory::$(pwd -P)
+
       - name: Cache build results
         uses: actions/cache@v2
         with:
           path: |
-            ../build
-          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
+            ${{ steps.cmake-setup.outputs.build-directory }}
+          key: ${{ runner.os }}-${{ matrix.build-type }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
           restore-keys: |
-            ${{ runner.os }}-cmake-
-
-      - name: Create Build Environment
-        run: cmake -E make_directory ../build
+            ${{ runner.os }}-${{ matrix.build-type }}-cmake-
 
       - name: Configure CMake
         shell: bash
-        working-directory: ../build
-        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+        working-directory: ${{ steps.cmake-setup.outputs.build-directory }}
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
 
       - name: Build
-        working-directory: ../build
+        working-directory: ${{ steps.cmake-setup.outputs.build-directory }}
         shell: bash
-        run: cmake --build . --config $BUILD_TYPE --parallel 2
+        run: cmake --build . --config ${{ matrix.build-type }} --parallel 2
 
       - name: Test
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{ steps.cmake-setup.outputs.build-directory }}
         shell: bash
-        run: |
-          ctest -C $BUILD_TYPE
+        run: ctest -C ${{ matrix.build-type }}
 
       - name: Package
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{ steps.cmake-setup.outputs.build-directory }}
         shell: bash
-        run: cpack .
+        run: cpack . -C ${{ matrix.build-type }}
 
       - uses: actions/upload-artifact@v2
         with:
-          name: Package
-          path: ${{runner.workspace}}/build/illarion.deb
+          name: Package-${{ matrix.build-type }}
+          path: ${{runner.workspace}}/build/*.deb
           if-no-files-found: error
   docker:
     name: Build Docker Image
@@ -86,12 +91,12 @@ jobs:
       - name: Fetch Artifact
         uses: actions/download-artifact@v2
         with:
-          name: Package
+          name: Package-RelWithDebInfo
           path: ${{runner.workspace}}
 
       - name: Prepare Docker environment
         shell: bash
-        run: mv ${{runner.workspace}}/illarion.deb $GITHUB_WORKSPACE/setup/docker/base/
+        run: mv ${{runner.workspace}}/*.deb $GITHUB_WORKSPACE/setup/docker/base/
 
       - uses: Illarion-eV/Illarion-Docker-Version@v1
         id: docker-vars
@@ -141,4 +146,4 @@ jobs:
       - name: Clean Docker environment
         shell: bash
         run: |
-          rm $GITHUB_WORKSPACE/setup/docker/base/illarion.deb
+          rm $GITHUB_WORKSPACE/setup/docker/base/*.deb
