@@ -18,7 +18,9 @@ RUN \
     mkdir -p /usr/share/illarion/scripts && \
     mkdir /scripts && \
     mkdir /maps && \
-    ln -s /maps /usr/share/illarion/map/import
+    ln -s /maps /usr/share/illarion/map/import && \
+    # Setup access to script and maps directory
+    chmod a+rw /usr/share/illarion/scripts /usr/share/illarion/map
 
 EXPOSE 3012
 VOLUME /scripts
