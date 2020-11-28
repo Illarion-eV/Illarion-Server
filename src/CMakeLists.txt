@@ -73,14 +73,17 @@ add_executable( illarion main.cpp )
 target_link_libraries( illarion PRIVATE server )
 target_compile_features( illarion PRIVATE cxx_std_17 )
 
+include( GNUInstallDirs )
 install(TARGETS illarion
-        DESTINATION bin
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
-                    GROUP_EXECUTE GROUP_WRITE GROUP_READ)
+                    GROUP_EXECUTE
+                    WORLD_EXECUTE)
 install(FILES ../setup/illarion.conf
         DESTINATION /etc
         PERMISSIONS OWNER_WRITE OWNER_READ
-                    GROUP_WRITE GROUP_READ)
+                                GROUP_READ
+                                WORLD_READ)
 
 include( InstallRequiredSystemLibraries )
 set( CPACK_GENERATOR "DEB" )
