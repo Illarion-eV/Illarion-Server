@@ -1,6 +1,5 @@
 find_package( Boost 1.67.0 REQUIRED COMPONENTS system graph )
 find_package( Filesystem REQUIRED )
-find_package( Git )
 find_package( Pqxx 6.2 REQUIRED )
 find_package( Lua 5.2 EXACT REQUIRED )
 find_package( Luabind REQUIRED )
@@ -12,21 +11,6 @@ add_subdirectory( dialog )
 add_subdirectory( map )
 add_subdirectory( netinterface )
 add_subdirectory( script )
-
-if (GIT_FOUND)
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} describe --long
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-        OUTPUT_VARIABLE illarion_VERSION
-        RESULT_VARIABLE version_error
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    if (version_error)
-        set(illarion_VERSION "unversioned")
-    endif (version_error)
-else()
-    set(illarion_VERSION "unknown")
-endif()
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/version.hpp.in"

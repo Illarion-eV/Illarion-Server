@@ -2,8 +2,36 @@ cmake_minimum_required(VERSION 3.13)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 
+find_package( Git )
+
+if( GIT_FOUND )
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} describe --tags --long
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    OUTPUT_VARIABLE illarion_VERSION_GIT
+    RESULT_VARIABLE version_error
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  if( version_error )
+    message( WARNING "Failed to get version information from git: ${version_error}" )
+    set( illarion_VERSION_GIT "42.42.42-gdeadbee" )
+    set( illarion_VERSION_DESC "unversioned" )
+  else()
+    set( illarion_VERSION_DESC ${illarion_VERSION_GIT} )
+  endif()
+else()
+  message( WARNING "Git is not available. Can't get version information." )
+  set( illarion_VERSION_GIT "42.42.42-gdeadbee" )
+  set( illarion_VERSION_DESC "unknown" )
+endif()
+
+string( REGEX MATCH "[0-9]+(\\.[0-9]+)+" illarion_VERSION "${illarion_VERSION_GIT}" )
+message( STATUS "Illarion Server version: ${illarion_VERSION} (${illarion_VERSION_DESC})" )
+
+cmake_policy( SET CMP0048 NEW )
+
 project(illarion
-        VERSION 0.9.16
+        VERSION ${illarion_VERSION}
         DESCRIPTION "Server for the Illarion MORPG"
         HOMEPAGE_URL "https://github.com/Illarion-eV/Illarion-Server")
 
