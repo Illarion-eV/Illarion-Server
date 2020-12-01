@@ -25,5 +25,6 @@ RUN \
 EXPOSE 3012
 VOLUME /scripts
 VOLUME /maps
+VOLUME /usr/share/illarion/map
 
 CMD [ "illarion", "/etc/illarion.conf" ]
