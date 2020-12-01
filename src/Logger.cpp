@@ -21,6 +21,8 @@
 #include "constants.hpp"
 
 #include <iostream>
+#include <map>
+#include <string>
 
 LogType<LogPriority::EMERGENCY>::type Logger::emergency;
 LogType<LogPriority::ALERT>::type Logger::alert;
@@ -36,6 +38,16 @@ void log_message(LogPriority priority, LogFacility facility, const std::string &
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
         syslog(static_cast<int>(priority) | static_cast<int>(facility), "%s", message.c_str());
     } else {
-        std::cout << message << std::endl;
+        static const std::map<LogPriority, std::string> priorityText{
+                {LogPriority::EMERGENCY, "emerg"}, {LogPriority::ALERT, "alert"},     {LogPriority::CRITICAL, "crit"},
+                {LogPriority::ERROR, "err"},       {LogPriority::WARNING, "warning"}, {LogPriority::NOTICE, "notice"},
+                {LogPriority::INFO, "info"},       {LogPriority::DEBUG, "debug"}};
+
+        static const std::map<LogFacility, std::string> facilityText{
+                {LogFacility::Database, "Database"}, {LogFacility::World, "World"}, {LogFacility::Script, "Script"},
+                {LogFacility::Player, "Player"},     {LogFacility::Chat, "Chat"},   {LogFacility::Admin, "Admin"},
+                {LogFacility::Other, "Other"}};
+
+        std::cout << facilityText.at(facility) << " (" << priorityText.at(priority) << "): " << message << std::endl;
     }
 }

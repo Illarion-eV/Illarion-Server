@@ -135,7 +135,7 @@ void sig_segv(int /*unused*/) {
 void sig_usr(int /*unused*/) {
     std::signal(SIGUSR1, SIG_IGN); // NOLINT
 
-    Logger::info(LogFacility::World) << "SIGUSR received! Importing new maps." << Log::end;
+    Logger::info(LogFacility::World) << "SIGUSR1 received! Importing new maps." << Log::end;
     Logger::info(LogFacility::World) << "Disable login and force log out of all players." << Log::end;
     World *world = World::get();
     world->allowLogin(false);
