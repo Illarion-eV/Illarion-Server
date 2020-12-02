@@ -36,6 +36,7 @@
 #include "script/LuaReloadScript.hpp"
 #include "script/server.hpp"
 #include "tuningConstants.hpp"
+#include "version.hpp"
 
 #include <memory>
 #include <sstream>
@@ -48,7 +49,7 @@ auto main(int argc, char *argv[]) -> int {
     // get more info for unspecified exceptions
     std::set_terminate(__gnu_cxx::__verbose_terminate_handler);
 
-    Logger::info(LogFacility::Other) << "Starting Illarion!" << Log::end;
+    Logger::info(LogFacility::Other) << "Starting Illarion " SERVER_VERSION "!" << Log::end;
 
     init_sighandlers();
 
