@@ -195,10 +195,6 @@ void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                     std::lock_guard<std::mutex> lock(mut);
                     pmanager->loggedOutPlayers.pop_front();
                 }
-
-                Logger::debug(LogFacility::World) << "update player list [begin]" << Log::end;
-                world->updatePlayerList();
-                Logger::debug(LogFacility::World) << "update player list [end]" << Log::end;
             }
 
             using namespace std::chrono_literals;

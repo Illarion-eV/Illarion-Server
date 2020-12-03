@@ -154,6 +154,10 @@ void World::checkPlayers() {
     for (const auto &player : lostPlayers) {
         Players.erase(player->getId());
     }
+
+    if (!lostPlayers.empty()) {
+        updatePlayerList();
+    }
 }
 
 void World::checkPlayerImmediateCommands() {
