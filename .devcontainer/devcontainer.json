@@ -12,12 +12,26 @@
 	// Set *default* container specific settings.json values on container create.
 	"settings": { 
 		"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+		"C_Cpp.formatting": "clangFormat",
 		"cmakeExplorer.buildDir": "../tmp/illarion/build",
 		"cmake.buildDirectory": "/tmp/illarion/build",
+		"cmake.enabledOutputParsers": [
+			"cmake",
+			"gcc",
+			"gnuld"
+		],
+		"cmake.statusbar.advanced": {
+			"debug": { "visibility": "hidden" },
+			"launch": { "visibility": "hidden" },
+			"launchTarget": { "visibility": "hidden" },
+			"kit": { "visibility": "hidden" },
+			"ctest": { "color": true }
+		},
 		"cmake.generator": "Ninja",
 		"cmake.debugConfig": {
 			"args": [ "${workspaceFolder}/setup/illarion.conf" ],
 		},
+		"debug.showInStatusBar": "always",
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"sqltools.connections": [
 			{
