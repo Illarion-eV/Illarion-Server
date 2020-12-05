@@ -5,17 +5,20 @@
 	"service": "game-server",
 	"workspaceFolder": "/workspace",
 
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+	},
+
 	// Set *default* container specific settings.json values on container create.
 	"settings": { 
 		"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
 		"cmakeExplorer.buildDir": "../tmp/illarion/build",
 		"cmake.buildDirectory": "/tmp/illarion/build",
 		"cmake.generator": "Ninja",
-		"cmake.toolset": "GCC 8.3.0",
 		"cmake.debugConfig": {
 			"args": [ "${workspaceFolder}/setup/illarion.conf" ],
 		},
-		"terminal.integrated.shell.linux": null,
+		"terminal.integrated.shell.linux": "/bin/bash",
 		"sqltools.connections": [
 			{
 				"previewLimit": 50,
@@ -33,11 +36,12 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"fredericbonnet.cmake-test-adapter",
+		"ms-azuretools.vscode-docker",
 		"ms-vscode.cmake-tools",
 		"ms-vscode.cpptools",
 		"mtxr.sqltools-driver-pg",
 		"twxs.cmake"
 	],
 
-	"appPort": ["13000:3012"]
+	"remoteUser": "vscode"
 }

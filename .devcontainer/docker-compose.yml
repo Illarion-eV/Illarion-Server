@@ -9,6 +9,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    init: true
     volumes:
       - type: bind
         source: ${SCRIPT_PATH}
@@ -21,17 +22,23 @@ services:
       - type: volume
         source: pg-socket
         target: /var/run/postgresql
-      - type: bind
-        source: ..
-        target: /workspace
+      - ..:/workspace:cached
+      - /var/run/docker.sock:/var/run/docker-host.sock 
       - type: volume
         source: build-dir
         target: /tmp/illarion/build
+    ports:
+      - "3012:${SERVER_PORT}"
     
     # Overrides default command so things don't shut down after the process ends.
-    command: /bin/sh -c "while sleep 1000; do :; done"
+    entrypoint: /usr/local/share/docker-init.sh
+    command: sleep infinity
 
-    network_mode: service:db
+    # Enable support for ptrace based debuggers
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
     
   db:
     image: ghcr.io/illarion-ev/illarion-dev-postgres
