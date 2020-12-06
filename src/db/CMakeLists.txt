@@ -19,5 +19,6 @@ target_sources( db
 )
 
 target_link_libraries( db PUBLIC Boost::boost Pqxx::Pqxx )
-target_include_directories( db PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR} )
+target_include_directories( db PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/.. )
+target_include_directories( db PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
 target_compile_features( db PUBLIC cxx_std_17 )
