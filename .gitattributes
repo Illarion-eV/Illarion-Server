@@ -3,3 +3,5 @@ pre-reload text=auto eol=lf
 *.items.txt text=auto eol=lf
 *.tiles.txt text=auto eol=lf
 *.warps.txt text=auto eol=lf
+*.sh text=auto eol=lf
+*.bat text=auto eol=crlf
