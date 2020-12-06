@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/src/**"
+            ],
+            "compilerPath": "/usr/bin/g++-8",
+            "intelliSenseMode": "gcc-x64",
+            "defines": [],
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "compileCommands": "/tmp/illarion/build/compile_commands.json"
+        }
+    ],
+    "version": 4
+}
