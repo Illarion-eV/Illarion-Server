@@ -11,8 +11,36 @@
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": { 
+		"C_Cpp.default.compilerPath": "/usr/bin/g++-8",
 		"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+		"C_Cpp.default.browse.databaseFilename": "/tmp/vscode/browse.vc.db",
+		"C_Cpp.default.intelliSenseMode": "gcc-x64",
 		"C_Cpp.formatting": "clangFormat",
+		"c-cpp-flylint.enable": true,
+		"c-cpp-flylint.clang.enable": false,
+		"c-cpp-flylint.cppcheck.enable": true,
+		"c-cpp-flylint.cppcheck.inconclusive": true,
+		"c-cpp-flylint.cppcheck.executable": "/opt/linter/linter-cppcheck.sh",
+		"c-cpp-flylint.cppcheck.severityLevels": {
+			"error": "Error",
+			"warning": "Warning",
+			"style": "Information",
+			"performance": "Warning",
+			"portability": "Warning",
+			"information": "Information"
+		},
+		"c-cpp-flylint.cppcheck.standard": [
+			"c++17"
+		],
+		"c-cpp-flylint.cppcheck.suppressions": [
+			"functionStatic:src/db/InsertQuery.hpp"
+		],
+		"c-cpp-flylint.flexelint.enable": false,
+		"c-cpp-flylint.run": "onSave",
+		"clang-tidy.executable": "/opt/linter/linter-clang-tidy.sh",
+		"clang-tidy.fixOnSave": false,
+		"clang-tidy.lintOnSave": true,
+		"clang-tidy.buildPath": "/tmp/illarion/build",
 		"cmakeExplorer.buildDir": "../tmp/illarion/build",
 		"cmake.buildDirectory": "/tmp/illarion/build",
 		"cmake.enabledOutputParsers": [
@@ -36,7 +64,7 @@
 		"sqltools.connections": [
 			{
 				"previewLimit": 50,
-				"server": "localhost",
+				"server": "/var/run/postgresql",
 				"port": 5432,
 				"driver": "PostgreSQL",
 				"name": "Illarion",
@@ -50,10 +78,12 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"fredericbonnet.cmake-test-adapter",
+		"jbenden.c-cpp-flylint",
 		"ms-azuretools.vscode-docker",
 		"ms-vscode.cmake-tools",
 		"ms-vscode.cpptools",
 		"mtxr.sqltools-driver-pg",
+		"notskm.clang-tidy",
 		"twxs.cmake"
 	],
 

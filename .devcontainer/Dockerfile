@@ -49,9 +49,19 @@ RUN \
     ln -s /maps /usr/share/illarion/map/import && \
     # Setup build directory
     mkdir -p /tmp/illarion/build && \
-    chown -R ${USERNAME}:root /tmp/illarion/build
+    chown -R ${USERNAME}:root /tmp/illarion/build && \
+    # Setup VSCode directory
+    mkdir -p /tmp/vscode && \
+    chown -R ${USERNAME}:root /tmp/vscode
 
 COPY library-scripts/pre-reload /usr/share/illarion/
+COPY library-scripts/linter-*.sh /opt/linter/
+
+RUN \
+    chown ${USERNAME}:root /usr/share/illarion/pre-reload && \
+    chmod o+x /usr/share/illarion/pre-reload && \
+    find /opt/linter -name linter-*.sh | xargs chown ${USERNAME}:root && \
+    find /opt/linter -name linter-*.sh | xargs chmod o+x
 
 USER ${USERNAME}
 RUN \

@@ -9,6 +9,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    environment:
+      ILLARION_REUSE_LINTER_CONTAINER: ${REUSE_LINTER_CONTAINER}
     init: true
     volumes:
       - type: bind
@@ -23,10 +25,13 @@ services:
         source: pg-socket
         target: /var/run/postgresql
       - ..:/workspace:cached
-      - /var/run/docker.sock:/var/run/docker-host.sock 
+      - /var/run/docker.sock:/var/run/docker-host.sock
       - type: volume
         source: build-dir
         target: /tmp/illarion/build
+      - type: volume
+        source: vscode-dir
+        target: /tmp/vscode
     ports:
       - "3012:${SERVER_PORT}"
     
@@ -71,3 +76,4 @@ volumes:
   local-db:
   pg-socket:
   build-dir:
+  vscode-dir:
