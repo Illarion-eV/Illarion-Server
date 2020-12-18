@@ -59,9 +59,9 @@ COPY library-scripts/linter-*.sh /opt/linter/
 
 RUN \
     chown ${USERNAME}:root /usr/share/illarion/pre-reload && \
-    chmod o+x /usr/share/illarion/pre-reload && \
+    chmod u+x /usr/share/illarion/pre-reload && \
     find /opt/linter -name linter-*.sh | xargs chown ${USERNAME}:root && \
-    find /opt/linter -name linter-*.sh | xargs chmod o+x
+    find /opt/linter -name linter-*.sh | xargs chmod u+x
 
 USER ${USERNAME}
 RUN \
