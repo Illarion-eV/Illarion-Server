@@ -33,7 +33,7 @@ services:
         source: vscode-dir
         target: /tmp/vscode
     ports:
-      - "3012:${SERVER_PORT}"
+      - "${SERVER_PORT}:3012"
     
     # Overrides default command so things don't shut down after the process ends.
     entrypoint: /usr/local/share/docker-init.sh
