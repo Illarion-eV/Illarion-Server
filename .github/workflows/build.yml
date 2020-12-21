@@ -5,6 +5,8 @@ on:
     branches:
     tags:
   pull_request:
+  schedule:
+    - cron: '00 15 * * 5'
 
 jobs:
   build:
@@ -47,6 +49,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.build-type }}-cmake-
 
+      - name: Initialize CodeQL
+        if: ${{ github.event_name == 'schedule' }}
+        uses: github/codeql-action/init@v1
+        with:
+          languages: cpp
+
       - name: Configure CMake
         shell: bash
         working-directory: ${{ steps.cmake-setup.outputs.build-directory }}
@@ -56,6 +64,10 @@ jobs:
         working-directory: ${{ steps.cmake-setup.outputs.build-directory }}
         shell: bash
         run: cmake --build . --config ${{ matrix.build-type }} --parallel 2
+
+      - name: Perform CodeQL Analysis
+        if: ${{ github.event_name == 'schedule' }}
+        uses: github/codeql-action/analyze@v1
 
       - name: Test
         working-directory: ${{ steps.cmake-setup.outputs.build-directory }}
