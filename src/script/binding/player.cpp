@@ -28,6 +28,10 @@ auto player() -> Binding<Player, Character> {
     return luabind::class_<Player, Character>("Player")
             .def("knows", &Player::knows)
             .def("getCustomNameOf", &Player::getCustomNameOf)
+            .def("getDescriptionEn", &Player::getDescriptionEn)
+            .def("setDescriptionEn", &Player::setDescriptionEn)
+            .def("getDescriptionDe", &Player::getDescriptionDe)
+            .def("setDescriptionDe", &Player::setDescriptionDe)
             .enum_("player_language")[luabind::value("german", static_cast<uint32_t>(Language::german)),
                                       luabind::value("english", static_cast<uint32_t>(Language::english))]
             .enum_("quest_availability")[luabind::value("questAvailable", static_cast<uint32_t>(questAvailable)),
