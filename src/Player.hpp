@@ -146,9 +146,9 @@ private:
 
 public:
     auto getDescriptionEn() const -> TYPE_OF_ENGLISH { return descriptionEn; }
-    void setDescriptionEn(const TYPE_OF_ENGLISH& descrEn) { descriptionEn = descrEn; }
+    void setDescriptionEn(const TYPE_OF_ENGLISH &descrEn) { descriptionEn = descrEn; }
     auto getDescriptionDe() const -> TYPE_OF_GERMAN  { return descriptionDe; }
-    void setDescriptionDe(const TYPE_OF_GERMAN& descrDe) { descriptionDe = descrDe; }
+    void setDescriptionDe(const TYPE_OF_GERMAN &descrDe) { descriptionDe = descrDe; }
 
     void receiveCommand(const ClientCommandPointer &cmd);
 
