@@ -1086,7 +1086,7 @@ auto Player::save() noexcept -> bool {
             query.addAssignColumn<time_t>("chr_lastsavetime", lastsavetime);
             query.addAssignColumn<TYPE_OF_ENGLISH>("chr_shortdesc_us", descriptionEn);
             query.addAssignColumn<TYPE_OF_GERMAN>("chr_shortdesc_de", descriptionDe);
-            
+
             if (status != 0) {
                 query.addAssignColumn<time_t>("chr_statustime", statustime);
                 query.addAssignColumn<TYPE_OF_CHARACTER_ID>("chr_statusgm", statusgm);
