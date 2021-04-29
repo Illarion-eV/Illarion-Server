@@ -24,7 +24,7 @@
 #include "Item.hpp"
 #include "dialog/Dialog.hpp"
 
-#include <unordered_map>
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -89,7 +89,7 @@ public:
     using index_t = uint8_t;
     using groups_t = vector<string>;
     using group_iterator = groups_t::const_iterator;
-    using craftables_t = std::unordered_map<uint8_t, Craftable>;
+    using craftables_t = std::map<uint8_t, Craftable>;
     using craftable_iterator = craftables_t::const_iterator;
 
     enum Result {
@@ -120,40 +120,40 @@ private:
 public:
     CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDuration, const luabind::object &callback);
 
-    auto getSfx() const -> uint16_t;
-    auto getSfxDuration() const -> uint16_t;
+    [[nodiscard]] auto getSfx() const -> uint16_t;
+    [[nodiscard]] auto getSfxDuration() const -> uint16_t;
 
     void clearGroupsAndProducts();
 
-    auto getGroupsSize() const -> index_t;
-    auto getGroupsBegin() const -> group_iterator;
-    auto getGroupsEnd() const -> group_iterator;
+    [[nodiscard]] auto getGroupsSize() const -> index_t;
+    [[nodiscard]] auto getGroupsBegin() const -> group_iterator;
+    [[nodiscard]] auto getGroupsEnd() const -> group_iterator;
     void addGroup(const string &name);
 
-    auto getCraftablesSize() const -> index_t;
-    auto getCraftablesBegin() const -> craftable_iterator;
-    auto getCraftablesEnd() const -> craftable_iterator;
+    [[nodiscard]] auto getCraftablesSize() const -> index_t;
+    [[nodiscard]] auto getCraftablesBegin() const -> craftable_iterator;
+    [[nodiscard]] auto getCraftablesEnd() const -> craftable_iterator;
     void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft);
     void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft,
                       uint8_t craftedStackSize);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item, uint8_t number);
 
-    auto getResult() const -> Result;
+    [[nodiscard]] auto getResult() const -> Result;
     void setResult(Result result);
 
-    auto getCraftableId() const -> uint8_t;
+    [[nodiscard]] auto getCraftableId() const -> uint8_t;
     void setCraftableId(uint8_t index);
-    auto getCraftableAmount() const -> Item::number_type;
+    [[nodiscard]] auto getCraftableAmount() const -> Item::number_type;
     void setCraftableAmount(Item::number_type amount);
-    auto getIngredientIndex() const -> index_t;
+    [[nodiscard]] auto getIngredientIndex() const -> index_t;
     void setIngredientIndex(index_t index);
-    auto getCraftableTime() const -> uint16_t;
+    [[nodiscard]] auto getCraftableTime() const -> uint16_t;
 
-    auto closeOnMove() const -> bool override;
+    [[nodiscard]] auto closeOnMove() const -> bool override;
 
 private:
-    auto canAddCraftable(uint8_t group) const -> bool;
+    [[nodiscard]] auto canAddCraftable(uint8_t group) const -> bool;
 };
 
 #endif
