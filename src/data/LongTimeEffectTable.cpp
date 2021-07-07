@@ -33,7 +33,7 @@ auto LongTimeEffectTable::assignId(const Database::ResultTuple &row) -> uint16_t
 auto LongTimeEffectTable::assignTable(const Database::ResultTuple &row) -> LongTimeEffectStruct {
     LongTimeEffectStruct lte;
     lte.effectid = assignId(row);
-    lte.effectname = row["lte_effectid"].as<std::string>();
+    lte.effectname = row["lte_effectname"].as<std::string>();
     return lte;
 }
 
