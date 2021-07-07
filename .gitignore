@@ -11,3 +11,4 @@
 !.clang-tidy
 *tags*
 compile_commands.json
+build
