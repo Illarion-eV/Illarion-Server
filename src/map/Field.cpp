@@ -101,6 +101,7 @@ auto Field::getStackItem(uint8_t pos) const -> ScriptItem {
         ScriptItem result(items.at(pos));
         result.type = ScriptItem::it_field;
         result.itempos = pos;
+        result.pos = here;
         return result;
     }
 
