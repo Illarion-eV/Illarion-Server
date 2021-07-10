@@ -155,6 +155,9 @@ public:
     void increaseFightPoints(int fp);
     auto canFight() const -> bool;
 
+    auto getSpeed() const -> double;
+    void setSpeed(double spd);
+
     auto getActiveLanguage() const -> short int;
     void setActiveLanguage(short int l);
 
@@ -504,6 +507,7 @@ private:
     TYPE_OF_RACE_ID race = 0;
     face_to faceto = north;
     s_magic magic{};
+    double speed = 1.0;
 };
 
 auto operator<<(std::ostream &os, const Character &character) -> std::ostream &;

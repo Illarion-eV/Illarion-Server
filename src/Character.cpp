@@ -223,6 +223,10 @@ void Character::increaseFightPoints(int fp) { setFightPoints(fightPoints + fp); 
 
 auto Character::canFight() const -> bool { return fightPoints >= getMinFightPoints(); }
 
+auto Character::getSpeed() const -> double { return speed; }
+
+void Character::setSpeed(double spd) { speed = spd; }
+
 auto Character::getActiveLanguage() const -> short int { return activeLanguage; }
 
 void Character::setActiveLanguage(short int l) { activeLanguage = l; }
@@ -1278,6 +1282,8 @@ auto Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bo
     auto loadPercentageIncrease = relativeLoad() * walkLoadWeight;
 
     walkcost += walkcost * (agilityPercentageIncrease + loadPercentageIncrease);
+
+    walkcost /= speed;
 
     walkcost = std::min(std::max(walkcost, MIN_WALK_COST), MAX_WALK_COST);
 

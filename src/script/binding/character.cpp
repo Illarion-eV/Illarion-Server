@@ -168,6 +168,7 @@ auto character() -> Binding<Character> {
             .property("activeLanguage", &Character::getActiveLanguage, &Character::setActiveLanguage)
             .property("movepoints", &Character::getActionPoints, &Character::setActionPoints)
             .property("fightpoints", &Character::getFightPoints, &Character::setFightPoints)
+            .property("speed", &Character::getSpeed, &Character::setSpeed)
             .property("isinvisible", &Character::isInvisible, &Character::setInvisible)
             .property("attackmode", &Character::getAttackMode)
             .def("stopAttack", &Character::stopAttack)
