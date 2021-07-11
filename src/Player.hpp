@@ -63,7 +63,6 @@ enum gm_rights {
     gmr_isnotshownasgm = 131072 // Char is not shown at gm in the list/ has no officially gm state.
 };
 
-//! ein Spieler in newmud
 class Player : public Character {
 public:
     ////////////////////////////////////////
@@ -78,6 +77,8 @@ public:
     private:
         char m_reason;
     };
+
+    enum class LookMode { look = 0, stare = 1 };
 
     enum viewdir { upper = 0, right = 1, lower = 2, left = 3 };
 
