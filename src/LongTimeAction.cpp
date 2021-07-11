@@ -371,7 +371,7 @@ void LongTimeAction::changeTarget(const ScriptItem &sI) {
 
 void LongTimeAction::checkTarget() {
     if (_targetId == 0) {
-        _source.character = nullptr;
+        _target.character = nullptr;
         return;
     }
     if (_targetId < MONSTER_BASE) {
