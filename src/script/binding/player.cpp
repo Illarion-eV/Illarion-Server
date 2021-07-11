@@ -31,7 +31,9 @@ auto player() -> Binding<Player, Character> {
             .enum_("quest_availability")[luabind::value("questAvailable", static_cast<uint32_t>(questAvailable)),
                                          luabind::value("questWillBeAvailable",
                                                         static_cast<uint32_t>(questWillBeAvailable)),
-                                         luabind::value("questNotAvailable", static_cast<uint32_t>(questNotAvailable))];
+                                         luabind::value("questNotAvailable", static_cast<uint32_t>(questNotAvailable))]
+            .enum_("look_mode")[luabind::value("look", static_cast<uint32_t>(Player::LookMode::look)),
+                                luabind::value("stare", static_cast<uint32_t>(Player::LookMode::stare))];
 }
 
 } // namespace binding
