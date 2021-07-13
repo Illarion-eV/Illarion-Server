@@ -489,6 +489,10 @@ protected:
     virtual auto getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const
             -> TYPE_OF_WALKINGCOST;
 
+    auto canTalk(talk_type tt) const -> bool;
+    static /*consteval*/ auto talkCost(talk_type tt) -> int;
+    void logTalk(talk_type tt, const std::string &message) const;
+
     appearance _appearance;
 
 private:

@@ -1126,9 +1126,29 @@ void Character::increaseMentalCapacity(int value) {
     }
 }
 
-void Character::talk(talk_type tt, const std::string &message) { // only for say, whisper, shout
-    talk(tt, message, message);
+auto Character::canTalk(talk_type tt) const -> bool { return tt == tt_whisper || isAlive(); }
 
+auto Character::talkCost(talk_type tt) -> int {
+    int cost = 0;
+
+    switch (tt) {
+    case tt_say:
+        cost = P_SAY_COST;
+        break;
+
+    case tt_whisper:
+        cost = P_WHISPER_COST;
+        break;
+
+    case tt_yell:
+        cost = P_SHOUT_COST;
+        break;
+    }
+
+    return cost;
+}
+
+void Character::logTalk(talk_type tt, const std::string &message) const {
     if (getType() == player) {
 #ifdef LOG_TALK
         std::string talkType;
@@ -1154,37 +1174,18 @@ void Character::talk(talk_type tt, const std::string &message) { // only for say
     }
 }
 
+void Character::talk(talk_type tt, const std::string &message) {
+    talk(tt, message, message);
+    logTalk(tt, message);
+}
+
 void Character::talk(talk_type tt, const std::string &german,
-                     const std::string &english) { // only for say, whisper, shout
-    uint16_t cost = 0;
-    lastSpokenText = english;
-
-    switch (tt) {
-    case tt_say:
-
-        if (!isAlive()) {
-            return;
-        }
-
-        cost = P_SAY_COST;
-        break;
-
-    case tt_whisper:
-        cost = P_WHISPER_COST;
-        break;
-
-    case tt_yell:
-
-        if (!isAlive()) {
-            return;
-        }
-
-        cost = P_SHOUT_COST;
-        break;
+                     const std::string &english) {
+    if (canTalk(tt)) {
+        lastSpokenText = english;
+        _world->sendMessageToAllCharsInRange(german, english, tt, this);
+        actionPoints -= talkCost(tt);
     }
-
-    _world->sendMessageToAllCharsInRange(german, english, tt, this);
-    actionPoints -= cost;
 }
 
 void Character::turn(direction dir) {
