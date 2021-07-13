@@ -1174,15 +1174,29 @@ void Character::logTalk(talk_type tt, const std::string &message) const {
     }
 }
 
+auto Character::talkScript(talk_type tt, const std::string &message) -> std::string {
+    auto &script = script::server::playerTalk();
+
+    if (script.existsEntrypoint("talk")) {
+        auto scriptMessage = script.talk(this, tt, message);
+
+        if (!scriptMessage.empty()) {
+            return scriptMessage;
+        }
+    }
+
+    return message;
+}
+
 void Character::talk(talk_type tt, const std::string &message) {
     if (canTalk(tt)) {
-        talk(tt, message, message);
-        logTalk(tt, message);
+        auto updatedMessage = talkScript(tt, message);
+        talk(tt, updatedMessage, updatedMessage);
+        logTalk(tt, updatedMessage);
     }
 }
 
-void Character::talk(talk_type tt, const std::string &german,
-                     const std::string &english) {
+void Character::talk(talk_type tt, const std::string &german, const std::string &english) {
     if (canTalk(tt)) {
         lastSpokenText = english;
         _world->sendMessageToAllCharsInRange(german, english, tt, this);

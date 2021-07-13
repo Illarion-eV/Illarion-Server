@@ -28,6 +28,7 @@
 #include "script/LuaLookAtItemScript.hpp"
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
+#include "script/LuaPlayerTalkScript.hpp"
 #include "script/LuaWeaponScript.hpp"
 
 namespace script::server {
@@ -35,6 +36,7 @@ auto depot() -> LuaDepotScript &;
 auto lookAtPlayer() -> LuaLookAtPlayerScript &;
 auto lookAtItem() -> LuaLookAtItemScript &;
 auto playerDeath() -> LuaPlayerDeathScript &;
+auto playerTalk() -> LuaPlayerTalkScript &;
 auto login() -> LuaLoginScript &;
 auto logout() -> LuaLogoutScript &;
 auto learn() -> LuaLearnScript &;
