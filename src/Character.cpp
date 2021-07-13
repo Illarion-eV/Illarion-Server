@@ -1175,8 +1175,10 @@ void Character::logTalk(talk_type tt, const std::string &message) const {
 }
 
 void Character::talk(talk_type tt, const std::string &message) {
-    talk(tt, message, message);
-    logTalk(tt, message);
+    if (canTalk(tt)) {
+        talk(tt, message, message);
+        logTalk(tt, message);
+    }
 }
 
 void Character::talk(talk_type tt, const std::string &german,
