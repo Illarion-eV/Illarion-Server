@@ -32,6 +32,7 @@ std::unique_ptr<LuaDepotScript> depotScript;
 std::unique_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
 std::unique_ptr<LuaLookAtItemScript> lookAtItemScript;
 std::unique_ptr<LuaPlayerDeathScript> playerDeathScript;
+std::unique_ptr<LuaPlayerTalkScript> playerTalkScript;
 std::unique_ptr<LuaLoginScript> loginScript;
 std::unique_ptr<LuaLogoutScript> logoutScript;
 std::unique_ptr<LuaLearnScript> learnScript;
@@ -42,6 +43,7 @@ auto depot() -> LuaDepotScript & { return *depotScript; }
 auto lookAtPlayer() -> LuaLookAtPlayerScript & { return *lookAtPlayerScript; }
 auto lookAtItem() -> LuaLookAtItemScript & { return *lookAtItemScript; }
 auto playerDeath() -> LuaPlayerDeathScript & { return *playerDeathScript; }
+auto playerTalk() -> LuaPlayerTalkScript & { return *playerTalkScript; }
 auto login() -> LuaLoginScript & { return *loginScript; }
 auto logout() -> LuaLogoutScript & { return *logoutScript; }
 auto learn() -> LuaLearnScript & { return *learnScript; }
@@ -67,6 +69,7 @@ auto reload() -> bool {
     success = success && loadScript(lookAtPlayerScript, "server.playerlookat");
     success = success && loadScript(lookAtItemScript, "server.itemlookat");
     success = success && loadScript(playerDeathScript, "server.playerdeath");
+    success = success && loadScript(playerTalkScript, "server.playertalk");
     success = success && loadScript(depotScript, "server.depot");
     success = success && loadScript(loginScript, "server.login");
     success = success && loadScript(logoutScript, "server.logout");

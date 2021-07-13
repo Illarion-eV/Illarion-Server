@@ -492,6 +492,7 @@ protected:
     auto canTalk(talk_type tt) const -> bool;
     static /*consteval*/ auto talkCost(talk_type tt) -> int;
     void logTalk(talk_type tt, const std::string &message) const;
+    auto talkScript(talk_type tt, const std::string &message) -> std::string;
 
     appearance _appearance;
 

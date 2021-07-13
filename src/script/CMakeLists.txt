@@ -19,6 +19,7 @@ target_sources( script
         LuaMonsterScript.cpp
         LuaNPCScript.cpp
         LuaPlayerDeathScript.cpp
+        LuaPlayerTalkScript.cpp
         LuaQuestScript.cpp
         LuaReloadScript.cpp
         LuaScheduledScript.cpp
