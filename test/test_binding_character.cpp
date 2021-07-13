@@ -52,10 +52,6 @@ public:
     MOCK_METHOD(void, changeSource, (const ScriptItem &), (override));
     MOCK_METHOD(void, changeSource, (const position &), (override));
     MOCK_METHOD(void, changeSource, (), (override));
-    MOCK_METHOD(void, changeTarget, (Character *), (override));
-    MOCK_METHOD(void, changeTarget, (const ScriptItem &), (override));
-    MOCK_METHOD(void, changeTarget, (const position &), (override));
-    MOCK_METHOD(void, changeTarget, (), (override));
     MOCK_METHOD(void, introducePlayer, (Player *), (override));
     MOCK_METHOD(bool, move, (direction, bool), (override));
     MOCK_METHOD(void, turn, (direction), (override));
@@ -296,32 +292,6 @@ TEST_F(monster_bindings, changeSource_position) {
 TEST_F(monster_bindings, changeSource_empty) {
     LuaTestSupportScript script {"function test(monster) monster:changeSource() end"};
     EXPECT_CALL(*monster, changeSource());
-    script.test<bool, Monster *>(monster);
-}
-
-TEST_F(monster_bindings, changeTarget_character) {
-    LuaTestSupportScript script {"function test(monster) monster:changeTarget(monster) end"};
-    EXPECT_CALL(*monster, changeTarget(monster));
-    script.test<bool, Monster *>(monster);
-}
-
-TEST_F(monster_bindings, changeTarget_scriptitem) {
-    LuaTestSupportScript script {"function test(monster, item) monster:changeTarget(item) end"};
-    ScriptItem item;
-    item.setId(47);
-    EXPECT_CALL(*monster, changeTarget(item));
-    script.test<bool, Monster *, ScriptItem>(monster, item);
-}
-
-TEST_F(monster_bindings, changeTarget_position) {
-    LuaTestSupportScript script {"function test(monster) monster:changeTarget(position(1, 2, 3)) end"};
-    EXPECT_CALL(*monster, changeTarget(position(1, 2, 3)));
-    script.test<bool, Monster *>(monster);
-}
-
-TEST_F(monster_bindings, changeTarget_empty) {
-    LuaTestSupportScript script {"function test(monster) monster:changeTarget() end"};
-    EXPECT_CALL(*monster, changeTarget());
     script.test<bool, Monster *>(monster);
 }
 

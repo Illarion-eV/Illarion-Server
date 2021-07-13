@@ -77,10 +77,9 @@ public:
      *sets the last action to the new values so the script can called correctly
      *@param script the script for the last action
      *@param srce the source object for the last action so we can determine if it was an item at which pos etc
-     *@param trgt the target object for the last action so we can determine if it was an item at which pos etc
      *@param at the type of action lastly performed (cast or use)
      */
-    void setLastAction(std::shared_ptr<LuaScript> script, const SouTar &srce, const SouTar &trgt, ActionType at);
+    void setLastAction(std::shared_ptr<LuaScript> script, const SouTar &srce, ActionType at);
 
     /**
      *starts an long time action which is aborted if the player talks, is attacked ....
@@ -117,29 +116,6 @@ public:
     void changeSource();
 
     /**
-     *changes the Target of the last action.
-     *@param cc target is a character the pointer to this character
-     */
-    void changeTarget(Character *cc);
-
-    /**
-     *changes the Target of the last action.
-     *@param sI target is a item the new item
-     */
-    void changeTarget(const ScriptItem &sI);
-
-    /**
-     *changes the target of the last action.
-     *@param pos Target is a position the new position
-     */
-    void changeTarget(position pos);
-
-    /**
-     *changes the Target of the last action to nothing
-     */
-    void changeTarget();
-
-    /**
      *checks if the last action is abborted or  (Action is disturbed by another player or event)
      *@return true, if the action should be aborted
      */
@@ -170,11 +146,8 @@ public:
 private:
     std::shared_ptr<LuaScript> _script = nullptr; /**< pointer to the last script*/
     SouTar _source;                               /**< source of the last script*/
-    SouTar _target;                               /**< target of the last script*/
-
-    TYPE_OF_CHARACTER_ID _targetId = 0; /**< id of the target if its an character*/
-    TYPE_OF_CHARACTER_ID _sourceId = 0; /**< id of the source if its an character*/
-    uint8_t _sourceCharType = 0;        /**< type of the source*/
+    TYPE_OF_CHARACTER_ID _sourceId = 0;           /**< id of the source if its an character*/
+    uint8_t _sourceCharType = 0;                  /**< type of the source*/
 
     Player *_owner; /**< the owner of the LongTimeAction Objectt*/
     World *_world;  /**< pointer to the gameworld*/
@@ -193,7 +166,6 @@ private:
     unsigned short int _sound = 0; /**< id of the sound which is played to the action*/
     unsigned short int _ani = 0;   /**< id of the animation which is shown to the action*/
 
-    void checkTarget();
     void checkSource();
 };
 

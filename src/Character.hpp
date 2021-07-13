@@ -243,14 +243,6 @@ public:
 
     inline virtual void changeSource() {}
 
-    inline virtual void changeTarget(Character *cc) {}
-
-    inline virtual void changeTarget(const ScriptItem &sI) {}
-
-    inline virtual void changeTarget(const position &pos) {}
-
-    inline virtual void changeTarget() {}
-
     virtual auto getMentalCapacity() const -> int { return mental_capacity; }
 
     virtual void setMentalCapacity(int value) { mental_capacity = value; }

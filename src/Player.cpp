@@ -2109,14 +2109,6 @@ void Player::changeSource(const position &pos) { ltAction->changeSource(pos); }
 
 void Player::changeSource() { ltAction->changeSource(); }
 
-void Player::changeTarget(Character *cc) { ltAction->changeTarget(cc); }
-
-void Player::changeTarget(const ScriptItem &sI) { ltAction->changeTarget(sI); }
-
-void Player::changeTarget(const position &pos) { ltAction->changeTarget(pos); }
-
-void Player::changeTarget() { ltAction->changeTarget(); }
-
 auto Player::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string {
     if (Data::skills().exists(s)) {
         const auto &skill = Data::skills()[s];
@@ -2730,8 +2722,7 @@ void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t
     SouTar source;
     source.Type = LUA_DIALOG;
     source.dialog = dialogId;
-    SouTar target;
-    ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, target, LongTimeAction::ACTION_CRAFT);
+    ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, LongTimeAction::ACTION_CRAFT);
     startAction(craftingTime, 0, 0, sfx, sfxDuration);
 
     ServerCommandPointer cmd = std::make_shared<CraftingDialogCraftTC>(stillToCraft, craftingTime, dialogId);

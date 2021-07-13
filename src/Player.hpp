@@ -203,33 +203,6 @@ public:
     void changeSource() override;
 
     /**
-     *changes the Target of the last action for this player.
-     *<b>Lua: [:changeTarget]</b>
-     *@param cc target is a character the pointer to this character
-     */
-    void changeTarget(Character *cc) override;
-
-    /**
-     *changes the Target of the last action for this player.
-     *<b>Lua: [:changeTarget]</b>
-     *@param sI target is a item the new item
-     */
-    void changeTarget(const ScriptItem &sI) override;
-
-    /**
-     *changes the target of the last action for this player.
-     *<b>Lua: [:changeTarget]</b>
-     *@param pos Target is a position the new position
-     */
-    void changeTarget(const position &pos) override;
-
-    /**
-     *changes the Target of the last action to nothing for this player
-     *<b>Lua: [:changeTarget]</b>
-     */
-    void changeTarget() override;
-
-    /**
      * returns the number of seconds the player has been idle, not actively issuing commands
      * <b>Lua: [:idleTime]</b>
      * @return number of seconds the player has been idle

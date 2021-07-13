@@ -335,7 +335,6 @@ void CastTS::performAction(Player *player) {
     }
 
     SouTar Source;
-    SouTar Target;
     Source.character = dynamic_cast<Character *>(player);
     Source.pos = player->getPosition();
     Source.Type = LUA_CHARACTER;
@@ -357,19 +356,19 @@ void CastTS::performAction(Player *player) {
 
                         if (tmpCharacter->getType() == Character::player) {
                             Logger::debug(LogFacility::Script) << "Target Character: player" << Log::end;
-                            Target.character = tmpCharacter;
-                            Target.pos = tmpCharacter->getPosition();
-                            Target.Type = LUA_CHARACTER;
+                            Source.character = tmpCharacter;
+                            Source.pos = tmpCharacter->getPosition();
+                            Source.Type = LUA_CHARACTER;
                         } else if (tmpCharacter->getType() == Character::npc) {
                             Logger::debug(LogFacility::Script) << "Target Character: NPC" << Log::end;
-                            Target.character = tmpCharacter;
-                            Target.pos = tmpCharacter->getPosition();
-                            Target.Type = LUA_CHARACTER;
+                            Source.character = tmpCharacter;
+                            Source.pos = tmpCharacter->getPosition();
+                            Source.Type = LUA_CHARACTER;
                         } else if (tmpCharacter->getType() == Character::monster) {
                             Logger::debug(LogFacility::Script) << "Target Character: monster" << Log::end;
-                            Target.character = tmpCharacter;
-                            Target.pos = tmpCharacter->getPosition();
-                            Target.Type = LUA_CHARACTER;
+                            Source.character = tmpCharacter;
+                            Source.pos = tmpCharacter->getPosition();
+                            Source.Type = LUA_CHARACTER;
                         }
                     }
                 } else {
@@ -377,16 +376,16 @@ void CastTS::performAction(Player *player) {
 
                     if (field.viewItemOnStack(item)) {
                         Logger::debug(LogFacility::Script) << "Item found at target field!" << Log::end;
-                        Target.pos = castPosition;
-                        Target.Type = LUA_ITEM;
-                        Target.item = static_cast<ScriptItem>(item);
-                        Target.item.type = ScriptItem::it_field;
-                        Target.item.pos = castPosition;
-                        Target.item.owner = player;
+                        Source.pos = castPosition;
+                        Source.Type = LUA_ITEM;
+                        Source.item = static_cast<ScriptItem>(item);
+                        Source.item.type = ScriptItem::it_field;
+                        Source.item.pos = castPosition;
+                        Source.item.owner = player;
                     } else {
                         Logger::debug(LogFacility::Script) << "empty field!" << Log::end;
-                        Target.pos = castPosition;
-                        Target.Type = LUA_FIELD;
+                        Source.pos = castPosition;
+                        Source.Type = LUA_FIELD;
                     }
                 }
             } catch (FieldNotFound &) {
@@ -413,14 +412,14 @@ void CastTS::performAction(Player *player) {
                     Container *tempc = nullptr;
 
                     if (ps->viewItemNr(pos, tempi, tempc)) {
-                        Target.Type = LUA_ITEM;
-                        ps->viewItemNr(pos, Target.item, tempc);
-                        Target.item.pos = castPosition;
-                        Target.item.type = ScriptItem::it_container;
-                        Target.item.itempos = pos;
-                        Target.item.owner = player;
-                        Target.item.inside = ps;
-                        Target.pos = castPosition;
+                        Source.Type = LUA_ITEM;
+                        ps->viewItemNr(pos, Source.item, tempc);
+                        Source.item.pos = castPosition;
+                        Source.item.type = ScriptItem::it_container;
+                        Source.item.itempos = pos;
+                        Source.item.owner = player;
+                        Source.item.inside = ps;
+                        Source.pos = castPosition;
                     } else {
                         paramOK = false;
                     }
@@ -461,11 +460,11 @@ void CastTS::performAction(Player *player) {
             }
 
             if (zauberstab) {
-                Target.Type = LUA_CHARACTER;
-                Target.character = World::get()->findCharacter(player->enemyid);
+                Source.Type = LUA_CHARACTER;
+                Source.character = World::get()->findCharacter(player->enemyid);
 
-                if (Target.character != nullptr) {
-                    Target.pos = Target.character->getPosition();
+                if (Source.character != nullptr) {
+                    Source.pos = Source.character->getPosition();
                 } else {
                     paramOK = false;
                 }
@@ -489,19 +488,19 @@ void CastTS::performAction(Player *player) {
         if (LuaMageScript) {
             if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
                 if (player->items.at(pos).getId() != 0) {
-                    Target.Type = LUA_ITEM;
-                    Target.item = static_cast<ScriptItem>(player->items.at(pos));
-                    Target.item.pos = player->getPosition();
+                    Source.Type = LUA_ITEM;
+                    Source.item = static_cast<ScriptItem>(player->items.at(pos));
+                    Source.item.pos = player->getPosition();
 
                     if (pos < MAX_BODY_ITEMS) {
-                        Target.item.type = ScriptItem::it_inventory;
+                        Source.item.type = ScriptItem::it_inventory;
                     } else {
-                        Target.item.type = ScriptItem::it_belt;
+                        Source.item.type = ScriptItem::it_belt;
                     }
 
-                    Target.item.itempos = pos;
-                    Target.item.owner = player;
-                    Target.pos = player->getPosition();
+                    Source.item.itempos = pos;
+                    Source.item.owner = player;
+                    Source.pos = player->getPosition();
                 } else {
                     paramOK = false;
                 }
@@ -515,24 +514,24 @@ void CastTS::performAction(Player *player) {
 
     if (LuaMageScript) {
         Logger::debug(LogFacility::Script) << "try to call magic script" << Log::end;
-        player->ltAction->setLastAction(LuaMageScript, Source, Target, LongTimeAction::ACTION_MAGIC);
+        player->ltAction->setLastAction(LuaMageScript, Source, LongTimeAction::ACTION_MAGIC);
 
         if ((paramOK) && player->isAlive()) {
-            switch (Target.Type) {
+            switch (Source.Type) {
             case LUA_NONE:
                 LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
                 break;
 
             case LUA_FIELD:
-                LuaMageScript->CastMagicOnField(player, Target.pos, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaMageScript->CastMagicOnField(player, Source.pos, static_cast<unsigned char>(LTS_NOLTACTION));
                 break;
 
             case LUA_CHARACTER:
-                LuaMageScript->CastMagicOnCharacter(player, Target.character,
+                LuaMageScript->CastMagicOnCharacter(player, Source.character,
                                                     static_cast<unsigned char>(LTS_NOLTACTION));
 
-                if (Target.character->getType() == Character::monster) {
-                    auto *temp = dynamic_cast<Monster *>(Target.character);
+                if (Source.character->getType() == Character::monster) {
+                    auto *temp = dynamic_cast<Monster *>(Source.character);
                     const auto monsterType = temp->getMonsterType();
 
                     if (monsterDescriptions->exists(monsterType)) {
@@ -547,7 +546,7 @@ void CastTS::performAction(Player *player) {
                 break;
 
             case LUA_ITEM:
-                LuaMageScript->CastMagicOnItem(player, Target.item, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaMageScript->CastMagicOnItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
                 break;
 
             default:
@@ -601,7 +600,6 @@ void UseTS::performAction(Player *player) {
     std::shared_ptr<LuaMonsterScript> LuaMonsterScript;
     std::shared_ptr<LuaTileScript> LuaTileScript;
     SouTar Source;
-    SouTar Target;
     ItemStruct com;
 
     switch (useId) {
@@ -777,48 +775,43 @@ void UseTS::performAction(Player *player) {
                                        << ")" << Log::end;
     Logger::debug(LogFacility::Script) << "Source type: " << Source.Type << Log::end;
     Logger::debug(LogFacility::Script) << "Source Character: " << *Source.character << Log::end;
-    Logger::debug(LogFacility::Script) << "Target pos (" << Target.pos.x << "," << Target.pos.y << "," << Target.pos.z
-                                       << ")" << Log::end;
-    Logger::debug(LogFacility::Script) << "Target Type: " << Target.Type << Log::end;
-    Logger::debug(LogFacility::Script) << "Target Character: " << *Target.character << Log::end;
     Logger::debug(LogFacility::Script) << "==========Use Script End=============" << Log::end;
 
     std::string msg;
 
     if (LuaScript) {
-        player->ltAction->setLastAction(LuaScript, Source, Target, LongTimeAction::ACTION_USE);
+        player->ltAction->setLastAction(LuaScript, Source, LongTimeAction::ACTION_USE);
 
         if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_ITEM) {
                 LuaScript->UseItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
-                msg = "Used Item: " + std::to_string(Source.item.getId()) +
-                      " with item: " + std::to_string(Target.item.getId());
+                msg = "Used Item: " + std::to_string(Source.item.getId());
             }
         }
     } else if (LuaNPCScript) {
-        player->ltAction->setLastAction(LuaNPCScript, Source, Target, LongTimeAction::ACTION_USE);
+        player->ltAction->setLastAction(LuaNPCScript, Source, LongTimeAction::ACTION_USE);
 
         if ((paramOK) && player->isAlive()) {
-            if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
+            if (Source.Type == LUA_CHARACTER) {
                 LuaNPCScript->useNPC(player, static_cast<unsigned char>(LTS_NOLTACTION));
                 msg = "Used NPC: " + Source.character->to_string();
             }
         }
 
     } else if (LuaMonsterScript) {
-        player->ltAction->setLastAction(LuaMonsterScript, Source, Target, LongTimeAction::ACTION_USE);
+        player->ltAction->setLastAction(LuaMonsterScript, Source, LongTimeAction::ACTION_USE);
 
         if ((paramOK) && player->isAlive()) {
-            if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
+            if (Source.Type == LUA_CHARACTER) {
                 LuaMonsterScript->useMonster(Source.character, player, static_cast<unsigned char>(LTS_NOLTACTION));
                 msg = "Used Monster: " + Source.character->to_string();
             }
         }
     } else if (LuaTileScript) {
-        player->ltAction->setLastAction(LuaTileScript, Source, Target, LongTimeAction::ACTION_USE);
+        player->ltAction->setLastAction(LuaTileScript, Source, LongTimeAction::ACTION_USE);
 
         if ((paramOK) && player->isAlive()) {
-            if (Source.Type == LUA_FIELD && Target.Type == LUA_NONE) {
+            if (Source.Type == LUA_FIELD) {
                 LuaTileScript->useTile(player, Source.pos, static_cast<unsigned char>(LTS_NOLTACTION));
             }
         }
