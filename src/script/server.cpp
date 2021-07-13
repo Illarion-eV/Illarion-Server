@@ -23,6 +23,7 @@
 #include "Logger.hpp"
 
 #include <memory>
+#include <string>
 
 namespace script::server {
 
@@ -46,67 +47,30 @@ auto logout() -> LuaLogoutScript & { return *logoutScript; }
 auto learn() -> LuaLearnScript & { return *learnScript; }
 auto fighting() -> LuaWeaponScript & { return *standardFightingScript; }
 
-auto reload() -> bool {
+template <typename T> auto loadScript(std::unique_ptr<T> &script, const std::string &file) -> bool {
     bool success = true;
 
     try {
-        standardFightingScript = std::make_unique<LuaWeaponScript>("server.standardfighting");
+        script = std::make_unique<T>(file);
     } catch (ScriptException &e) {
         success = false;
-        Logger::error(LogFacility::Script)
-                << "Error while loading script: server.standardfighting: " << e.what() << Log::end;
+        Logger::error(LogFacility::Script) << "Error while loading script: " << file << ": " << e.what() << Log::end;
     }
 
-    try {
-        lookAtPlayerScript = std::make_unique<LuaLookAtPlayerScript>("server.playerlookat");
-    } catch (ScriptException &e) {
-        success = false;
-        Logger::error(LogFacility::Script)
-                << "Error while loading script: server.playerlookat: " << e.what() << Log::end;
-    }
+    return success;
+}
 
-    try {
-        lookAtItemScript = std::make_unique<LuaLookAtItemScript>("server.itemlookat");
-    } catch (ScriptException &e) {
-        success = false;
-        Logger::error(LogFacility::Script) << "Error while loading script: server.itemlookat: " << e.what() << Log::end;
-    }
+auto reload() -> bool {
+    bool success = true;
 
-    try {
-        playerDeathScript = std::make_unique<LuaPlayerDeathScript>("server.playerdeath");
-    } catch (ScriptException &e) {
-        success = false;
-        Logger::error(LogFacility::Script)
-                << "Error while loading script: server.playerdeath: " << e.what() << Log::end;
-    }
-
-    try {
-        depotScript = std::make_unique<LuaDepotScript>("server.depot");
-    } catch (ScriptException &e) {
-        success = false;
-        Logger::error(LogFacility::Script) << "Error while loading script: server.depot: " << e.what() << Log::end;
-    }
-
-    try {
-        loginScript = std::make_unique<LuaLoginScript>("server.login");
-    } catch (ScriptException &e) {
-        success = false;
-        Logger::error(LogFacility::Script) << "Error while loading script: server.login: " << e.what() << Log::end;
-    }
-
-    try {
-        logoutScript = std::make_unique<LuaLogoutScript>("server.logout");
-    } catch (ScriptException &e) {
-        success = false;
-        Logger::error(LogFacility::Script) << "Error while loading script: server.logout: " << e.what() << Log::end;
-    }
-
-    try {
-        learnScript = std::make_unique<LuaLearnScript>("server.learn");
-    } catch (ScriptException &e) {
-        success = false;
-        Logger::error(LogFacility::Script) << "Error while loading script: server.learn: " << e.what() << Log::end;
-    }
+    success = success && loadScript(standardFightingScript, "server.standardfighting");
+    success = success && loadScript(lookAtPlayerScript, "server.playerlookat");
+    success = success && loadScript(lookAtItemScript, "server.itemlookat");
+    success = success && loadScript(playerDeathScript, "server.playerdeath");
+    success = success && loadScript(depotScript, "server.depot");
+    success = success && loadScript(loginScript, "server.login");
+    success = success && loadScript(logoutScript, "server.logout");
+    success = success && loadScript(learnScript, "server.learn");
 
     return success;
 }
