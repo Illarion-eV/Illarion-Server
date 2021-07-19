@@ -980,7 +980,7 @@ CREATE TABLE server.map_items (
     mi_quality smallint NOT NULL,
     mi_number smallint NOT NULL,
     mi_wear smallint NOT NULL,
-    CONSTRAINT number_range CHECK ((mi_number > 0)),
+    CONSTRAINT number_range CHECK ((mi_number >= 0)),
     CONSTRAINT quality_range CHECK (((mi_quality >= 0) AND (mi_quality <= 999))),
     CONSTRAINT wear_range CHECK (((mi_wear >= 0) AND (mi_wear <= 255)))
 );
