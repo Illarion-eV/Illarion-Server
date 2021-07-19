@@ -756,6 +756,10 @@ void World::what_command(Player *cp) {
         map::Field &field = fieldAt(front);
         message.str("");
 
+        if (field.isPersistent()) {
+            cp->inform("- Field is persistent.");
+        }
+
         message << "- Tile " << field.getTileId();
         cp->inform(message.str());
         Item top;
