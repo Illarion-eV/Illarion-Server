@@ -145,7 +145,6 @@ auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, cons
 template <class T>
 auto CharacterContainer<T>::findAllCharactersInScreen(const position &pos) const -> std::vector<pointer> {
     std::vector<pointer> temp;
-    const int MAX_SCREEN_RANGE = 30;
     auto candidates = projection_x_axis(pos, MAX_SCREEN_RANGE);
 
     for (auto &c : candidates) {

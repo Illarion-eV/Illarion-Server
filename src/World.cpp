@@ -232,6 +232,11 @@ auto World::initRespawns() -> bool {
     }
 }
 
+auto World::isPlayerNearby(const Character &character) const -> bool {
+    const auto players = getPlayersInRangeOf(character.getPosition(), MAX_ACT_RANGE);
+    return !players.empty();
+}
+
 void World::checkMonsters() {
     if (monstertimer.intervalExceeded()) {
         if (isSpawnEnabled()) {
@@ -258,9 +263,13 @@ void World::checkMonsters() {
             monster.effects.checkEffects();
 
             if (monster.canAct()) {
+                if (!isPlayerNearby(monster) && !monster.getOnRoute()) {
+                    return;
+                }
+
                 bool foundMonster = monsterDescriptions->exists(monster.getMonsterType());
                 const auto &monStruct = (*monsterDescriptions)[monster.getMonsterType()];
-                
+
                 if (!monster.getOnRoute()) {
                     if (monster.getPosition() == monster.lastTargetPosition) {
                         monster.lastTargetSeen = false;

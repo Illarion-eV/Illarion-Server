@@ -40,6 +40,8 @@ constexpr uint32_t DYNNPC_BASE = 0xFF800000;
 constexpr uint32_t NPC_BASE = 0xFF000000;
 constexpr uint32_t MONSTER_BASE = 0xFE000000;
 constexpr auto MONSTERVIEWRANGE = 11;
+constexpr auto MAX_SCREEN_RANGE = 30;
+constexpr auto MAX_ACT_RANGE = 60;
 
 constexpr auto MAXPOISONVALUE = 400;
 constexpr auto MAXMANA = 10000;

@@ -640,6 +640,7 @@ public:
     auto getPlayersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Player *> override;
     auto getMonstersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Monster *> override;
     auto getNPCSInRangeOf(const position &pos, uint8_t radius) const -> std::vector<NPC *> override;
+    auto isPlayerNearby(const Character &character) const -> bool;
 
     auto getItemStats(const ScriptItem &item) const -> ItemStruct override;
     auto getItemStatsFromId(TYPE_OF_ITEM_ID id) const -> ItemStruct override;
