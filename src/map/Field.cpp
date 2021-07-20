@@ -454,10 +454,9 @@ void Field::age() {
             }
 
             updateDatabaseItems();
+            updateFlags();
         }
     }
-
-    updateFlags();
 }
 
 void Field::updateFlags() {
