@@ -29,43 +29,34 @@
 
 ScheduledScriptsTable::ScheduledScriptsTable() { reload(); }
 
-auto ScheduledScriptsTable::nextCycle() -> bool {
+void ScheduledScriptsTable::nextCycle() {
     currentCycle++;
     ScriptData data; /**< holds the current task*/
     constexpr auto scriptLimit = 200;
     int emexit = 0; /**< emergency counter which breaks the loop if too much execution*/
 
     while (!m_table.empty() && (emexit++ < scriptLimit) && (m_table.front().nextCycleTime <= currentCycle)) {
-        if (!m_table.empty()) {
-            data = m_table.front(); /**< copy the first data in data*/
-            m_table.pop_front();    /**< deletes the first task */
+        data = m_table.front(); /**< copy the first data in data*/
+        m_table.pop_front();    /**< deletes the first task */
 
-            if (data.scriptptr) {
-                /**calculate the next time where the script is invoked */
-                data.nextCycleTime = currentCycle + Random::uniform(data.minCycleTime, data.maxCycleTime);
+        if (data.scriptptr) {
+            /**calculate the next time when the script is invoked */
+            data.nextCycleTime += Random::uniform(data.minCycleTime, data.maxCycleTime);
 
-                /**call the script function */
-                data.scriptptr->callFunction(data.functionName, currentCycle, data.lastCycleTime, data.nextCycleTime);
+            /**call the script function */
+            data.scriptptr->callFunction(data.functionName, currentCycle, data.lastCycleTime, data.nextCycleTime);
 
-                data.lastCycleTime = currentCycle; /**< script was runned and so we can change the lastCycleTime*/
+            data.lastCycleTime = currentCycle; /**< script was run so we can change lastCycleTime*/
 
-                addData(data); /**< insert the script in the list again*/
-                return true;
-            }
+            addData(data); /**< insert the script in the list again*/
         }
     }
-
-    return false;
 }
 
-auto ScheduledScriptsTable::addData(ScriptData data) -> bool {
+void ScheduledScriptsTable::addData(ScriptData data) {
     Logger::debug(LogFacility::Script) << "insert new Task task.nextCycle: " << data.nextCycleTime
                                        << " current Cycle: " << currentCycle << Log::end;
     bool inserted = false;
-
-    if (data.nextCycleTime <= currentCycle) {
-        data.nextCycleTime = currentCycle + Random::uniform(data.minCycleTime, data.maxCycleTime);
-    }
 
     for (auto it = m_table.begin(); it != m_table.end(); ++it) {
         if (it->nextCycleTime > data.nextCycleTime) {
@@ -78,8 +69,6 @@ auto ScheduledScriptsTable::addData(ScriptData data) -> bool {
     if (!inserted) {
         m_table.push_back(data);
     }
-
-    return true;
 }
 
 void ScheduledScriptsTable::reload() {

@@ -53,9 +53,9 @@ public:
 
     [[nodiscard]] inline auto isDataOK() const -> bool { return m_dataOk; }
 
-    auto nextCycle() -> bool;
+    void nextCycle();
 
-    auto addData(ScriptData data) -> bool;
+    void addData(ScriptData data);
 
 private:
     void reload();

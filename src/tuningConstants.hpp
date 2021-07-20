@@ -27,7 +27,7 @@ using namespace std::chrono_literals;
 
 constexpr auto reduceMentalCapacityInterval = 10s;
 constexpr auto checkMonitoringClientsInterval = 250ms;
-constexpr auto scheduledScriptsInterval = 1s;
+constexpr auto scheduledScriptsInterval = 100ms;
 constexpr auto wearReductionInterval = 3min;
 constexpr auto gameLoopInterval = 100ms;
 constexpr auto ingameTimeUpdateInterval = 8h;
