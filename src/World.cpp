@@ -257,10 +257,10 @@ void World::checkMonsters() {
             monster.increaseFightPoints(ap);
             monster.effects.checkEffects();
 
-            bool foundMonster = monsterDescriptions->exists(monster.getMonsterType());
-            const auto &monStruct = (*monsterDescriptions)[monster.getMonsterType()];
-
             if (monster.canAct()) {
+                bool foundMonster = monsterDescriptions->exists(monster.getMonsterType());
+                const auto &monStruct = (*monsterDescriptions)[monster.getMonsterType()];
+                
                 if (!monster.getOnRoute()) {
                     if (monster.getPosition() == monster.lastTargetPosition) {
                         monster.lastTargetSeen = false;
