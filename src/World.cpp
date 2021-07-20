@@ -561,6 +561,11 @@ void World::checkNPC() {
         if (npc->isAlive()) {
             npc->increaseActionPoints(ap);
             npc->effects.checkEffects();
+
+            if (!isPlayerNearby(*npc) && !npc->getOnRoute()) {
+                return;
+            }
+
             std::shared_ptr<LuaNPCScript> npcScript = npc->getScript();
 
             if (npc->canAct() && npcScript) {
