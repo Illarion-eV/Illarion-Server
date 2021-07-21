@@ -53,7 +53,7 @@ void ScheduledScriptsTable::nextCycle() {
     }
 }
 
-void ScheduledScriptsTable::addData(ScriptData data) {
+void ScheduledScriptsTable::addData(const ScriptData &data) {
     Logger::debug(LogFacility::Script) << "insert new Task task.nextCycle: " << data.nextCycleTime
                                        << " current Cycle: " << currentCycle << Log::end;
     bool inserted = false;

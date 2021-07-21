@@ -55,7 +55,7 @@ public:
 
     void nextCycle();
 
-    void addData(ScriptData data);
+    void addData(const ScriptData &data);
 
 private:
     void reload();
