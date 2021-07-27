@@ -29,6 +29,7 @@
 #include "script/server.hpp"
 
 #include <csignal>
+#include <exception>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -127,6 +128,7 @@ void sig_term(int /*unused*/) {
 void sig_segv(int /*unused*/) {
     Logger::error(LogFacility::Other) << "SIGSEGV received! Last Script: " << World::get()->currentScript->getFileName()
                                       << Log::end;
+    std::terminate();
 }
 
 // signal handler for SIGUSR1 - Used to reload maps
