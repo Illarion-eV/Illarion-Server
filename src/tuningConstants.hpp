@@ -32,6 +32,7 @@ constexpr auto wearReductionInterval = 3min;
 constexpr auto gameLoopInterval = 100ms;
 constexpr auto ingameTimeUpdateInterval = 8h;
 
+constexpr auto PLAYER_SAVE_INTERVAL = 60;
 constexpr auto CLIENT_TIMEOUT = 50;
 
 // how many players to process each turn (maximum)

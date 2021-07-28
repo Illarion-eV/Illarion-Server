@@ -106,16 +106,17 @@ void World::turntheworld() {
 }
 
 void World::checkPlayers() {
-    time_t tempkeepalive = 0;
-    time(&tempkeepalive);
+    time_t now = 0;
+    time(&now);
+    bool savedOnePlayer = false;
 
     std::vector<Player *> lostPlayers;
 
-    Players.for_each([tempkeepalive, &lostPlayers, this](Player *playerPointer) {
+    Players.for_each([now, &savedOnePlayer, &lostPlayers, this](Player *playerPointer) {
         Player &player = *playerPointer;
 
         if (player.Connection->online) {
-            long temptime = tempkeepalive - player.lastkeepalive;
+            long temptime = now - player.lastkeepalive;
 
             if (((temptime >= 0) && (temptime <= CLIENT_TIMEOUT))) {
                 player.increaseActionPoints(ap);
@@ -124,6 +125,12 @@ void World::checkPlayers() {
                 player.checkFightMode();
                 player.ltAction->checkAction();
                 player.effects.checkEffects();
+                auto timeSinceSave = now - player.lastsavetime;
+
+                if (!savedOnePlayer && timeSinceSave >= PLAYER_SAVE_INTERVAL) {
+                    player.save();
+                    savedOnePlayer = true;
+                }
             }
             // User timed out.
             else {
