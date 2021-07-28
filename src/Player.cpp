@@ -1022,7 +1022,7 @@ struct container_struct {
 auto Player::save() noexcept -> bool {
     using namespace Database;
 
-    Logger::info(LogFacility::Player) << "Saving " << to_string() << Log::end;
+    Logger::debug(LogFacility::Player) << "Saving " << to_string() << Log::end;
 
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
