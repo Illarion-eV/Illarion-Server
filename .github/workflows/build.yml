@@ -45,6 +45,7 @@ jobs:
         with:
           path: |
             ${{ steps.cmake-setup.outputs.build-directory }}
+            !${{ steps.cmake-setup.outputs.build-directory }}/*.deb
           key: ${{ runner.os }}-${{ matrix.build-type }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.build-type }}-cmake-
