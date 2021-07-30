@@ -16,19 +16,17 @@ Details
 
 Requirements
 
-   GCC 8.3
-   GNU Make 4.2.1
-   CMake 3.13.4
-   Boost 1.67.0
-   PostgreSQL 11.9
-   libpqxx 6.2.5
+   GCC 10.1
+   GNU Make 4.3
+   CMake 3.18.4
+   Boost 1.74.0
+   PostgreSQL 13.3
+   libpqxx 6.4.5
    Lua 5.2.4
 
 Dependencies fetched automatically during the build
 
-   Luabind 0.9.1 with some bugfixes from
-        http://illarion.org/repos/apt/debian (binary)
-     or https://github.com/vilarion/luabind/tree/illarion (source)
+   Luabind 0.9.1 with some bugfixes from https://github.com/vilarion/luabind/tree/illarion
    range-v3 0.11.0
    googletest 1.10
 

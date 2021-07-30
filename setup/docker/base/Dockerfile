@@ -1,4 +1,4 @@
-FROM debian:buster AS base
+FROM debian:bullseye AS base
 
 COPY *.deb /tmp
 COPY pre-reload /usr/share/illarion/
