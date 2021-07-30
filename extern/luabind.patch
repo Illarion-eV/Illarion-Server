@@ -1,9 +1,13 @@
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -5,6 +5,11 @@
+@@ -3,8 +3,13 @@
+ # http://academic.cleardefinition.com/
+ # Iowa State University HCI Graduate Program/VRAC
  
- cmake_minimum_required(VERSION 2.8.3)
- set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
+-cmake_minimum_required(VERSION 2.8.3)
+-set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
++cmake_minimum_required(VERSION 3.13)
++
 +
 +if (POLICY CMP0048)
 +  cmake_policy(SET CMP0048 NEW)
@@ -12,3 +16,13 @@
  project(LuaBind)
  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
  
+@@ -109,6 +114,8 @@ if(LUABIND_USE_CXX11)
+     add_definitions(-DLUABIND_USE_CXX11)
+ endif()
+ 
++add_compile_definitions(BOOST_BIND_GLOBAL_PLACEHOLDERS)
++
+ # Configure the build info header
+ file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/luabind")
+ configure_file(build_information.hpp.cmake_in "${CMAKE_CURRENT_BINARY_DIR}/luabind/build_information.hpp")
+
