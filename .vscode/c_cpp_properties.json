@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/src/**"
             ],
-            "compilerPath": "/usr/bin/g++-8",
+            "compilerPath": "/usr/bin/g++-10",
             "intelliSenseMode": "gcc-x64",
             "defines": [],
             "cStandard": "c17",

@@ -1,9 +1,9 @@
 [
     {
-      "name": "GCC 8.3.0",
+      "name": "GCC 10.2.1",
       "compilers": {
-        "C": "/usr/bin/gcc-8",
-        "CXX": "/usr/bin/g++-8"
+        "C": "/usr/bin/gcc-10",
+        "CXX": "/usr/bin/g++-10"
       }
     }
   ]

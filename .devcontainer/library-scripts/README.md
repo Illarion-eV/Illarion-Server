@@ -1,7 +1,5 @@
-The following files are created by Microsoft and are just redistributed copies.
+# Warning: Folder contents may be replaced
 
-- `common-debian.sh`
-- `docker-debian.sh`
+The contents of this folder will be automatically replaced with a file of the same name in the [vscode-dev-containers](https://github.com/microsoft/vscode-dev-containers) repository's [script-library folder](https://github.com/microsoft/vscode-dev-containers/tree/main/script-library) whenever the repository is packaged.
 
-The original source of the files is located here:  
-https://github.com/microsoft/vscode-dev-containers/tree/master/script-library
+To retain your edits, move the file to a different location. You may also delete the files if they are not needed.

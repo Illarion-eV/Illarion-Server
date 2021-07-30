@@ -5,7 +5,7 @@ services:
     build:
       context: .
       args:
-        VARIANT: buster
+        VARIANT: bullseye
     depends_on:
       db:
         condition: service_healthy
