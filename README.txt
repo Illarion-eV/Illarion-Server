@@ -28,7 +28,7 @@ Dependencies fetched automatically during the build
 
    Luabind 0.9.1 with some bugfixes from https://github.com/vilarion/luabind/tree/illarion
    range-v3 0.11.0
-   googletest 1.10
+   googletest 1.11
 
 Build
 
