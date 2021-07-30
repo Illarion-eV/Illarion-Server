@@ -16,7 +16,7 @@ Details
 
 Requirements
 
-   GCC 10.1
+   GCC 10.2
    GNU Make 4.3
    CMake 3.18.4
    Boost 1.74.0
