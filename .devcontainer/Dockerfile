@@ -28,11 +28,14 @@ RUN \
     apt-get -y --no-install-recommends install \
         file ninja-build psmisc \
         default-jre-headless rsync wget \
-        g++ cmake gdb \
-        libboost-graph-dev libboost-system-dev libpqxx-dev lua5.2-dev librange-v3-dev && \
+        g++ gdb \
+        libboost-graph-dev libboost-system-dev libpq-dev lua5.2-dev librange-v3-dev && \
     apt-get autoremove -y && \
     apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /tmp/cmake && cd /tmp/cmake && \
+    wget https://github.com/Kitware/CMake/releases/download/v3.21.1/cmake-3.21.1-linux-x86_64.sh -O /tmp/cmake/cmake.sh -q && \
+    sh cmake.sh --skip-license --prefix=/usr/local && cd && rm -rf /tmp/cmake
 
 RUN \
     # Download the easyCompiler
