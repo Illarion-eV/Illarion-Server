@@ -1,6 +1,6 @@
-find_package( Boost 1.67.0 REQUIRED COMPONENTS system graph )
+find_package( Boost 1.74.0 REQUIRED COMPONENTS system graph )
 find_package( Filesystem REQUIRED )
-find_package( Pqxx 6.2 REQUIRED )
+find_package( Pqxx 6.4 REQUIRED )
 find_package( Lua 5.2 EXACT REQUIRED )
 find_package( Luabind REQUIRED )
 find_package( Threads REQUIRED )
