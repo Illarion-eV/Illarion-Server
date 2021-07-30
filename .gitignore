@@ -1,6 +1,7 @@
 .*
 *.*~
 *.log
+*.sql
 !.devcontainer
 !.vscode
 !.gitattributes
