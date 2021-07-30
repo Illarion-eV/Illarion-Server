@@ -21,12 +21,12 @@ Requirements
    CMake 3.18.4
    Boost 1.74.0
    PostgreSQL 13.3
-   libpqxx 6.4.5
    Lua 5.2.4
 
 Dependencies fetched automatically during the build
 
    Luabind 0.9.1 with some bugfixes from https://github.com/vilarion/luabind/tree/illarion
+   libpqxx 7.6.0
    range-v3 0.11.0
    googletest 1.11
 

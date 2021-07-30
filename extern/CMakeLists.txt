@@ -51,3 +51,26 @@ if( NOT range_v3_POPULATED )
     endif()
     add_subdirectory( ${range_v3_SOURCE_DIR} ${range_v3_BINARY_DIR} )
 endif()
+
+FetchContent_Declare(
+    pqxx
+    GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+    GIT_TAG        aef63cf936adf3a9da7d668c10287843a3a780c3 #origin/7.6.0
+    GIT_SHALLOW    ON
+)
+
+FetchContent_GetProperties( pqxx )
+if( NOT pqxx_POPULATED )
+    FetchContent_Populate( pqxx )
+    if( NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set( CMAKE_BUILD_TYPE "Release" )
+    endif()
+    set( SKIP_BUILD_TEST on )
+    set( BUILD_SHARED_LIBS off )
+    add_subdirectory( ${pqxx_SOURCE_DIR} ${pqxx_BINARY_DIR} )
+endif()
+
+set( PQXX_FOUND 1 CACHE BOOL "libpqxx found" FORCE )
+set( PQXX_INCLUDE_DIRS "${pqxx_SOURCE_DIR};${pqxx_BINARY_DIR}" CACHE STRING "Include directories for pqxx library" FORCE )
+set( PQXX_LIBRARIES "pqxx" CACHE STRING "Link libraries for pqxx library" FORCE )
+set( PQXX_VERSION_STRING "7.6" )
