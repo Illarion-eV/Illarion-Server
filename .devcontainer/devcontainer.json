@@ -11,7 +11,7 @@
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": { 
-		"C_Cpp.default.compilerPath": "/usr/bin/g++-8",
+		"C_Cpp.default.compilerPath": "/usr/bin/g++-10",
 		"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
 		"C_Cpp.default.browse.databaseFilename": "/tmp/vscode/browse.vc.db",
 		"C_Cpp.default.intelliSenseMode": "gcc-x64",
