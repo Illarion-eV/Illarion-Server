@@ -25,8 +25,10 @@ jobs:
         run: |
           apt-get update
           export DEBIAN_FRONTEND=noninteractive
-          apt-get -y -qq install build-essential cmake git file
-          apt-get -y -qq install libboost-graph-dev libboost-system-dev libpqxx-dev lua5.2-dev
+          apt-get -y -qq install build-essential git wget file
+          apt-get -y -qq install libboost-graph-dev libboost-system-dev libpq-dev lua5.2-dev
+          wget https://github.com/Kitware/CMake/releases/download/v3.21.1/cmake-3.21.1-linux-x86_64.sh -O cmake.sh -q
+          sh cmake.sh --skip-license --prefix=/usr/local
       
       - uses: actions/checkout@v2
         with:
