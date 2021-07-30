@@ -48,6 +48,7 @@ include(GoogleTest)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_compile_options( -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -pedantic-errors )
+add_compile_definitions(BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 add_subdirectory( src )
 add_subdirectory( test )
