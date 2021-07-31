@@ -23,6 +23,7 @@
 
 #include <memory>
 #include <pqxx/connection.hxx>
+#include <pqxx/stream_to.hxx>
 #include <pqxx/transaction.hxx>
 #include <string>
 
@@ -33,7 +34,7 @@ using PConnection = std::shared_ptr<Connection>;
 
 class Connection {
 private:
-    /* The libpgxx representation of the connection to the database. */
+    /* The libpqxx representation of the connection to the database. */
     std::unique_ptr<pqxx::connection> internalConnection = nullptr;
     std::unique_ptr<pqxx::transaction_base> transaction = nullptr;
 
@@ -47,6 +48,7 @@ public:
 
     void beginTransaction();
     auto query(const std::string &query) -> pqxx::result;
+    auto streamTo(pqxx::table_path path, std::initializer_list<std::string_view> columns) -> pqxx::stream_to;
     void commitTransaction();
     void rollbackTransaction();
 

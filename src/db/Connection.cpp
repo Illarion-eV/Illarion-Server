@@ -20,6 +20,8 @@
 
 #include "Connection.hpp"
 
+#include "db/SchemaHelper.hpp"
+
 #include <memory>
 #include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
@@ -56,6 +58,14 @@ void Connection::rollbackTransaction() {
 auto Connection::query(const std::string &query) -> pqxx::result {
     if (transaction) {
         return transaction->exec(query);
+    }
+
+    throw std::domain_error("No active transaction");
+}
+
+auto Connection::streamTo(pqxx::table_path path, std::initializer_list<std::string_view> columns) -> pqxx::stream_to {
+    if (transaction) {
+        return pqxx::stream_to::table(*transaction, path, columns);
     }
 
     throw std::domain_error("No active transaction");

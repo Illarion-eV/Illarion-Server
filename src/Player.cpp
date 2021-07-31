@@ -1028,6 +1028,7 @@ auto Player::save() noexcept -> bool {
 
     try {
         connection->beginTransaction();
+        static const auto server = Config::instance().postgres_schema_server();
 
         {
             DeleteQuery introductionQuery(connection);
@@ -1037,17 +1038,13 @@ auto Player::save() noexcept -> bool {
         }
 
         {
-            InsertQuery introductionQuery(connection);
-            const InsertQuery::columnIndex playerColumn = introductionQuery.addColumn("intro_player");
-            const InsertQuery::columnIndex knownPlayerColumn = introductionQuery.addColumn("intro_known_player");
-            introductionQuery.addServerTable("introduction");
+            auto stream = connection->streamTo({server, "introduction"}, {"intro_player", "intro_known_player"});
 
             for (const auto player : knownPlayers) {
-                introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(playerColumn, getId());
-                introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(knownPlayerColumn, player);
+                stream.write_values(getId(), player);
             }
 
-            introductionQuery.execute();
+            stream.complete();
         }
 
         {
@@ -1058,22 +1055,18 @@ auto Player::save() noexcept -> bool {
         }
 
         {
-            InsertQuery namingQuery(connection);
-            const InsertQuery::columnIndex playerColumn = namingQuery.addColumn("name_player");
-            const InsertQuery::columnIndex namedPlayerColumn = namingQuery.addColumn("name_named_player");
-            const InsertQuery::columnIndex playerNameColumn = namingQuery.addColumn("name_player_name");
-            namingQuery.addServerTable("naming");
+            auto stream =
+                    connection->streamTo({server, "naming"}, {"name_player", "name_named_player", "name_player_name"});
 
             for (const auto &playerAndName : namedPlayers) {
-                namingQuery.addValue<TYPE_OF_CHARACTER_ID>(playerColumn, getId());
-                namingQuery.addValue<TYPE_OF_CHARACTER_ID>(namedPlayerColumn, playerAndName.first);
-                namingQuery.addValue<std::string>(playerNameColumn, playerAndName.second);
+                stream.write_values(getId(), playerAndName.first, playerAndName.second);
             }
 
-            namingQuery.execute();
+            stream.complete();
         }
 
         time(&lastsavetime);
+
         {
             UpdateQuery query(connection);
             query.addAssignColumn<uint16_t>("chr_status", (uint16_t)status);
@@ -1137,22 +1130,14 @@ auto Player::save() noexcept -> bool {
         }
 
         if (!skills.empty()) {
-            InsertQuery query(connection);
-            const InsertQuery::columnIndex playerIdColumn = query.addColumn("psk_playerid");
-            const InsertQuery::columnIndex skillIdColumn = query.addColumn("psk_skill_id");
-            const InsertQuery::columnIndex valueColumn = query.addColumn("psk_value");
-            const InsertQuery::columnIndex minorColumn = query.addColumn("psk_minor");
+            auto stream = connection->streamTo({server, "playerskills"},
+                                               {"psk_playerid", "psk_skill_id", "psk_value", "psk_minor"});
 
-            // now store the skills
             for (const auto &skill : skills) {
-                query.addValue<uint16_t>(skillIdColumn, skill.first);
-                query.addValue<uint16_t>(valueColumn, (uint16_t)skill.second.major);
-                query.addValue<uint16_t>(minorColumn, (uint16_t)skill.second.minor);
+                stream.write_values(getId(), (int)skill.first, skill.second.major, skill.second.minor);
             }
 
-            query.addValues<TYPE_OF_CHARACTER_ID>(playerIdColumn, getId(), InsertQuery::FILL);
-            query.addServerTable("playerskills");
-            query.execute();
+            stream.complete();
         }
 
         {
@@ -1172,85 +1157,58 @@ auto Player::save() noexcept -> bool {
         {
             std::list<container_struct> containers;
 
-            // add backpack to containerlist
+            // add backpack to container list
             if (items.at(BACKPACK).getId() != 0 && (backPackContents != nullptr)) {
                 containers.emplace_back(backPackContents, BACKPACK + 1);
             }
 
-            // add depot to containerlist
+            // add depots to container list
             ranges::transform(depotContents, ranges::back_inserter(containers),
                               [](const auto &depot) { return container_struct(depot.second, 0, depot.first); });
-
-            InsertQuery itemsQuery(connection);
-            const InsertQuery::columnIndex itemsPlyIdColumn = itemsQuery.addColumn("pit_playerid");
-            const InsertQuery::columnIndex itemsLineColumn = itemsQuery.addColumn("pit_linenumber");
-            const InsertQuery::columnIndex itemsContainerColumn = itemsQuery.addColumn("pit_in_container");
-            const InsertQuery::columnIndex itemsDepotColumn = itemsQuery.addColumn("pit_depot");
-            const InsertQuery::columnIndex itemsItmIdColumn = itemsQuery.addColumn("pit_itemid");
-            const InsertQuery::columnIndex itemsWearColumn = itemsQuery.addColumn("pit_wear");
-            const InsertQuery::columnIndex itemsNumberColumn = itemsQuery.addColumn("pit_number");
-            const InsertQuery::columnIndex itemsQualColumn = itemsQuery.addColumn("pit_quality");
-            const InsertQuery::columnIndex itemsSlotColumn = itemsQuery.addColumn("pit_containerslot");
-            itemsQuery.setServerTable("playeritems");
-
-            InsertQuery dataQuery(connection);
-            const InsertQuery::columnIndex dataPlyIdColumn = dataQuery.addColumn("idv_playerid");
-            const InsertQuery::columnIndex dataLineColumn = dataQuery.addColumn("idv_linenumber");
-            const InsertQuery::columnIndex dataKeyColumn = dataQuery.addColumn("idv_key");
-            const InsertQuery::columnIndex dataValueColumn = dataQuery.addColumn("idv_value");
-            dataQuery.setServerTable("playeritem_datavalues");
-
+            auto stream =
+                    connection->streamTo({server, "playeritems"},
+                                         {"pit_playerid", "pit_linenumber", "pit_in_container", "pit_depot",
+                                          "pit_itemid", "pit_wear", "pit_number", "pit_quality", "pit_containerslot"});
             int linenumber = 0;
+            std::vector<std::tuple<TYPE_OF_CHARACTER_ID, int, const std::string, const std::string>> datas;
 
-            // save all items directly on the body...
+            // save all items directly on the body
             for (int thisItemSlot = 0; thisItemSlot < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++thisItemSlot) {
                 ++linenumber;
+                const auto &item = items.at(thisItemSlot);
 
                 // if there is no item on this place, do not save it
-                if (items.at(thisItemSlot).getId() == 0) {
+                if (item.getId() == 0) {
                     continue;
                 }
 
-                itemsQuery.addValue<int32_t>(itemsLineColumn, linenumber);
-                itemsQuery.addValue<int16_t>(itemsContainerColumn, 0);
-                itemsQuery.addValue<int32_t>(itemsDepotColumn, 0);
-                itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, items.at(thisItemSlot).getId());
-                itemsQuery.addValue<uint16_t>(itemsWearColumn, items.at(thisItemSlot).getWear());
-                itemsQuery.addValue<uint16_t>(itemsNumberColumn, items.at(thisItemSlot).getNumber());
-                itemsQuery.addValue<uint16_t>(itemsQualColumn, items.at(thisItemSlot).getQuality());
-                itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, 0);
+                stream.write_values(getId(), linenumber, 0, 0, item.getId(), (int)item.getWear(), item.getNumber(),
+                                    item.getQuality(), 0);
 
-                for (auto it = items.at(thisItemSlot).getDataBegin(); it != items.at(thisItemSlot).getDataEnd(); ++it) {
+                for (auto it = item.getDataBegin(); it != item.getDataEnd(); ++it) {
                     if (it->second.length() > 0) {
-                        dataQuery.addValue<int32_t>(dataLineColumn, linenumber);
-                        dataQuery.addValue<std::string>(dataKeyColumn, it->first);
-                        dataQuery.addValue<std::string>(dataValueColumn, it->second);
+                        datas.emplace_back(getId(), linenumber, it->first, it->second);
                     }
                 }
             }
 
-            // add backpack contents...
+            // save all items in containers
             while (!containers.empty()) {
-                // get container to save...
-                container_struct &currentContainerStruct = containers.front();
-                Container &currentContainer = *currentContainerStruct.container;
-                auto containedItems = currentContainer.getItems();
+                // get container to save
+                const auto &currentContainerStruct = containers.front();
+                const auto &currentContainer = *currentContainerStruct.container;
+                const auto &containedItems = currentContainer.getItems();
 
                 for (const auto &slotAndItem : containedItems) {
-                    const Item &item = slotAndItem.second;
-                    itemsQuery.addValue<int32_t>(itemsLineColumn, ++linenumber);
-                    itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t)currentContainerStruct.id);
-                    itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t)currentContainerStruct.depotid);
-                    itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item.getId());
-                    itemsQuery.addValue<uint16_t>(itemsWearColumn, item.getWear());
-                    itemsQuery.addValue<uint16_t>(itemsNumberColumn, item.getNumber());
-                    itemsQuery.addValue<uint16_t>(itemsQualColumn, item.getQuality());
-                    itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, slotAndItem.first);
+                    const auto &item = slotAndItem.second;
+                    stream.write_values(getId(), ++linenumber, (int16_t)currentContainerStruct.id,
+                                        (int32_t)currentContainerStruct.depotid, item.getId(), (int)item.getWear(),
+                                        item.getNumber(), item.getQuality(), slotAndItem.first);
 
                     for (auto it = item.getDataBegin(); it != item.getDataEnd(); ++it) {
-                        dataQuery.addValue<int32_t>(dataLineColumn, linenumber);
-                        dataQuery.addValue<std::string>(dataKeyColumn, it->first);
-                        dataQuery.addValue<std::string>(dataValueColumn, it->second);
+                        if (it->second.length() > 0) {
+                            datas.emplace_back(getId(), linenumber, it->first, it->second);
+                        }
                     }
 
                     // if it is a container, add it to the list of containers to save...
@@ -1267,11 +1225,16 @@ auto Player::save() noexcept -> bool {
                 containers.pop_front();
             }
 
-            itemsQuery.addValues(itemsPlyIdColumn, getId(), InsertQuery::FILL);
-            dataQuery.addValues(dataPlyIdColumn, getId(), InsertQuery::FILL);
+            stream.complete();
 
-            itemsQuery.execute();
-            dataQuery.execute();
+            auto dataStream = connection->streamTo({server, "playeritem_datavalues"},
+                                                   {"idv_playerid", "idv_linenumber", "idv_key", "idv_value"});
+
+            for (const auto &data : datas) {
+                dataStream << data;
+            }
+
+            dataStream.complete();
         }
 
         connection->commitTransaction();
@@ -1282,7 +1245,7 @@ auto Player::save() noexcept -> bool {
 
         return true;
     } catch (std::exception &e) {
-        Logger::error(LogFacility::Player) << "Playersave caught exception: " << e.what() << Log::end;
+        Logger::error(LogFacility::Player) << "Exception in Player::save: " << e.what() << Log::end;
         connection->rollbackTransaction();
         return false;
     }
