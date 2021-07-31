@@ -14,4 +14,4 @@ target_sources( dialog
 target_link_libraries( dialog INTERFACE data )
 target_link_libraries( dialog INTERFACE Luabind::Luabind )
 target_include_directories( dialog INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/.. )
-target_compile_features( dialog INTERFACE cxx_std_17 )
+target_compile_features( dialog INTERFACE cxx_std_20 )

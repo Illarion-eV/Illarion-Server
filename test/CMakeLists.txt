@@ -20,7 +20,7 @@ function( run_test )
     target_sources( ${name} PRIVATE ${name}.cpp )
     target_link_libraries( ${name} PRIVATE server )
     target_link_libraries( ${name} PRIVATE gtest gmock gmock_main )
-    target_compile_features( ${name} PRIVATE cxx_std_17 )
+    target_compile_features( ${name} PRIVATE cxx_std_20 )
 
     if( NOT "${run_test_DEPENDENCIES}" STREQUAL "" )
         add_dependencies( ${name} ${run_test_DEPENDENCIES} )

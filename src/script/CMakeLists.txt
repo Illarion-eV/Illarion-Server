@@ -34,4 +34,4 @@ target_sources( script
 target_link_libraries( script INTERFACE script_binding map )
 target_link_libraries( script INTERFACE Boost::boost Luabind::Luabind )
 target_include_directories( script INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/.. )
-target_compile_features( script INTERFACE  cxx_std_17 )
+target_compile_features( script INTERFACE  cxx_std_20 )

@@ -67,11 +67,11 @@ target_link_libraries( server PUBLIC Boost::system Boost::graph Threads::Threads
 target_link_libraries( server PUBLIC Luabind::Luabind Pqxx::Pqxx std::filesystem )
 
 target_include_directories( server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} )
-target_compile_features( server PUBLIC cxx_std_17 )
+target_compile_features( server PUBLIC cxx_std_20 )
 
 add_executable( illarion main.cpp )
 target_link_libraries( illarion PRIVATE server )
-target_compile_features( illarion PRIVATE cxx_std_17 )
+target_compile_features( illarion PRIVATE cxx_std_20 )
 
 include( GNUInstallDirs )
 install(TARGETS illarion

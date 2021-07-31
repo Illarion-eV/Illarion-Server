@@ -30,7 +30,7 @@
 			"information": "Information"
 		},
 		"c-cpp-flylint.cppcheck.standard": [
-			"c++17"
+			"c++20"
 		],
 		"c-cpp-flylint.cppcheck.suppressions": [
 			"functionStatic:src/db/InsertQuery.hpp"

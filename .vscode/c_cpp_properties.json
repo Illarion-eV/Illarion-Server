@@ -9,7 +9,7 @@
             "intelliSenseMode": "gcc-x64",
             "defines": [],
             "cStandard": "c17",
-            "cppStandard": "c++17",
+            "cppStandard": "c++20",
             "configurationProvider": "ms-vscode.cmake-tools",
             "compileCommands": "/tmp/illarion/build/compile_commands.json"
         }

@@ -40,4 +40,4 @@ target_sources( script_binding
 target_link_libraries( script_binding INTERFACE data dialog server )
 target_link_libraries( script_binding INTERFACE Luabind::Luabind range-v3::range-v3 )
 target_include_directories( script_binding INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/../.. )
-target_compile_features( script_binding INTERFACE cxx_std_17 )
+target_compile_features( script_binding INTERFACE cxx_std_20 )

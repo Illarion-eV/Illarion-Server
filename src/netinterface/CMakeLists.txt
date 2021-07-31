@@ -16,4 +16,4 @@ target_sources( netinterface
 target_link_libraries( netinterface INTERFACE netinterface_protocol )
 target_link_libraries( netinterface INTERFACE Boost::boost )
 target_include_directories( netinterface INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/.. )
-target_compile_features( netinterface INTERFACE cxx_std_17 )
+target_compile_features( netinterface INTERFACE cxx_std_20 )
