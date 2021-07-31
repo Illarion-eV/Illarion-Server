@@ -14,11 +14,15 @@ Details
    It works together with the Illarion Client found at
    https://github.com/Illarion-eV/Illarion-Java.
 
+Standard
+
+   C++20
+
 Requirements
 
    GCC 10.2
    GNU Make 4.3
-   CMake 3.18.4
+   CMake 3.21
    Boost 1.74.0
    PostgreSQL 13.3
    Lua 5.2.4
