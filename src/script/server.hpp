@@ -42,7 +42,7 @@ auto logout() -> LuaLogoutScript &;
 auto learn() -> LuaLearnScript &;
 auto fighting() -> LuaWeaponScript &;
 
-auto reload() -> bool;
+void reload();
 } // namespace script::server
 
 #endif

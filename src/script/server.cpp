@@ -22,6 +22,7 @@
 
 #include "Logger.hpp"
 
+#include <cstdlib>
 #include <memory>
 #include <string>
 
@@ -56,13 +57,14 @@ template <typename T> auto loadScript(std::unique_ptr<T> &script, const std::str
         script = std::make_unique<T>(file);
     } catch (ScriptException &e) {
         success = false;
-        Logger::error(LogFacility::Script) << "Error while loading script: " << file << ": " << e.what() << Log::end;
+        Logger::critical(LogFacility::Script)
+                << "Error while loading server script: " << file << ": " << e.what() << Log::end;
     }
 
     return success;
 }
 
-auto reload() -> bool {
+void reload() {
     bool success = true;
 
     success = success && loadScript(standardFightingScript, "server.standardfighting");
@@ -75,6 +77,9 @@ auto reload() -> bool {
     success = success && loadScript(logoutScript, "server.logout");
     success = success && loadScript(learnScript, "server.learn");
 
-    return success;
+    if (!success) {
+        Logger::critical(LogFacility::Script) << "One or more server scripts were not loaded, terminating." << Log::end;
+        std::exit(EXIT_FAILURE);
+    }
 }
 } // namespace script::server

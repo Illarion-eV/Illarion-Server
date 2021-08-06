@@ -1056,7 +1056,7 @@ auto World::reload_defs(Player *cp) const -> bool {
         // Mutex entsperren.
         PlayerManager::setLoginLogout(false);
 
-        ok = script::server::reload();
+        script::server::reload();
     }
 
     if (ok) {
