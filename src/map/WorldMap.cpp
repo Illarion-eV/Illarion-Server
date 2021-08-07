@@ -349,6 +349,7 @@ auto WorldMap::importFromEditor() -> bool {
     }
 
     saveToDisk();
+    loadPersistentFields();
     return errors == 0;
 }
 
