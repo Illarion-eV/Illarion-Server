@@ -1,16 +1,5 @@
 include( Dart )
 
-file( GLOB MapTestFiles ${CMAKE_CURRENT_SOURCE_DIR}/maps/*.txt )
-
-add_custom_target( CopyMapTestFiles
-                   COMMENT "Copy the files that are required for the map unit tests."
-                   DEPENDS ${MapTestFiles} )
-foreach( MapTestFile ${MapTestFiles} )
-  get_filename_component( MapTestFileName ${MapTestFile} NAME )
-  add_custom_command( TARGET CopyMapTestFiles
-                      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MapTestFile} ${CMAKE_CURRENT_BINARY_DIR}/data/map/import/${MapTestFileName} )
-endforeach()
-
 function( run_test )
     set( multiValueArgs DEPENDENCIES )
     cmake_parse_arguments( run_test "" "" "${multiValueArgs}" ${ARGN} )
@@ -41,6 +30,5 @@ run_test( test_binding_scriptitem )
 run_test( test_binding_weatherstruct )
 run_test( test_binding_world )
 run_test( test_container )
-run_test( test_map_import DEPENDENCIES CopyMapTestFiles )
 run_test( test_random )
 run_test( test_timer )
