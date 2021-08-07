@@ -39,7 +39,7 @@ public:
     auto find(const std::string &effectname, LongTimeEffect *&effect) const -> bool;
     auto removeEffect(uint16_t effectid) -> bool;
     auto removeEffect(const std::string &name) -> bool;
-    auto removeEffect(LongTimeEffect *effect) -> bool;
+    auto removeEffect(const LongTimeEffect *effect) -> bool;
 
     void checkEffects();
     auto save() -> bool;

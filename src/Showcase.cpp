@@ -20,7 +20,7 @@
 
 Showcase::Showcase(Container *container, bool carry) : openContainer(container), isInInventory(carry) {}
 
-auto Showcase::contains(Container *container) const -> bool { return openContainer == container; }
+auto Showcase::contains(const Container *container) const -> bool { return openContainer == container; }
 
 auto Showcase::getContainer() const -> Container * { return openContainer; }
 

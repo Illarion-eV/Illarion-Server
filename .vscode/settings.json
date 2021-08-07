@@ -1,5 +1,12 @@
 {
     "files.associations": {
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "*.ipp": "cpp",
+        "iosfwd": "cpp",
+        "numeric": "cpp",
+        "ranges": "cpp",
+        "functional": "cpp",
+        "regex": "cpp",
+        "tuple": "cpp"
     }
 }

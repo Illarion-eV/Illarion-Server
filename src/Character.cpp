@@ -146,8 +146,6 @@ Character::Character() : Character(appearance()) {}
 
 Character::Character(const appearance &appearance)
         : effects(this), waypoints(this), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
-    setAlive(true);
-
     attributes[strength] = Attribute(0, MAXATTRIB);
     attributes[dexterity] = Attribute(0, MAXATTRIB);
     attributes[constitution] = Attribute(0, MAXATTRIB);
@@ -587,14 +585,12 @@ void Character::setAlive(bool t) { alive = t; }
 auto Character::attack(Character *target) -> bool {
     if ((target != nullptr) && target->isAlive()) {
         if (!actionRunning()) {
-            if (target->isAlive()) {
-                if (target->getType() == player) {
-                    auto *pl = dynamic_cast<Player *>(target);
-                    pl->ltAction->actionDisturbed(this);
-                }
-
-                callAttackScript(this, target);
+            if (target->getType() == player) {
+                auto *pl = dynamic_cast<Player *>(target);
+                pl->ltAction->actionDisturbed(this);
             }
+
+            callAttackScript(this, target);
         }
 
         if (getType() == player) {
@@ -988,7 +984,7 @@ auto Character::isInScreen(const position &pos) const -> bool {
     Coordinate dy = std::abs(this->pos.y - pos.y);
     Coordinate dz = std::abs(this->pos.z - pos.z);
 
-    return dx + dy <= getScreenRange() && -RANGEDOWN <= dz && dz <= RANGEUP;
+    return dx + dy <= getScreenRange() && dz <= std::max(RANGEDOWN, RANGEUP);
 }
 
 auto Character::getScreenRange() const -> Coordinate { return screenRange; }

@@ -37,7 +37,7 @@ auto long_time_character_effects() -> Binding<LongTimeCharacterEffects> {
             .def("removeEffect",
                  (bool (LongTimeCharacterEffects::*)(const std::string &)) & LongTimeCharacterEffects::removeEffect)
             .def("removeEffect",
-                 (bool (LongTimeCharacterEffects::*)(LongTimeEffect *)) & LongTimeCharacterEffects::removeEffect)
+                 (bool (LongTimeCharacterEffects::*)(const LongTimeEffect *)) & LongTimeCharacterEffects::removeEffect)
             .def("find",
                  (bool (LongTimeCharacterEffects::*)(uint16_t, LongTimeEffect *&) const) &
                          LongTimeCharacterEffects::find,

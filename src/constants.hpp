@@ -39,6 +39,9 @@ constexpr auto maxDataValueLength = 255;
 constexpr uint32_t DYNNPC_BASE = 0xFF800000;
 constexpr uint32_t NPC_BASE = 0xFF000000;
 constexpr uint32_t MONSTER_BASE = 0xFE000000;
+static_assert(MONSTER_BASE < NPC_BASE);
+static_assert(NPC_BASE < DYNNPC_BASE);
+
 constexpr auto MONSTERVIEWRANGE = 11;
 constexpr auto MAX_SCREEN_RANGE = 30;
 constexpr auto MAX_ACT_RANGE = 60;

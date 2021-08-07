@@ -1057,9 +1057,7 @@ auto World::reload_defs(Player *cp) const -> bool {
         PlayerManager::setLoginLogout(false);
 
         script::server::reload();
-    }
 
-    if (ok) {
         cp->inform(" *** Definitions reloaded *** ");
     } else {
         cp->inform("CRITICAL ERROR: Failure while reloading definitions");

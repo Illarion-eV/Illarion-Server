@@ -27,7 +27,7 @@ public:
 
     [[nodiscard]] auto inInventory() const -> bool;
     [[nodiscard]] auto getContainer() const -> Container *;
-    auto contains(Container *container) const -> bool;
+    auto contains(const Container *container) const -> bool;
 
 private:
     Container *openContainer;

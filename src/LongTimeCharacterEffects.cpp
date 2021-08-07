@@ -132,7 +132,7 @@ auto LongTimeCharacterEffects::removeEffect(const std::string &name) -> bool {
     return false;
 }
 
-auto LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) -> bool {
+auto LongTimeCharacterEffects::removeEffect(const LongTimeEffect *effect) -> bool {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if (it->get() == effect) {
             const auto &script = Data::longTimeEffects().script((*it)->getEffectId());

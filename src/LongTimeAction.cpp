@@ -334,7 +334,7 @@ void LongTimeAction::checkSource() {
             _sourceCharType = 0;
         }
 
-    } else if (_sourceId >= MONSTER_BASE && _sourceId < NPC_BASE) {
+    } else if (_sourceId < NPC_BASE) {
         // monster
 
         if (World::get()->Monsters.find(_sourceId) == nullptr) {

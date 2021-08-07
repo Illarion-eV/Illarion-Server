@@ -38,7 +38,6 @@ uint32_t Monster::counter = 0;
 Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint)
         : lastTargetPosition(position(0, 0, 0)), spawn(spawnpoint), monstertype(type) {
     setId(MONSTER_BASE + counter++ % (NPC_BASE - MONSTER_BASE));
-    setAlive(true);
     setMonsterType(type);
     setPosition(newpos);
 }

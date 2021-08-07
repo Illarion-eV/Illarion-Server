@@ -245,7 +245,7 @@ void LookAtCharacterTS::performAction(Player *player) {
         }
 
         // code for player handling
-    } else if (id >= MONSTER_BASE && id < NPC_BASE) {
+    } else if (id < NPC_BASE) {
         Monster *monster = World::get()->Monsters.find(id);
 
         if (monster != nullptr) {
