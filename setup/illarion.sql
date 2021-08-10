@@ -263,7 +263,7 @@ CREATE SEQUENCE accounts.acc_log_seq
 
 SET default_tablespace = '';
 
-SET default_with_oids = true;
+SET default_with_oids = false;
 
 --
 -- Name: account; Type: TABLE; Schema: accounts; Owner: -
@@ -291,8 +291,6 @@ CREATE TABLE accounts.account (
     acc_weight accounts.measuresystem DEFAULT 'metric'::accounts.measuresystem NOT NULL
 );
 
-
-SET default_with_oids = false;
 
 --
 -- Name: account_groups; Type: TABLE; Schema: accounts; Owner: -
@@ -415,8 +413,6 @@ CREATE TABLE accounts.attribtemp (
 COMMENT ON TABLE accounts.attribtemp IS 'Attribute Voreinstellung bei Charaktererschaffung';
 
 
-SET default_with_oids = true;
-
 --
 -- Name: bad_ips; Type: TABLE; Schema: accounts; Owner: -
 --
@@ -452,8 +448,6 @@ CREATE SEQUENCE accounts.bad_value_seq
     CACHE 1;
 
 
-SET default_with_oids = false;
-
 --
 -- Name: bad_values; Type: TABLE; Schema: accounts; Owner: -
 --
@@ -473,8 +467,6 @@ CREATE TABLE accounts.bad_values (
 
 COMMENT ON TABLE accounts.bad_values IS 'Invalid or banned values for account and chars';
 
-
-SET default_with_oids = true;
 
 --
 -- Name: badname_full; Type: TABLE; Schema: accounts; Owner: -
@@ -542,8 +534,6 @@ CREATE TABLE accounts.gm_stats_race (
 );
 
 
-SET default_with_oids = false;
-
 --
 -- Name: groups; Type: TABLE; Schema: accounts; Owner: -
 --
@@ -557,8 +547,6 @@ CREATE TABLE accounts.groups (
     g_rights character varying(100) NOT NULL
 );
 
-
-SET default_with_oids = true;
 
 --
 -- Name: legtimulti; Type: TABLE; Schema: accounts; Owner: -
@@ -596,8 +584,6 @@ CREATE TABLE accounts.raceapplys (
     ra_answer text
 );
 
-
-SET default_with_oids = false;
 
 --
 -- Name: rights; Type: TABLE; Schema: accounts; Owner: -
@@ -640,21 +626,6 @@ CREATE SEQUENCE accounts.story_seq
 
 
 --
--- Name: test; Type: VIEW; Schema: accounts; Owner: -
---
-
-CREATE VIEW accounts.test AS
- SELECT raceapplys.ra_accid,
-    raceapplys.ra_answer,
-    gm_stats_race.gm_name
-   FROM (accounts.raceapplys
-     JOIN accounts.gm_stats_race ON ((raceapplys.oid = (gm_stats_race.gm_apply_id)::oid)))
-  WHERE ((raceapplys.ra_race = 7) AND (raceapplys.ra_status = 2));
-
-
-SET default_with_oids = true;
-
---
 -- Name: warnings; Type: TABLE; Schema: accounts; Owner: -
 --
 
@@ -690,8 +661,6 @@ CREATE TABLE server.armor (
     CONSTRAINT armor_type_check CHECK (((arm_type >= 0) AND (arm_type < 6)))
 );
 
-
-SET default_with_oids = false;
 
 --
 -- Name: attribute_packages; Type: TABLE; Schema: server; Owner: -
@@ -746,8 +715,6 @@ CREATE SEQUENCE server.char_log_seq
     CACHE 1;
 
 
-SET default_with_oids = true;
-
 --
 -- Name: chars; Type: TABLE; Schema: server; Owner: -
 --
@@ -782,8 +749,6 @@ CREATE TABLE server.container (
 );
 
 
-SET default_with_oids = false;
-
 --
 -- Name: deleted_chars; Type: TABLE; Schema: server; Owner: -
 --
@@ -807,8 +772,6 @@ CREATE SEQUENCE server.gmpager_seq
     NO MAXVALUE
     CACHE 1;
 
-
-SET default_with_oids = true;
 
 --
 -- Name: gmpager; Type: TABLE; Schema: server; Owner: -
@@ -884,8 +847,6 @@ CREATE VIEW server.gmrights AS
    FROM server.gms;
 
 
-SET default_with_oids = false;
-
 --
 -- Name: introduction; Type: TABLE; Schema: server; Owner: -
 --
@@ -895,8 +856,6 @@ CREATE TABLE server.introduction (
     intro_known_player integer NOT NULL
 );
 
-
-SET default_with_oids = true;
 
 --
 -- Name: items; Type: TABLE; Schema: server; Owner: -
@@ -978,8 +937,6 @@ CREATE TABLE server.longtimeeffects (
 );
 
 
-SET default_with_oids = false;
-
 --
 -- Name: map_item_data; Type: TABLE; Schema: server; Owner: -
 --
@@ -1058,8 +1015,6 @@ CREATE SEQUENCE server.mon_drop_seq
 
 COMMENT ON SEQUENCE server.mon_drop_seq IS 'The sequence for the index in the monster drop table.';
 
-
-SET default_with_oids = true;
 
 --
 -- Name: monster; Type: TABLE; Schema: server; Owner: -
@@ -1312,8 +1267,6 @@ CREATE TABLE server.monsterattack (
 COMMENT ON COLUMN server.monsterattack.mat_attack_type IS '1-slashing, 2-concussion, 3-puncture';
 
 
-SET default_with_oids = false;
-
 --
 -- Name: naming; Type: TABLE; Schema: server; Owner: -
 --
@@ -1324,8 +1277,6 @@ CREATE TABLE server.naming (
     name_player_name character varying(50) NOT NULL
 );
 
-
-SET default_with_oids = true;
 
 --
 -- Name: naturalarmor; Type: TABLE; Schema: server; Owner: -
@@ -1500,8 +1451,6 @@ CREATE TABLE server.player (
 COMMENT ON COLUMN server.player.ply_body_height IS 'in inches';
 
 
-SET default_with_oids = false;
-
 --
 -- Name: playeritem_datavalues; Type: TABLE; Schema: server; Owner: -
 --
@@ -1513,8 +1462,6 @@ CREATE TABLE server.playeritem_datavalues (
     idv_value character varying(255) DEFAULT ''::character varying NOT NULL
 );
 
-
-SET default_with_oids = true;
 
 --
 -- Name: playeritems; Type: TABLE; Schema: server; Owner: -
@@ -1577,8 +1524,6 @@ CREATE TABLE server.playerskills (
 );
 
 
-SET default_with_oids = false;
-
 --
 -- Name: questprogress; Type: TABLE; Schema: server; Owner: -
 --
@@ -1600,8 +1545,6 @@ CREATE TABLE server.quests (
     qst_script character varying(50) NOT NULL
 );
 
-
-SET default_with_oids = true;
 
 --
 -- Name: race; Type: TABLE; Schema: server; Owner: -
@@ -1699,8 +1642,6 @@ COMMENT ON COLUMN server.race.race_height_max IS 'The maximal height for this ra
 COMMENT ON COLUMN server.race.race_name IS 'This is the name used to refer to this race in the scripts';
 
 
-SET default_with_oids = false;
-
 --
 -- Name: race_beard; Type: TABLE; Schema: server; Owner: -
 --
@@ -1779,8 +1720,6 @@ CREATE TABLE server.race_types (
 );
 
 
-SET default_with_oids = true;
-
 --
 -- Name: raceattr; Type: TABLE; Schema: server; Owner: -
 --
@@ -1833,8 +1772,6 @@ CREATE TABLE server.scheduledscripts (
     CONSTRAINT scs_cycletime_check CHECK (((sc_mincycletime > 0) AND (sc_mincycletime <= sc_maxcycletime)))
 );
 
-
-SET default_with_oids = false;
 
 --
 -- Name: scriptvariables; Type: TABLE; Schema: server; Owner: -
@@ -1900,8 +1837,6 @@ CREATE SEQUENCE server.spawnpoint_seq
     CACHE 1;
 
 
-SET default_with_oids = true;
-
 --
 -- Name: spawnpoint; Type: TABLE; Schema: server; Owner: -
 --
@@ -1959,8 +1894,6 @@ CREATE TABLE server.spells (
     CONSTRAINT spell_type_check CHECK (((spl_magictype >= 0) AND (spl_magictype <= 3)))
 );
 
-
-SET default_with_oids = false;
 
 --
 -- Name: startpack_items; Type: TABLE; Schema: server; Owner: -
@@ -2172,8 +2105,6 @@ CREATE TABLE server.statistics_types (
 );
 
 
-SET default_with_oids = true;
-
 --
 -- Name: tiles; Type: TABLE; Schema: server; Owner: -
 --
@@ -2231,8 +2162,6 @@ CREATE SEQUENCE server.version_seq
     CACHE 1;
 
 
-SET default_with_oids = false;
-
 --
 -- Name: versions; Type: TABLE; Schema: server; Owner: -
 --
@@ -2242,8 +2171,6 @@ CREATE TABLE server.versions (
     version_name character varying(30) NOT NULL
 );
 
-
-SET default_with_oids = true;
 
 --
 -- Name: weapon; Type: TABLE; Schema: server; Owner: -
