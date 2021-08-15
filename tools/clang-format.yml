@@ -3,7 +3,7 @@ version: "3.8"
 services:
 
   clang-format:
-    image: ghcr.io/illarion-ev/illarion-server-tools-clang
+    image: ghcr.io/illarion-ev/illarion-server-tools-clang:sha-b185f1e1
     volumes:
       - type: bind
         source: ..

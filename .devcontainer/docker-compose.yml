@@ -46,7 +46,7 @@ services:
       - seccomp:unconfined
     
   db:
-    image: ghcr.io/illarion-ev/illarion-dev-postgres
+    image: ghcr.io/illarion-ev/illarion-dev-postgres:sha-a8ddac0b
     restart: unless-stopped
     volumes:
       - type: volume

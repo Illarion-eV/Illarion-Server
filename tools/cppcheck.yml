@@ -3,7 +3,7 @@ version: "3.8"
 services:
 
   cppcheck:
-    image: ghcr.io/illarion-ev/illarion-server-tools-cppcheck
+    image: ghcr.io/illarion-ev/illarion-server-tools-cppcheck:sha-94c41a15
     volumes:
       - type: bind
         source: ..
