@@ -55,7 +55,7 @@ endif()
 FetchContent_Declare(
     pqxx
     GIT_REPOSITORY https://github.com/jtv/libpqxx.git
-    GIT_TAG        aef63cf936adf3a9da7d668c10287843a3a780c3 #origin/7.6.0
+    GIT_TAG        5fe041dd185d808f98df8327a583f1a55fccc15f #pre 7.7.0
     GIT_SHALLOW    ON
 )
 
