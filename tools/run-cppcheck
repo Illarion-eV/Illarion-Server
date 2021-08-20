@@ -5,6 +5,7 @@ pushd $SCRIPTPATH > /dev/null
 [ -z "$CI" ] || XML="--xml --xml-version=2 --output-file=/tmp/cppcheck.xml"
 [ -z "$CI" ] || BIND_TMP="-v /tmp:/tmp"
 
+docker-compose -f cppcheck.yml pull
 docker-compose -f cppcheck.yml run --rm $BIND_TMP cppcheck sh -c "cppcheck --std=c++20 --enable=warning,style,performance,portability --inconclusive -j $(nproc) $XML --error-exitcode=1 -q --suppress=constParameter:src/netinterface/protocol/BBIWIClientCommands.cpp --suppress=knownConditionTrueFalse:src/Player.cpp -Isrc/ src/"
 exit_code=$?
 

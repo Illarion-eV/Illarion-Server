@@ -5,6 +5,7 @@ pushd $SCRIPTPATH > /dev/null
 [ -z "$CI" ] || mkdir -p /tmp/build
 [ -z "$CI" ] && BIND_BUILD="build:/build" || BIND_BUILD="/tmp/build:/build"
 
+docker-compose -f clang-tidy.yml pull
 docker-compose -f clang-tidy.yml run --rm -v $BIND_BUILD clang-tidy
 exit_code=$?
 
