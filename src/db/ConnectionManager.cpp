@@ -42,6 +42,7 @@ void ConnectionManager::setupManager() {
     addConnectionParameterIfValid("dbname", Config::instance().postgres_db);
     addConnectionParameterIfValid("host", Config::instance().postgres_host);
     addConnectionParameterIfValid("port", std::to_string(Config::instance().postgres_port));
+    addConnectionParameterIfValid("client_encoding", "LATIN1");
     isOperational = true;
 }
 
