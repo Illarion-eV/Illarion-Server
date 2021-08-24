@@ -108,7 +108,7 @@ void World::turntheworld() {
 void World::checkPlayers() {
     time_t now = 0;
     time(&now);
-    bool savedOnePlayer = false;
+    bool savedOnePlayer = true; // disable auto save until it can be moved into player save thread
 
     std::vector<Player *> lostPlayers;
 
