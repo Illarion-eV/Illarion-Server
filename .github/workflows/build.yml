@@ -42,16 +42,6 @@ jobs:
           cd ../build
           echo ::set-output name=build-directory::$(pwd -P)
 
-      - name: Cache build results
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ steps.cmake-setup.outputs.build-directory }}
-            !${{ steps.cmake-setup.outputs.build-directory }}/*.deb
-          key: ${{ runner.os }}-${{ matrix.build-type }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.build-type }}-cmake-
-
       - name: Initialize CodeQL
         if: ${{ github.event_name == 'schedule' }}
         uses: github/codeql-action/init@v1
@@ -123,14 +113,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
       - name: Login to GitHub
         if: ${{ steps.docker-vars.outputs.has-docker-secret == 'true' }}
         uses: docker/login-action@v1
@@ -156,8 +138,6 @@ jobs:
             org.opencontainers.image.created=${{ steps.docker-vars.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.licenses=${{ fromJson(steps.repo.outputs.result).license.spdx_id }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
 
       - name: Clean Docker environment
         shell: bash
