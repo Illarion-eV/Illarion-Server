@@ -129,11 +129,12 @@ void preReload() {
 auto getIdFromName(const std::string &itemName) -> TYPE_OF_ITEM_ID {
     TYPE_OF_ITEM_ID item = 0;
 
-    for (const auto &di : items()) {
-        if (di.second.serverName == itemName) {
-            item = di.second.id;
-            break; // Drop out, we found it
-        }
+    auto found = std::find_if(items().begin(), items().end(), [&](std::pair<ushort, ItemStruct> const &di) {
+        return (itemName == di.second.serverName);
+    });
+
+    if (found != items().end()) {
+        item = found->second.id;
     }
 
     return item;

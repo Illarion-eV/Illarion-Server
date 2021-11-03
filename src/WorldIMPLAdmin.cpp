@@ -854,8 +854,8 @@ void World::gmhelp_command(Player *cp) {
         if (Config::instance().debug != 0) {
             std::string tmessage = " <> - parameter.  [] - optional.  | = choice.  () = shortcut";
             cp->inform(tmessage);
-            tmessage = "!create <id|itemName> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your "
-                       "inventory.";
+            tmessage = "!create <id|itemName> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an "
+                       "item in your inventory.";
             cp->inform(tmessage);
             tmessage = "!jumpto <player> - (!j) teleports you to the player.";
             cp->inform(tmessage);
@@ -890,8 +890,8 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
         tmessage = "!broadcast <message> - (!bc) Broadcasts the message <message> to all players IG.";
         cp->inform(tmessage);
-        tmessage = "!create <id|itemName> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your "
-                   "inventory.";
+        tmessage = "!create <id|itemName> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in "
+                   "your inventory.";
     }
 
     if (cp->hasGMRight(gmr_warp)) {
