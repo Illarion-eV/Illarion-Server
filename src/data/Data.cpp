@@ -126,4 +126,17 @@ void preReload() {
     }
 }
 
+auto getIdFromName(const std::string &itemName) -> TYPE_OF_ITEM_ID {
+    TYPE_OF_ITEM_ID item = 0;
+
+    for (const auto &di : items()) {
+        if (di.second.serverName == itemName) {
+            item = di.second.id;
+            break; // Drop out, we found it
+        }
+    }
+
+    return item;
+}
+
 } // namespace Data

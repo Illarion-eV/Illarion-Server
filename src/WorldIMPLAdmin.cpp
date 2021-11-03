@@ -259,10 +259,14 @@ void World::create_command(Player *cp, const std::string &itemid) {
         script_data_exchangemap dataList;
 
         std::stringstream ss;
+        std::string tempItem;
         ss.str(itemid);
-        ss >> item;
+        ss >> tempItem;
         ss >> quantity;
         ss >> quality;
+
+        // Obtain the ItemID either from stringId or name
+        item = isNumeric(tempItem) ? std::stoi(tempItem) : Data::getIdFromName(tempItem);
 
         while (ss.good()) {
             ss >> data;
@@ -850,7 +854,7 @@ void World::gmhelp_command(Player *cp) {
         if (Config::instance().debug != 0) {
             std::string tmessage = " <> - parameter.  [] - optional.  | = choice.  () = shortcut";
             cp->inform(tmessage);
-            tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your "
+            tmessage = "!create <id|itemName> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your "
                        "inventory.";
             cp->inform(tmessage);
             tmessage = "!jumpto <player> - (!j) teleports you to the player.";
@@ -886,7 +890,7 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
         tmessage = "!broadcast <message> - (!bc) Broadcasts the message <message> to all players IG.";
         cp->inform(tmessage);
-        tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your "
+        tmessage = "!create <id|itemName> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your "
                    "inventory.";
     }
 

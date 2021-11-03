@@ -61,6 +61,7 @@ void reloadScripts();
 void activateTables();
 auto reload() -> bool;
 void preReload();
+auto getIdFromName(const std::string &itemName) -> TYPE_OF_ITEM_ID;
 
 } // namespace Data
 
