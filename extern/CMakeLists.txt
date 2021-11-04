@@ -4,7 +4,7 @@ FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG        e2239ee6043f73722e7aa812a459f54a28552929 #origin/v1.11.0
-    GIT_SHALLOW    ON
+    #GIT_SHALLOW    ON
 )
 
 FetchContent_GetProperties( googletest )
@@ -17,7 +17,7 @@ FetchContent_Declare(
     luabind
     GIT_REPOSITORY https://github.com/vilarion/luabind.git
     GIT_TAG        a9287d342c70a37b68beca694ee75f2d5c747db4 #origin/master
-    GIT_SHALLOW    ON
+    #GIT_SHALLOW    ON
     PATCH_COMMAND  git checkout -- CMakeLists.txt && git apply --reject --ignore-space-change --ignore-whitespace "${CMAKE_CURRENT_SOURCE_DIR}/luabind.patch"
 )
 
@@ -40,7 +40,7 @@ FetchContent_Declare(
     range_v3
     GIT_REPOSITORY https://github.com/ericniebler/range-v3.git
     GIT_TAG        4989f3e9ff2efee1852942bb9328ef121369ba02 #origin/0.11.0
-    GIT_SHALLOW    ON
+    #GIT_SHALLOW    ON
 )
 
 FetchContent_GetProperties( range_v3 )
@@ -56,7 +56,7 @@ FetchContent_Declare(
     pqxx
     GIT_REPOSITORY https://github.com/jtv/libpqxx.git
     GIT_TAG        65b619558dc147d2423b52ab3054d0b0e59354a1 #master
-    GIT_SHALLOW    ON
+    #GIT_SHALLOW    ON
 )
 
 FetchContent_GetProperties( pqxx )
