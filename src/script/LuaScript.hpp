@@ -178,7 +178,7 @@ private:
             using clock = std::chrono::steady_clock;
 
             auto luaEntrypoint = buildEntrypoint(entrypoint);
-            
+
             const auto startTime = clock::now();
             luaEntrypoint(args...);
             const auto duration = clock::now() - startTime;
@@ -193,7 +193,7 @@ private:
             using clock = std::chrono::steady_clock;
 
             auto luaEntrypoint = buildEntrypoint(entrypoint);
-            
+
             const auto startTime = clock::now();
             auto result = luaEntrypoint(args...);
             const auto duration = clock::now() - startTime;
