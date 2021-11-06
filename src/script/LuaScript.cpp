@@ -234,6 +234,19 @@ void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const luabind::
                                        << "Expected type " << expectedType << Log::end;
 }
 
+void LuaScript::checkRunTime(const std::string &entryPoint, const std::chrono::nanoseconds duration) const {
+    if (duration > scriptRunTimeLimitSoft) {
+        using std::chrono::duration_cast;
+        using std::chrono::milliseconds;
+
+        const auto elapsed = duration_cast<milliseconds>(duration).count();
+
+        Logger::warn(LogFacility::Script)
+                << "Long-running script may affect server performance! Script: " << _filename
+                << ", entrypoint: " << entryPoint << ", duration: " << elapsed << "ms." << Log::end;
+    }
+}
+
 void LuaScript::writeDebugMsg(const std::string &msg) {
     if (Config::instance().debug != 0) {
         lua_pushstring(_luaState, ("Debug Message: " + msg).c_str());

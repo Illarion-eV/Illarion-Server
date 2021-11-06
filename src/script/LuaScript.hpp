@@ -30,6 +30,7 @@ extern "C" {
 #include "character_ptr.hpp"
 #include "globals.hpp"
 
+#include <chrono>
 #include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
 #include <map>
@@ -156,6 +157,7 @@ private:
     static auto add_backtrace(lua_State *L) -> int;
     static void writeErrorMsg();
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) const;
+    void checkRunTime(const std::string &entryPoint, const std::chrono::nanoseconds duration) const;
     void setCurrentWorldScript();
     auto buildEntrypoint(const std::string &entrypoint) -> luabind::object;
     [[nodiscard]] auto existsQuestEntrypoint(const std::string &entrypoint) const -> bool;
@@ -173,16 +175,31 @@ private:
 
     template <typename... Args> void safeCall(const std::string &entrypoint, const Args &...args) {
         try {
+            using clock = std::chrono::steady_clock;
+
             auto luaEntrypoint = buildEntrypoint(entrypoint);
+
+            const auto startTime = clock::now();
             luaEntrypoint(args...);
+            const auto duration = clock::now() - startTime;
+
+            checkRunTime(entrypoint, duration);
         } catch (const luabind::error &e) {
             writeErrorMsg();
         }
     }
     template <typename T, typename... Args> auto safeCall(const std::string &entrypoint, const Args &...args) -> T {
         try {
+            using clock = std::chrono::steady_clock;
+
             auto luaEntrypoint = buildEntrypoint(entrypoint);
+
+            const auto startTime = clock::now();
             auto result = luaEntrypoint(args...);
+            const auto duration = clock::now() - startTime;
+
+            checkRunTime(entrypoint, duration);
+
             return luabind::object_cast<T>(result);
         } catch (luabind::cast_failed &e) {
             writeCastErrorMsg(entrypoint, e);
