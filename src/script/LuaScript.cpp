@@ -241,9 +241,9 @@ void LuaScript::checkRunTime(const std::string &entryPoint, const std::chrono::n
 
         const auto elapsed = duration_cast<milliseconds>(duration).count();
 
-        Logger::warn(LogFacility::Other)
-                << "Long-running script may affect server performance! Script: " << _filename
-                << ", entrypoint: " << entryPoint << ", duration: " << elapsed << "ms." << Log::end;
+        Logger::warn(LogFacility::Other) << "Long-running script may affect server performance! Script: " << _filename
+                                         << ", entrypoint: " << entryPoint << ", duration: " << elapsed << "ms."
+                                         << Log::end;
     }
 }
 
