@@ -39,4 +39,6 @@ auto to_direction(uint8_t dir) -> direction {
     return dir_none;
 }
 
-auto isNumeric(const std::string &str) -> bool { return str.find_first_not_of("0123456789") == std::string::npos; }
+auto isNumeric(const std::string &str) -> bool {
+    return !str.empty() && str.find_first_not_of("0123456789") == std::string::npos;
+}
