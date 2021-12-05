@@ -1929,15 +1929,14 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
     int timeNow = int(time(nullptr));
 
     try {
-        connection->beginTransaction();
+        UpdateQuery updQuery;
+        updQuery.addAssignColumn<TYPE_OF_QUESTSTATUS>("qpg_progress", progress);
+        updQuery.addAssignColumn<int>("qpg_time", timeNow);
+        updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", getId());
+        updQuery.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
+        updQuery.setServerTable("questprogress");
 
-        SelectQuery query(connection);
-        query.addColumn("questprogress", "qpg_progress");
-        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", getId());
-        query.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
-        query.addServerTable("questprogress");
-
-        Result results = query.execute();
+        Result results = updQuery.execute();
 
         // TODO: Save player from dedicated thread only, see PlayerManager
         // save();
@@ -1956,18 +1955,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
             insQuery.addValue<int>(timeColumn, timeNow);
 
             insQuery.execute();
-        } else {
-            UpdateQuery updQuery;
-            updQuery.addAssignColumn<TYPE_OF_QUESTSTATUS>("qpg_progress", progress);
-            updQuery.addAssignColumn<int>("qpg_time", timeNow);
-            updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", getId());
-            updQuery.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
-            updQuery.setServerTable("questprogress");
-
-            updQuery.execute();
         }
-
-        connection->commitTransaction();
     } catch (std::exception &e) {
         Logger::error(LogFacility::Script)
                 << "Setting quest progress failed for " << to_string() << ": " << e.what() << Log::end;
