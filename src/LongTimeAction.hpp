@@ -16,8 +16,8 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLONGTIMEACTION_HPP
-#define CLONGTIMEACTION_HPP
+#ifndef LONG_TIME_ACTION_HPP
+#define LONG_TIME_ACTION_HPP
 
 #include "Item.hpp"
 #include "Timer.hpp"
@@ -30,10 +30,10 @@ class Character;
 class LuaScript;
 
 enum SouTarTypes {
-    LUA_NONE = 0,      /**< not a correct type (only for initialisation) */
-    LUA_FIELD = 1,     /**< target was a field */
-    LUA_ITEM = 2,      /**< target was a item */
-    LUA_CHARACTER = 3, /**< target was character*/
+    LUA_NONE = 0,
+    LUA_FIELD = 1,
+    LUA_ITEM = 2,
+    LUA_CHARACTER = 3,
     LUA_DIALOG = 4
 };
 
@@ -55,7 +55,7 @@ public:
     /**
      * what type of action was invoked
      */
-    enum class ActionType {USE, MAGIC, CRAFT};
+    enum class ActionType { USE, MAGIC, CRAFT, TALK };
 
     /**
      *@name Lua Definitions:
