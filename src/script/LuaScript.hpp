@@ -53,12 +53,6 @@ enum SouTarTypes {
     LUA_DIALOG = 4
 };
 
-enum LtaStates {
-    LTS_NOLTACTION = 0,       /**< no longtime action in this script */
-    LTS_ACTIONABORTED = 1,    /**< long time action was aborted */
-    LTS_ACTIONSUCCESSFULL = 2 /**< long time action was performed sucessfulle*/
-};
-
 struct SouTar {
     Character *character = nullptr;
     ScriptItem item;

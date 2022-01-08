@@ -519,16 +519,17 @@ void CastTS::performAction(Player *player) {
         if ((paramOK) && player->isAlive()) {
             switch (Source.Type) {
             case LUA_NONE:
-                LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaMageScript->CastMagic(player, static_cast<unsigned char>(LongTimeAction::ST_NONE));
                 break;
 
             case LUA_FIELD:
-                LuaMageScript->CastMagicOnField(player, Source.pos, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaMageScript->CastMagicOnField(player, Source.pos,
+                                                static_cast<unsigned char>(LongTimeAction::ST_NONE));
                 break;
 
             case LUA_CHARACTER:
                 LuaMageScript->CastMagicOnCharacter(player, Source.character,
-                                                    static_cast<unsigned char>(LTS_NOLTACTION));
+                                                    static_cast<unsigned char>(LongTimeAction::ST_NONE));
 
                 if (Source.character->getType() == Character::monster) {
                     auto *temp = dynamic_cast<Monster *>(Source.character);
@@ -546,11 +547,12 @@ void CastTS::performAction(Player *player) {
                 break;
 
             case LUA_ITEM:
-                LuaMageScript->CastMagicOnItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaMageScript->CastMagicOnItem(player, Source.item,
+                                               static_cast<unsigned char>(LongTimeAction::ST_NONE));
                 break;
 
             default:
-                LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaMageScript->CastMagic(player, static_cast<unsigned char>(LongTimeAction::ST_NONE));
                 break;
             }
         }
@@ -784,7 +786,7 @@ void UseTS::performAction(Player *player) {
 
         if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_ITEM) {
-                LuaScript->UseItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaScript->UseItem(player, Source.item, static_cast<unsigned char>(LongTimeAction::ST_NONE));
                 msg = "Used Item: " + std::to_string(Source.item.getId());
             }
         }
@@ -793,7 +795,7 @@ void UseTS::performAction(Player *player) {
 
         if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_CHARACTER) {
-                LuaNPCScript->useNPC(player, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaNPCScript->useNPC(player, static_cast<unsigned char>(LongTimeAction::ST_NONE));
                 msg = "Used NPC: " + Source.character->to_string();
             }
         }
@@ -803,7 +805,8 @@ void UseTS::performAction(Player *player) {
 
         if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_CHARACTER) {
-                LuaMonsterScript->useMonster(Source.character, player, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaMonsterScript->useMonster(Source.character, player,
+                                             static_cast<unsigned char>(LongTimeAction::ST_NONE));
                 msg = "Used Monster: " + Source.character->to_string();
             }
         }
@@ -812,7 +815,7 @@ void UseTS::performAction(Player *player) {
 
         if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_FIELD) {
-                LuaTileScript->useTile(player, Source.pos, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaTileScript->useTile(player, Source.pos, static_cast<unsigned char>(LongTimeAction::ST_NONE));
             }
         }
     }

@@ -177,12 +177,12 @@ void LongTimeAction::abortAction() {
                 // a itemscript
                 if (_source.Type == LUA_ITEM) {
                     std::shared_ptr<LuaItemScript> itScript = std::dynamic_pointer_cast<LuaItemScript>(_script);
-                    itScript->UseItem(_owner, _source.item, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                    itScript->UseItem(_owner, _source.item, static_cast<unsigned char>(LongTimeAction::ST_ABORT));
                 }
                 // a tilescript
                 else if (_source.Type == LUA_FIELD) {
                     std::shared_ptr<LuaTileScript> tiScript = std::dynamic_pointer_cast<LuaTileScript>(_script);
-                    tiScript->useTile(_owner, _source.pos, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                    tiScript->useTile(_owner, _source.pos, static_cast<unsigned char>(LongTimeAction::ST_ABORT));
                 }
                 // a character
                 else if (_source.Type == LUA_CHARACTER) {
@@ -190,26 +190,29 @@ void LongTimeAction::abortAction() {
                     if (_sourceCharType == Character::monster) {
                         std::shared_ptr<LuaMonsterScript> monScript =
                                 std::dynamic_pointer_cast<LuaMonsterScript>(_script);
-                        monScript->useMonster(_source.character, _owner, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                        monScript->useMonster(_source.character, _owner,
+                                              static_cast<unsigned char>(LongTimeAction::ST_ABORT));
                     }
                     // a npc
                     else if (_sourceCharType == Character::npc) {
                         std::shared_ptr<LuaNPCScript> npcScript = std::dynamic_pointer_cast<LuaNPCScript>(_script);
-                        npcScript->useNPC(_owner, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                        npcScript->useNPC(_owner, static_cast<unsigned char>(LongTimeAction::ST_ABORT));
                     }
                 }
             } else if (_at == ACTION_MAGIC) {
                 std::shared_ptr<LuaMagicScript> mgScript = std::dynamic_pointer_cast<LuaMagicScript>(_script);
 
                 if (_source.Type == LUA_NONE) {
-                    mgScript->CastMagic(_owner, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                    mgScript->CastMagic(_owner, static_cast<unsigned char>(LongTimeAction::ST_ABORT));
                 } else if (_source.Type == LUA_FIELD) {
-                    mgScript->CastMagicOnField(_owner, _source.pos, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                    mgScript->CastMagicOnField(_owner, _source.pos,
+                                               static_cast<unsigned char>(LongTimeAction::ST_ABORT));
                 } else if (_source.Type == LUA_CHARACTER) {
                     mgScript->CastMagicOnCharacter(_owner, _source.character,
-                                                   static_cast<unsigned char>(LTS_ACTIONABORTED));
+                                                   static_cast<unsigned char>(LongTimeAction::ST_ABORT));
                 } else if (_source.Type == LUA_ITEM) {
-                    mgScript->CastMagicOnItem(_owner, _source.item, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                    mgScript->CastMagicOnItem(_owner, _source.item,
+                                              static_cast<unsigned char>(LongTimeAction::ST_ABORT));
                 }
             }
         }
@@ -240,12 +243,12 @@ void LongTimeAction::successAction() {
                 // a itemscript
                 if (_source.Type == LUA_ITEM) {
                     std::shared_ptr<LuaItemScript> itScript = std::dynamic_pointer_cast<LuaItemScript>(_script);
-                    itScript->UseItem(_owner, _source.item, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                    itScript->UseItem(_owner, _source.item, static_cast<unsigned char>(LongTimeAction::ST_SUCCESS));
                 }
                 // a tilescript
                 else if (_source.Type == LUA_FIELD) {
                     std::shared_ptr<LuaTileScript> tiScript = std::dynamic_pointer_cast<LuaTileScript>(_script);
-                    tiScript->useTile(_owner, _source.pos, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                    tiScript->useTile(_owner, _source.pos, static_cast<unsigned char>(LongTimeAction::ST_SUCCESS));
                 }
                 // a character
                 else if (_source.Type == LUA_CHARACTER) {
@@ -254,27 +257,29 @@ void LongTimeAction::successAction() {
                         std::shared_ptr<LuaMonsterScript> monScript =
                                 std::dynamic_pointer_cast<LuaMonsterScript>(_script);
                         monScript->useMonster(_source.character, _owner,
-                                              static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                                              static_cast<unsigned char>(LongTimeAction::ST_SUCCESS));
                     }
                     // a npc
                     else if (_sourceCharType == Character::npc) {
                         std::shared_ptr<LuaNPCScript> npcScript = std::dynamic_pointer_cast<LuaNPCScript>(_script);
-                        npcScript->useNPC(_owner, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                        npcScript->useNPC(_owner, static_cast<unsigned char>(LongTimeAction::ST_SUCCESS));
                     }
                 }
             } else if (_at == ACTION_MAGIC) {
                 std::shared_ptr<LuaMagicScript> mgScript = std::dynamic_pointer_cast<LuaMagicScript>(_script);
 
                 if (_source.Type == LUA_NONE) {
-                    mgScript->CastMagic(_owner, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                    mgScript->CastMagic(_owner, static_cast<unsigned char>(LongTimeAction::ST_SUCCESS));
                 } else if (_source.Type == LUA_FIELD) {
-                    mgScript->CastMagicOnField(_owner, _source.pos, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                    mgScript->CastMagicOnField(_owner, _source.pos,
+                                               static_cast<unsigned char>(LongTimeAction::ST_SUCCESS));
                 } else if (_source.Type == LUA_CHARACTER) {
                     mgScript->CastMagicOnCharacter(_owner, _source.character,
-                                                   static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                                                   static_cast<unsigned char>(LongTimeAction::ST_SUCCESS));
                     // Todo add ki handling here
                 } else if (_source.Type == LUA_ITEM) {
-                    mgScript->CastMagicOnItem(_owner, _source.item, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                    mgScript->CastMagicOnItem(_owner, _source.item,
+                                              static_cast<unsigned char>(LongTimeAction::ST_SUCCESS));
                 }
             }
         }
