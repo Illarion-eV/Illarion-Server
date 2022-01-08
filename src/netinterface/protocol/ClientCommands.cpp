@@ -35,7 +35,6 @@
 #include "script/LuaMagicScript.hpp"
 #include "script/LuaMonsterScript.hpp"
 #include "script/LuaNPCScript.hpp"
-#include "script/LuaScript.hpp"
 #include "script/LuaTileScript.hpp"
 #include "script/server.hpp"
 #include "tuningConstants.hpp"

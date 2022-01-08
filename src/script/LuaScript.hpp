@@ -45,22 +45,6 @@ public:
     explicit ScriptException(const std::string &s) : std::runtime_error(s) {}
 };
 
-enum SouTarTypes {
-    LUA_NONE = 0,      /**< not a correct type (only for initialisation) */
-    LUA_FIELD = 1,     /**< target was a field */
-    LUA_ITEM = 2,      /**< target was a item */
-    LUA_CHARACTER = 3, /**< target was character*/
-    LUA_DIALOG = 4
-};
-
-struct SouTar {
-    Character *character = nullptr;
-    ScriptItem item;
-    SouTarTypes Type = LUA_NONE;
-    position pos{};
-    unsigned int dialog = 0;
-};
-
 class LuaScript {
 public:
     LuaScript();
