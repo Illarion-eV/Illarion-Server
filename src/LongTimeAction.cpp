@@ -106,7 +106,7 @@ auto LongTimeAction::actionDisturbed(Character *disturber) -> bool {
     checkSource();
 
     if (_actionrunning) {
-        if (_at == ACTION_CRAFT) {
+        if (_at == ActionType::CRAFT) {
             if (_source.Type == LUA_DIALOG) {
                 _actionrunning = false;
                 _owner->executeCraftingDialogCraftingAborted(_source.dialog);
@@ -114,7 +114,7 @@ auto LongTimeAction::actionDisturbed(Character *disturber) -> bool {
         } else if (_script) {
             bool disturbed = false;
 
-            if (_at == ACTION_USE) {
+            if (_at == ActionType::USE) {
                 if (_source.Type == LUA_ITEM) {
                     std::shared_ptr<LuaItemScript> itemScript = std::dynamic_pointer_cast<LuaItemScript>(_script);
 
@@ -143,7 +143,7 @@ auto LongTimeAction::actionDisturbed(Character *disturber) -> bool {
                         }
                     }
                 }
-            } else if (_at == ACTION_MAGIC) {
+            } else if (_at == ActionType::MAGIC) {
                 std::shared_ptr<LuaMagicScript> magicScript = std::dynamic_pointer_cast<LuaMagicScript>(_script);
 
                 if (magicScript->existsEntrypoint("actionDisturbed")) {
@@ -169,12 +169,12 @@ void LongTimeAction::abortAction() {
     checkSource();
 
     if (_actionrunning) {
-        if (_at == ACTION_CRAFT) {
+        if (_at == ActionType::CRAFT) {
             if (_source.Type == LUA_DIALOG) {
                 _owner->executeCraftingDialogCraftingAborted(_source.dialog);
             }
         } else if (_script) {
-            if (_at == ACTION_USE) {
+            if (_at == ActionType::USE) {
                 // a itemscript
                 if (_source.Type == LUA_ITEM) {
                     std::shared_ptr<LuaItemScript> itScript = std::dynamic_pointer_cast<LuaItemScript>(_script);
@@ -200,7 +200,7 @@ void LongTimeAction::abortAction() {
                         npcScript->useNPC(_owner, static_cast<unsigned char>(LongTimeAction::ST_ABORT));
                     }
                 }
-            } else if (_at == ACTION_MAGIC) {
+            } else if (_at == ActionType::MAGIC) {
                 std::shared_ptr<LuaMagicScript> mgScript = std::dynamic_pointer_cast<LuaMagicScript>(_script);
 
                 if (_source.Type == LUA_NONE) {
@@ -234,13 +234,13 @@ void LongTimeAction::successAction() {
     if (_actionrunning) {
         _actionrunning = false;
 
-        if (_at == ACTION_CRAFT) {
+        if (_at == ActionType::CRAFT) {
             if (_source.Type == LUA_DIALOG) {
                 _owner->executeCraftingDialogCraftingComplete(_source.dialog);
                 return;
             }
         } else if (_script) {
-            if (_at == ACTION_USE) {
+            if (_at == ActionType::USE) {
                 // a itemscript
                 if (_source.Type == LUA_ITEM) {
                     std::shared_ptr<LuaItemScript> itScript = std::dynamic_pointer_cast<LuaItemScript>(_script);
@@ -266,7 +266,7 @@ void LongTimeAction::successAction() {
                         npcScript->useNPC(_owner, static_cast<unsigned char>(LongTimeAction::ST_SUCCESS));
                     }
                 }
-            } else if (_at == ACTION_MAGIC) {
+            } else if (_at == ActionType::MAGIC) {
                 std::shared_ptr<LuaMagicScript> mgScript = std::dynamic_pointer_cast<LuaMagicScript>(_script);
 
                 if (_source.Type == LUA_NONE) {

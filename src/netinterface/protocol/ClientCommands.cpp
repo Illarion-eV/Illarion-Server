@@ -513,7 +513,7 @@ void CastTS::performAction(Player *player) {
 
     if (LuaMageScript) {
         Logger::debug(LogFacility::Script) << "try to call magic script" << Log::end;
-        player->ltAction->setLastAction(LuaMageScript, Source, LongTimeAction::ACTION_MAGIC);
+        player->ltAction->setLastAction(LuaMageScript, Source, LongTimeAction::ActionType::MAGIC);
 
         if ((paramOK) && player->isAlive()) {
             switch (Source.Type) {
@@ -781,7 +781,7 @@ void UseTS::performAction(Player *player) {
     std::string msg;
 
     if (LuaScript) {
-        player->ltAction->setLastAction(LuaScript, Source, LongTimeAction::ACTION_USE);
+        player->ltAction->setLastAction(LuaScript, Source, LongTimeAction::ActionType::USE);
 
         if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_ITEM) {
@@ -790,7 +790,7 @@ void UseTS::performAction(Player *player) {
             }
         }
     } else if (LuaNPCScript) {
-        player->ltAction->setLastAction(LuaNPCScript, Source, LongTimeAction::ACTION_USE);
+        player->ltAction->setLastAction(LuaNPCScript, Source, LongTimeAction::ActionType::USE);
 
         if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_CHARACTER) {
@@ -800,7 +800,7 @@ void UseTS::performAction(Player *player) {
         }
 
     } else if (LuaMonsterScript) {
-        player->ltAction->setLastAction(LuaMonsterScript, Source, LongTimeAction::ACTION_USE);
+        player->ltAction->setLastAction(LuaMonsterScript, Source, LongTimeAction::ActionType::USE);
 
         if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_CHARACTER) {
@@ -810,7 +810,7 @@ void UseTS::performAction(Player *player) {
             }
         }
     } else if (LuaTileScript) {
-        player->ltAction->setLastAction(LuaTileScript, Source, LongTimeAction::ACTION_USE);
+        player->ltAction->setLastAction(LuaTileScript, Source, LongTimeAction::ActionType::USE);
 
         if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_FIELD) {

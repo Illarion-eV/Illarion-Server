@@ -55,7 +55,7 @@ public:
     /**
      * what type of action was invoked
      */
-    enum ActionType { ACTION_USE = 0, ACTION_MAGIC = 1, ACTION_CRAFT = 2 };
+    enum class ActionType {USE, MAGIC, CRAFT};
 
     /**
      *@name Lua Definitions:
@@ -177,7 +177,7 @@ private:
     std::unique_ptr<Timer> _redosoundTimer =
             nullptr; /**< timer which determines how many ms the sound is played again.*/
 
-    ActionType _at = ACTION_USE; /**< type of the action @see ActionType*/
+    ActionType _at = ActionType::USE; /**< type of the action @see ActionType*/
 
     unsigned short int _sound = 0; /**< id of the sound which is played to the action*/
     unsigned short int _ani = 0;   /**< id of the animation which is shown to the action*/

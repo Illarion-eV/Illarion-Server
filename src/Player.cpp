@@ -2685,7 +2685,7 @@ void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t
     SouTar source;
     source.Type = LUA_DIALOG;
     source.dialog = dialogId;
-    ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, LongTimeAction::ACTION_CRAFT);
+    ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, LongTimeAction::ActionType::CRAFT);
     startAction(craftingTime, 0, 0, sfx, sfxDuration);
 
     ServerCommandPointer cmd = std::make_shared<CraftingDialogCraftTC>(stillToCraft, craftingTime, dialogId);
