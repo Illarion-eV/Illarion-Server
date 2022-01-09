@@ -26,6 +26,7 @@
 
 struct SpellStruct;
 class Character;
+enum LtaState : unsigned char;
 
 class LuaMagicScript : public LuaScript {
 public:
@@ -36,10 +37,10 @@ public:
     LuaMagicScript(LuaMagicScript &&) = default;
     auto operator=(LuaMagicScript &&) -> LuaMagicScript & = default;
 
-    void CastMagic(Character *caster, unsigned char ltastate);
-    void CastMagicOnItem(Character *caster, const ScriptItem &TargetItem, unsigned char ltastate);
-    void CastMagicOnCharacter(Character *caster, Character *target, unsigned char ltastate);
-    void CastMagicOnField(Character *caster, const position &pos, unsigned char ltastate);
+    void CastMagic(Character *caster, LtaState actionState);
+    void CastMagicOnItem(Character *caster, const ScriptItem &TargetItem, LtaState actionState);
+    void CastMagicOnCharacter(Character *caster, Character *target, LtaState actionState);
+    void CastMagicOnField(Character *caster, const position &pos, LtaState actionState);
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;
 };
 

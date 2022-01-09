@@ -26,25 +26,25 @@
 
 LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct & /*unused*/) : LuaScript(filename) {}
 
-void LuaMagicScript::CastMagic(Character *caster, unsigned char ltastate) {
+void LuaMagicScript::CastMagic(Character *caster, LtaState actionState) {
     character_ptr fuse_caster(caster);
-    callEntrypoint("CastMagic", fuse_caster, ltastate);
+    callEntrypoint("CastMagic", fuse_caster, static_cast<unsigned char>(actionState));
 }
 
-void LuaMagicScript::CastMagicOnCharacter(Character *caster, Character *target, unsigned char ltastate) {
+void LuaMagicScript::CastMagicOnCharacter(Character *caster, Character *target, LtaState actionState) {
     character_ptr fuse_caster(caster);
     character_ptr fuse_target(target);
-    callEntrypoint("CastMagicOnCharacter", fuse_caster, fuse_target, ltastate);
+    callEntrypoint("CastMagicOnCharacter", fuse_caster, fuse_target, static_cast<unsigned char>(actionState));
 }
 
-void LuaMagicScript::CastMagicOnField(Character *caster, const position &pos, unsigned char ltastate) {
+void LuaMagicScript::CastMagicOnField(Character *caster, const position &pos, LtaState actionState) {
     character_ptr fuse_caster(caster);
-    callEntrypoint("CastMagicOnField", fuse_caster, pos, ltastate);
+    callEntrypoint("CastMagicOnField", fuse_caster, pos, static_cast<unsigned char>(actionState));
 }
 
-void LuaMagicScript::CastMagicOnItem(Character *caster, const ScriptItem &TargetItem, unsigned char ltastate) {
+void LuaMagicScript::CastMagicOnItem(Character *caster, const ScriptItem &TargetItem, LtaState actionState) {
     character_ptr fuse_caster(caster);
-    callEntrypoint("CastMagicOnItem", fuse_caster, TargetItem, ltastate);
+    callEntrypoint("CastMagicOnItem", fuse_caster, TargetItem, static_cast<unsigned char>(actionState));
 }
 
 auto LuaMagicScript::actionDisturbed(Character *performer, Character *disturber) -> bool {

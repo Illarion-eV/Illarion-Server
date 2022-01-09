@@ -29,20 +29,22 @@ class World;
 class Character;
 class LuaScript;
 
-enum SouTarTypes {
-    LUA_NONE = 0,
-    LUA_FIELD = 1,
-    LUA_ITEM = 2,
-    LUA_CHARACTER = 3,
-    LUA_DIALOG = 4
+enum ActionParameterTypes { LUA_NONE = 0, LUA_FIELD = 1, LUA_ITEM = 2, LUA_CHARACTER = 3, LUA_DIALOG = 4, LUA_TALK };
+
+enum LtaState : unsigned char {
+    ST_NONE = 0,   /**< no action invoked or started*/
+    ST_ABORT = 1,  /**< action was aborted*/
+    ST_SUCCESS = 2 /**< action was sucessfully*/
 };
 
-struct SouTar {
+struct ActionParameters {
     Character *character = nullptr;
     ScriptItem item;
-    SouTarTypes Type = LUA_NONE;
+    ActionParameterTypes type = LUA_NONE;
     position pos{};
     unsigned int dialog = 0;
+    std::string text;
+    int talkType;
 };
 
 /**
@@ -69,15 +71,6 @@ public:
      */
 
     /**
-     *holds the state of a long time action
-     */
-    enum LtaState {
-        ST_NONE = 0,   /**< no action invoked or started*/
-        ST_ABORT = 1,  /**< action was aborted*/
-        ST_SUCCESS = 2 /**< action was sucessfully*/
-    };
-
-    /**
      *======================end grouping Lua Definitions===================
      */
     //@}
@@ -95,7 +88,7 @@ public:
      *@param srce the source object for the last action so we can determine if it was an item at which pos etc
      *@param at the type of action lastly performed (cast or use)
      */
-    void setLastAction(std::shared_ptr<LuaScript> script, const SouTar &srce, ActionType at);
+    void setLastAction(std::shared_ptr<LuaScript> script, const ActionParameters &parameters, ActionType at);
 
     /**
      *starts an long time action which is aborted if the player talks, is attacked ....
@@ -125,6 +118,8 @@ public:
      *@param pos source is a position the new position
      */
     void changeSource(position pos);
+
+    void changeSource(const std::string &text);
 
     /**
      *changes the Source of the last action to nothing
@@ -160,10 +155,11 @@ public:
     inline auto actionRunning() const -> bool { return _actionrunning; }
 
 private:
-    std::shared_ptr<LuaScript> _script = nullptr; /**< pointer to the last script*/
-    SouTar _source;                               /**< source of the last script*/
-    TYPE_OF_CHARACTER_ID _sourceId = 0;           /**< id of the source if its an character*/
-    uint8_t _sourceCharType = 0;                  /**< type of the source*/
+    std::shared_ptr<LuaScript> script = nullptr; /**< pointer to the last script*/
+    ActionParameters currentScriptParameters{};
+    ActionParameters currentActionParameters{};
+    TYPE_OF_CHARACTER_ID parameterId = 0; /**< id of the source if its an character*/
+    uint8_t characterType = 0;            /**< type of the source*/
 
     Player *_owner; /**< the owner of the LongTimeAction Objectt*/
     World *_world;  /**< pointer to the gameworld*/
@@ -177,7 +173,8 @@ private:
     std::unique_ptr<Timer> _redosoundTimer =
             nullptr; /**< timer which determines how many ms the sound is played again.*/
 
-    ActionType _at = ActionType::USE; /**< type of the action @see ActionType*/
+    ActionType currentScriptType = ActionType::USE;
+    ActionType currentActionType = ActionType::USE;
 
     unsigned short int _sound = 0; /**< id of the sound which is played to the action*/
     unsigned short int _ani = 0;   /**< id of the animation which is shown to the action*/

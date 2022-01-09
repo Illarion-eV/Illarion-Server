@@ -27,6 +27,7 @@
 
 class World;
 class Character;
+enum LtaState : unsigned char;
 
 class LuaTileScript : public LuaScript {
 public:
@@ -37,7 +38,7 @@ public:
     LuaTileScript(LuaTileScript &&) = default;
     auto operator=(LuaTileScript &&) -> LuaTileScript & = default;
 
-    void useTile(Character *user, const position &pos, unsigned char ltastate);
+    void useTile(Character *user, const position &pos, LtaState actionState);
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;
 
 private:

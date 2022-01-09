@@ -25,8 +25,8 @@ namespace binding {
 
 auto long_time_action() -> Binding<LongTimeAction> {
     return luabind::class_<LongTimeAction>("Action").enum_(
-            "state")[luabind::value("none", LongTimeAction::ST_NONE), luabind::value("abort", LongTimeAction::ST_ABORT),
-                     luabind::value("success", LongTimeAction::ST_SUCCESS)];
+            "state")[luabind::value("none", ST_NONE), luabind::value("abort", ST_ABORT),
+                     luabind::value("success", ST_SUCCESS)];
 }
 
 } // namespace binding

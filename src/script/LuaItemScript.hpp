@@ -34,6 +34,7 @@ class Field;
 }
 class Character;
 class ScriptItem;
+enum LtaState : unsigned char;
 
 class LuaItemScript : public LuaScript {
 public:
@@ -46,7 +47,7 @@ public:
     LuaItemScript(LuaItemScript &&) = default;
     auto operator=(LuaItemScript &&) -> LuaItemScript & = default;
 
-    void UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate);
+    void UseItem(Character *User, const ScriptItem &SourceItem, LtaState actionState);
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;
     auto LookAtItem(Character *who, const ScriptItem &t_item) -> ItemLookAt;
     auto MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) -> bool;

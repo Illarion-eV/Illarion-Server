@@ -26,6 +26,7 @@
 #include <string>
 
 class Character;
+enum LtaState : unsigned char;
 
 class LuaPlayerTalkScript : public LuaScript {
 public:
@@ -36,7 +37,8 @@ public:
     LuaPlayerTalkScript(LuaPlayerTalkScript &&) = default;
     auto operator=(LuaPlayerTalkScript &&) -> LuaPlayerTalkScript & = default;
 
-    auto talk(Character *player, int talkType, const std::string &message) -> std::string;
+    auto talk(Character *player, int talkType, const std::string &message, LtaState actionState) -> std::string;
+    auto actionDisturbed(Character *performer, Character *disturber) -> bool;
 };
 
 #endif

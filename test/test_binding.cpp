@@ -4,6 +4,7 @@
 #include "Character.hpp"
 #include "World.hpp"
 #include "Container.hpp"
+#include "LongTimeAction.hpp"
 
 class MockCharacter : public Character {
 public:
@@ -86,7 +87,7 @@ TEST_F(world_bindings, UseItem) {
 
     EXPECT_CALL(world, getItemName(item.getId(), _)).Times(1).WillOnce(Return("itemname"));
     EXPECT_CALL(player, inform(_,_)).Times(1);
-    script.UseItem(&player, item, 1);
+    script.UseItem(&player, item, ST_NONE);
 }
 
 TEST_F(world_bindings, ContainerCountItem) {
@@ -102,7 +103,7 @@ TEST_F(world_bindings, ContainerCountItem) {
 
     EXPECT_CALL(player, GetBackPack()).Times(1).WillOnce(Return(&container));
     EXPECT_CALL(container, countItem(1, Pointee(AnyOf(data1, data2)))).Times(1);
-    script.UseItem(&player, item, 1);
+    script.UseItem(&player, item, ST_NONE);
 }
 
 TEST_F(world_bindings, ContainerEraseItem) {
@@ -118,7 +119,7 @@ TEST_F(world_bindings, ContainerEraseItem) {
 
     EXPECT_CALL(player, GetBackPack()).Times(1).WillOnce(Return(&container));
     EXPECT_CALL(container, eraseItem(1, 1, Pointee(AnyOf(data1, data2)))).Times(1);
-    script.UseItem(&player, item, 1);
+    script.UseItem(&player, item, ST_NONE);
 }
 
 auto main(int argc, char **argv) -> int {

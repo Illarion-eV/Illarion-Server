@@ -27,6 +27,7 @@
 
 class NPC;
 class World;
+enum LtaState : unsigned char;
 
 class LuaNPCScript : public LuaScript {
 public:
@@ -39,7 +40,7 @@ public:
 
     void nextCycle();
     void receiveText(Character::talk_type tt, const std::string &message, Character *cc);
-    void useNPC(Character *user, unsigned char ltastate);
+    void useNPC(Character *user, LtaState actionState);
     void lookAtNpc(Character *source, unsigned char mode);
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;
     void beforeReload();

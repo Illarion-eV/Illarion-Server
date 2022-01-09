@@ -73,6 +73,7 @@ auto character() -> Binding<Character> {
             .def("changeSource", (void (Character::*)(Character *)) & Character::changeSource)
             .def("changeSource", (void (Character::*)(const ScriptItem &)) & Character::changeSource)
             .def("changeSource", (void (Character::*)(const position &)) & Character::changeSource)
+            .def("changeSource", (void (Character::*)(const std::string &)) & Character::changeSource)
             .def("changeSource", (void (Character::*)(void)) & Character::changeSource)
             .def("inform", inform_lua1)
             .def("inform", inform_lua2)

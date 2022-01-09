@@ -241,6 +241,8 @@ public:
 
     inline virtual void changeSource(const position &pos) {}
 
+    inline virtual void changeSource(const std::string &text) {}
+
     inline virtual void changeSource() {}
 
     virtual auto getMentalCapacity() const -> int { return mental_capacity; }

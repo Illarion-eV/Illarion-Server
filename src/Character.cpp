@@ -1174,7 +1174,7 @@ auto Character::talkScript(talk_type tt, const std::string &message) -> std::str
     auto &script = script::server::playerTalk();
 
     if (script.existsEntrypoint("talk")) {
-        auto scriptMessage = script.talk(this, tt, message);
+        auto scriptMessage = script.talk(this, tt, message, ST_NONE);
 
         if (!scriptMessage.empty()) {
             return scriptMessage;
