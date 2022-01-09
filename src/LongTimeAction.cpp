@@ -71,8 +71,8 @@ auto LongTimeAction::checkAction() -> bool {
 void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned short int ani,
                                          unsigned short int redoani, unsigned short int sound,
                                          unsigned short int redosound) {
-    if (currentActionType == ActionType::TALK) {
-        abortAction(); // talking normally doesn't abort actions
+    if (currentScriptType == ActionType::TALK) {
+        abortAction(); // talking normally doesn't abort actions, so we have to abort when starting a talk action
     }
 
     currentActionType = currentScriptType;
