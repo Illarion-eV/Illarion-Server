@@ -364,20 +364,17 @@ auto Container::increaseAtPos(unsigned char pos, int count) -> int {
         if (temp > maxStack) {
             item.setNumber(maxStack);
 
-            temp = temp - maxStack;
-
+            temp = maxStack;
         } else if (temp <= 0) {
-            temp = count + item.getNumber();
-
             items.erase(pos);
-
+            temp = 0;
         } else {
             item.setNumber(temp);
-
-            temp = 0;
         }
     }
 
+    World::get()->sendContainerSlotChange(this, pos);
+    
     return temp;
 }
 
