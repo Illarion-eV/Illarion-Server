@@ -374,7 +374,7 @@ auto Container::increaseAtPos(unsigned char pos, int count) -> int {
     }
 
     World::get()->sendContainerSlotChange(this, pos);
-    
+
     return temp;
 }
 
