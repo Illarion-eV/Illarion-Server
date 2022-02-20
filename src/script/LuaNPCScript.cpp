@@ -42,10 +42,10 @@ void LuaNPCScript::receiveText(Character::talk_type tt, const std::string &messa
     callEntrypoint("receiveText", fuse_thisnpc, (int)tt, message, fuse_cc);
 }
 
-void LuaNPCScript::useNPC(Character *user, unsigned char ltastate) {
+void LuaNPCScript::useNPC(Character *user, LtaState actionState) {
     character_ptr fuse_thisnpc(_thisnpc);
     character_ptr fuse_user(user);
-    callEntrypoint("useNPC", fuse_thisnpc, fuse_user, ltastate);
+    callEntrypoint("useNPC", fuse_thisnpc, fuse_user, static_cast<unsigned char>(actionState));
 }
 
 auto LuaNPCScript::actionDisturbed(Character *performer, Character *disturber) -> bool {

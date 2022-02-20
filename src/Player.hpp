@@ -196,6 +196,8 @@ public:
      */
     void changeSource(const position &pos) override;
 
+    void changeSource(const std::string &text) override;
+
     /**
      *changes the Source of the last action to nothing for this player
      *<b>Lua: [:changeSource]</b>
@@ -422,6 +424,8 @@ public:
     // Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
     auto isAdmin() const -> bool override;
+
+    void talk(talk_type tt, const std::string &message) override;
 
     // player gets informed about something
     void inform(const std::string &message, informType type = informServer) const override;

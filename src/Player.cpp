@@ -1694,6 +1694,16 @@ void Player::teachMagic(unsigned char type, unsigned char flag) {
     */
 }
 
+void Player::talk(talk_type tt, const std::string &message) {
+    ActionParameters parameters;
+    parameters.type = LUA_TALK;
+    parameters.talkType = tt;
+    parameters.text = message;
+    ltAction->setLastAction(std::shared_ptr<LuaScript>(), parameters, LongTimeAction::ActionType::TALK);
+
+    Character::talk(tt, message);
+}
+
 void Player::inform(const std::string &message, informType type) const {
     ServerCommandPointer cmd = std::make_shared<InformTC>(type, message);
     Connection->addCommand(cmd);
@@ -2057,6 +2067,8 @@ void Player::changeSource(Character *cc) { ltAction->changeSource(cc); }
 void Player::changeSource(const ScriptItem &sI) { ltAction->changeSource(sI); }
 
 void Player::changeSource(const position &pos) { ltAction->changeSource(pos); }
+
+void Player::changeSource(const std::string &text) { ltAction->changeSource(text); }
 
 void Player::changeSource() { ltAction->changeSource(); }
 
@@ -2670,10 +2682,10 @@ void Player::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &
 
 void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration,
                            uint32_t dialogId) {
-    SouTar source;
-    source.Type = LUA_DIALOG;
+    ActionParameters source;
+    source.type = LUA_DIALOG;
     source.dialog = dialogId;
-    ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, LongTimeAction::ACTION_CRAFT);
+    ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, LongTimeAction::ActionType::CRAFT);
     startAction(craftingTime, 0, 0, sfx, sfxDuration);
 
     ServerCommandPointer cmd = std::make_shared<CraftingDialogCraftTC>(stillToCraft, craftingTime, dialogId);

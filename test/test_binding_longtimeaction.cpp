@@ -25,7 +25,7 @@ TEST_F(longtimeaction_bindings, test_state_none) {
 	};
 
 	auto none = script.test<int, int>(dummy);
-	EXPECT_EQ(LongTimeAction::ST_NONE, none);
+	EXPECT_EQ(ST_NONE, none);
 }
 
 TEST_F(longtimeaction_bindings, test_state_abort) {
@@ -36,7 +36,7 @@ TEST_F(longtimeaction_bindings, test_state_abort) {
     };
 
     auto abort = script.test<int, int>(dummy);
-    EXPECT_EQ(LongTimeAction::ST_ABORT, abort);
+    EXPECT_EQ(ST_ABORT, abort);
 }
 
 TEST_F(longtimeaction_bindings, test_state_success) {
@@ -47,7 +47,7 @@ TEST_F(longtimeaction_bindings, test_state_success) {
     };
 
     auto success = script.test<int, int>(dummy);
-    EXPECT_EQ(LongTimeAction::ST_SUCCESS, success);
+    EXPECT_EQ(ST_SUCCESS, success);
 }
 
 auto main(int argc, char **argv) -> int {

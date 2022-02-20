@@ -35,9 +35,9 @@ void LuaTileScript::init_functions() const {
     globals["thisTile"] = thisTile;
 }
 
-void LuaTileScript::useTile(Character *user, const position &pos, unsigned char ltastate) {
+void LuaTileScript::useTile(Character *user, const position &pos, LtaState actionState) {
     character_ptr fuse_user(user);
-    callEntrypoint("useTile", fuse_user, pos, ltastate);
+    callEntrypoint("useTile", fuse_user, pos, static_cast<unsigned char>(actionState));
 }
 
 auto LuaTileScript::actionDisturbed(Character *performer, Character *disturber) -> bool {

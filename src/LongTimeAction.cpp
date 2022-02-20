@@ -27,21 +27,24 @@
 #include "script/LuaMagicScript.hpp"
 #include "script/LuaMonsterScript.hpp"
 #include "script/LuaNPCScript.hpp"
+#include "script/LuaScript.hpp"
 #include "script/LuaTileScript.hpp"
+#include "script/server.hpp"
 
 #include <memory>
 #include <utility>
 
 LongTimeAction::LongTimeAction(Player *player, World *world) : _owner(player), _world(world) {}
 
-void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, const SouTar &srce, ActionType at) {
-    _script = std::move(script);
-    _source = srce;
-    _at = at;
+void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, const ActionParameters &parameters,
+                                   ActionType at) {
+    this->script = std::move(script);
+    this->currentScriptParameters = parameters;
+    currentScriptType = at;
 
-    if (srce.character != nullptr) {
-        _sourceId = _source.character->getId();
-        _sourceCharType = _source.character->getType();
+    if (parameters.character != nullptr) {
+        parameterId = parameters.character->getId();
+        characterType = parameters.character->getType();
     }
 }
 
@@ -68,6 +71,13 @@ auto LongTimeAction::checkAction() -> bool {
 void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned short int ani,
                                          unsigned short int redoani, unsigned short int sound,
                                          unsigned short int redosound) {
+    if (currentScriptType == ActionType::TALK) {
+        abortAction(); // talking normally doesn't abort actions, so we have to abort when starting a talk action
+    }
+
+    currentActionType = currentScriptType;
+    currentActionParameters = currentScriptParameters;
+
     _actionrunning = true;
     _ani = ani;
     _sound = sound;
@@ -105,60 +115,66 @@ auto LongTimeAction::actionDisturbed(Character *disturber) -> bool {
     checkSource();
 
     if (_actionrunning) {
-        if (_at == ACTION_CRAFT) {
-            if (_source.Type == LUA_DIALOG) {
-                _actionrunning = false;
-                _owner->executeCraftingDialogCraftingAborted(_source.dialog);
-            }
-        } else if (_script) {
-            bool disturbed = false;
+        bool disturbed = false;
 
-            if (_at == ACTION_USE) {
-                if (_source.Type == LUA_ITEM) {
-                    std::shared_ptr<LuaItemScript> itemScript = std::dynamic_pointer_cast<LuaItemScript>(_script);
+        if (currentActionType == ActionType::TALK) {
+            if (currentActionParameters.type == LUA_TALK) {
+                auto &talkScript = script::server::playerTalk();
+                if (talkScript.existsEntrypoint("actionDisturbed")) {
+                    disturbed = talkScript.actionDisturbed(_owner, disturber);
+                }
+            }
+        } else if (currentActionType == ActionType::CRAFT) {
+            if (currentActionParameters.type == LUA_DIALOG) {
+                _actionrunning = false;
+                _owner->executeCraftingDialogCraftingAborted(currentActionParameters.dialog);
+            }
+        } else if (script) {
+            if (currentActionType == ActionType::USE) {
+                if (currentActionParameters.type == LUA_ITEM) {
+                    std::shared_ptr<LuaItemScript> itemScript = std::dynamic_pointer_cast<LuaItemScript>(script);
 
                     if (itemScript->existsEntrypoint("actionDisturbed")) {
                         disturbed = itemScript->actionDisturbed(_owner, disturber);
                     }
-                } else if (_source.Type == LUA_FIELD) {
-                    std::shared_ptr<LuaTileScript> tileScript = std::dynamic_pointer_cast<LuaTileScript>(_script);
+                } else if (currentActionParameters.type == LUA_FIELD) {
+                    std::shared_ptr<LuaTileScript> tileScript = std::dynamic_pointer_cast<LuaTileScript>(script);
 
                     if (tileScript->existsEntrypoint("actionDisturbed")) {
                         disturbed = tileScript->actionDisturbed(_owner, disturber);
                     }
-                } else if (_source.Type == LUA_CHARACTER) {
-                    if (_sourceCharType == Character::monster) {
+                } else if (currentActionParameters.type == LUA_CHARACTER) {
+                    if (characterType == Character::monster) {
                         std::shared_ptr<LuaMonsterScript> monsterScript =
-                                std::dynamic_pointer_cast<LuaMonsterScript>(_script);
+                                std::dynamic_pointer_cast<LuaMonsterScript>(script);
 
                         if (monsterScript->existsEntrypoint("actionDisturbed")) {
                             disturbed = monsterScript->actionDisturbed(_owner, disturber);
                         }
-                    } else if (_sourceCharType == Character::npc) {
-                        std::shared_ptr<LuaNPCScript> npcScript = std::dynamic_pointer_cast<LuaNPCScript>(_script);
+                    } else if (characterType == Character::npc) {
+                        std::shared_ptr<LuaNPCScript> npcScript = std::dynamic_pointer_cast<LuaNPCScript>(script);
 
                         if (npcScript->existsEntrypoint("actionDisturbed")) {
                             disturbed = npcScript->actionDisturbed(_owner, disturber);
                         }
                     }
                 }
-            } else if (_at == ACTION_MAGIC) {
-                std::shared_ptr<LuaMagicScript> magicScript = std::dynamic_pointer_cast<LuaMagicScript>(_script);
+            } else if (currentActionType == ActionType::MAGIC) {
+                std::shared_ptr<LuaMagicScript> magicScript = std::dynamic_pointer_cast<LuaMagicScript>(script);
 
                 if (magicScript->existsEntrypoint("actionDisturbed")) {
                     disturbed = magicScript->actionDisturbed(_owner, disturber);
                 }
             }
-
-            if (disturbed) {
-                abortAction();
-                return true;
-            }
-            return false;
-
         } else {
             _actionrunning = false;
         }
+
+        if (disturbed) {
+            abortAction();
+            return true;
+        }
+        return false;
     }
 
     return false;
@@ -168,55 +184,59 @@ void LongTimeAction::abortAction() {
     checkSource();
 
     if (_actionrunning) {
-        if (_at == ACTION_CRAFT) {
-            if (_source.Type == LUA_DIALOG) {
-                _owner->executeCraftingDialogCraftingAborted(_source.dialog);
+        if (currentActionType == ActionType::TALK) {
+            if (currentActionParameters.type == LUA_TALK) {
+                script::server::playerTalk().talk(_owner, currentActionParameters.talkType,
+                                                  currentActionParameters.text, ST_ABORT);
             }
-        } else if (_script) {
-            if (_at == ACTION_USE) {
+        } else if (currentActionType == ActionType::CRAFT) {
+            if (currentActionParameters.type == LUA_DIALOG) {
+                _owner->executeCraftingDialogCraftingAborted(currentActionParameters.dialog);
+            }
+        } else if (script) {
+            if (currentActionType == ActionType::USE) {
                 // a itemscript
-                if (_source.Type == LUA_ITEM) {
-                    std::shared_ptr<LuaItemScript> itScript = std::dynamic_pointer_cast<LuaItemScript>(_script);
-                    itScript->UseItem(_owner, _source.item, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                if (currentActionParameters.type == LUA_ITEM) {
+                    std::shared_ptr<LuaItemScript> itScript = std::dynamic_pointer_cast<LuaItemScript>(script);
+                    itScript->UseItem(_owner, currentActionParameters.item, ST_ABORT);
                 }
                 // a tilescript
-                else if (_source.Type == LUA_FIELD) {
-                    std::shared_ptr<LuaTileScript> tiScript = std::dynamic_pointer_cast<LuaTileScript>(_script);
-                    tiScript->useTile(_owner, _source.pos, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                else if (currentActionParameters.type == LUA_FIELD) {
+                    std::shared_ptr<LuaTileScript> tiScript = std::dynamic_pointer_cast<LuaTileScript>(script);
+                    tiScript->useTile(_owner, currentActionParameters.pos, ST_ABORT);
                 }
                 // a character
-                else if (_source.Type == LUA_CHARACTER) {
+                else if (currentActionParameters.type == LUA_CHARACTER) {
                     // a monster
-                    if (_sourceCharType == Character::monster) {
+                    if (characterType == Character::monster) {
                         std::shared_ptr<LuaMonsterScript> monScript =
-                                std::dynamic_pointer_cast<LuaMonsterScript>(_script);
-                        monScript->useMonster(_source.character, _owner, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                                std::dynamic_pointer_cast<LuaMonsterScript>(script);
+                        monScript->useMonster(currentActionParameters.character, _owner, ST_ABORT);
                     }
                     // a npc
-                    else if (_sourceCharType == Character::npc) {
-                        std::shared_ptr<LuaNPCScript> npcScript = std::dynamic_pointer_cast<LuaNPCScript>(_script);
-                        npcScript->useNPC(_owner, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                    else if (characterType == Character::npc) {
+                        std::shared_ptr<LuaNPCScript> npcScript = std::dynamic_pointer_cast<LuaNPCScript>(script);
+                        npcScript->useNPC(_owner, ST_ABORT);
                     }
                 }
-            } else if (_at == ACTION_MAGIC) {
-                std::shared_ptr<LuaMagicScript> mgScript = std::dynamic_pointer_cast<LuaMagicScript>(_script);
+            } else if (currentActionType == ActionType::MAGIC) {
+                std::shared_ptr<LuaMagicScript> mgScript = std::dynamic_pointer_cast<LuaMagicScript>(script);
 
-                if (_source.Type == LUA_NONE) {
-                    mgScript->CastMagic(_owner, static_cast<unsigned char>(LTS_ACTIONABORTED));
-                } else if (_source.Type == LUA_FIELD) {
-                    mgScript->CastMagicOnField(_owner, _source.pos, static_cast<unsigned char>(LTS_ACTIONABORTED));
-                } else if (_source.Type == LUA_CHARACTER) {
-                    mgScript->CastMagicOnCharacter(_owner, _source.character,
-                                                   static_cast<unsigned char>(LTS_ACTIONABORTED));
-                } else if (_source.Type == LUA_ITEM) {
-                    mgScript->CastMagicOnItem(_owner, _source.item, static_cast<unsigned char>(LTS_ACTIONABORTED));
+                if (currentActionParameters.type == LUA_NONE) {
+                    mgScript->CastMagic(_owner, ST_ABORT);
+                } else if (currentActionParameters.type == LUA_FIELD) {
+                    mgScript->CastMagicOnField(_owner, currentActionParameters.pos, ST_ABORT);
+                } else if (currentActionParameters.type == LUA_CHARACTER) {
+                    mgScript->CastMagicOnCharacter(_owner, currentActionParameters.character, ST_ABORT);
+                } else if (currentActionParameters.type == LUA_ITEM) {
+                    mgScript->CastMagicOnItem(_owner, currentActionParameters.item, ST_ABORT);
                 }
             }
         }
     }
 
     _actionrunning = false;
-    _script.reset();
+    script.reset();
     _redoaniTimer.reset();
     _redosoundTimer.reset();
     _timetowaitTimer.reset();
@@ -230,58 +250,61 @@ void LongTimeAction::successAction() {
     if (_actionrunning) {
         _actionrunning = false;
 
-        if (_at == ACTION_CRAFT) {
-            if (_source.Type == LUA_DIALOG) {
-                _owner->executeCraftingDialogCraftingComplete(_source.dialog);
+        if (currentActionType == ActionType::TALK) {
+            if (currentActionParameters.type == LUA_TALK) {
+                script::server::playerTalk().talk(_owner, currentActionParameters.talkType,
+                                                  currentActionParameters.text, ST_SUCCESS);
+            }
+        } else if (currentActionType == ActionType::CRAFT) {
+            if (currentActionParameters.type == LUA_DIALOG) {
+                _owner->executeCraftingDialogCraftingComplete(currentActionParameters.dialog);
                 return;
             }
-        } else if (_script) {
-            if (_at == ACTION_USE) {
+        } else if (script) {
+            if (currentActionType == ActionType::USE) {
                 // a itemscript
-                if (_source.Type == LUA_ITEM) {
-                    std::shared_ptr<LuaItemScript> itScript = std::dynamic_pointer_cast<LuaItemScript>(_script);
-                    itScript->UseItem(_owner, _source.item, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                if (currentActionParameters.type == LUA_ITEM) {
+                    std::shared_ptr<LuaItemScript> itScript = std::dynamic_pointer_cast<LuaItemScript>(script);
+                    itScript->UseItem(_owner, currentActionParameters.item, ST_SUCCESS);
                 }
                 // a tilescript
-                else if (_source.Type == LUA_FIELD) {
-                    std::shared_ptr<LuaTileScript> tiScript = std::dynamic_pointer_cast<LuaTileScript>(_script);
-                    tiScript->useTile(_owner, _source.pos, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                else if (currentActionParameters.type == LUA_FIELD) {
+                    std::shared_ptr<LuaTileScript> tiScript = std::dynamic_pointer_cast<LuaTileScript>(script);
+                    tiScript->useTile(_owner, currentActionParameters.pos, ST_SUCCESS);
                 }
                 // a character
-                else if (_source.Type == LUA_CHARACTER) {
+                else if (currentActionParameters.type == LUA_CHARACTER) {
                     // a monster
-                    if (_sourceCharType == Character::monster) {
+                    if (characterType == Character::monster) {
                         std::shared_ptr<LuaMonsterScript> monScript =
-                                std::dynamic_pointer_cast<LuaMonsterScript>(_script);
-                        monScript->useMonster(_source.character, _owner,
-                                              static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                                std::dynamic_pointer_cast<LuaMonsterScript>(script);
+                        monScript->useMonster(currentActionParameters.character, _owner, ST_SUCCESS);
                     }
                     // a npc
-                    else if (_sourceCharType == Character::npc) {
-                        std::shared_ptr<LuaNPCScript> npcScript = std::dynamic_pointer_cast<LuaNPCScript>(_script);
-                        npcScript->useNPC(_owner, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                    else if (characterType == Character::npc) {
+                        std::shared_ptr<LuaNPCScript> npcScript = std::dynamic_pointer_cast<LuaNPCScript>(script);
+                        npcScript->useNPC(_owner, ST_SUCCESS);
                     }
                 }
-            } else if (_at == ACTION_MAGIC) {
-                std::shared_ptr<LuaMagicScript> mgScript = std::dynamic_pointer_cast<LuaMagicScript>(_script);
+            } else if (currentActionType == ActionType::MAGIC) {
+                std::shared_ptr<LuaMagicScript> mgScript = std::dynamic_pointer_cast<LuaMagicScript>(script);
 
-                if (_source.Type == LUA_NONE) {
-                    mgScript->CastMagic(_owner, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                } else if (_source.Type == LUA_FIELD) {
-                    mgScript->CastMagicOnField(_owner, _source.pos, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                } else if (_source.Type == LUA_CHARACTER) {
-                    mgScript->CastMagicOnCharacter(_owner, _source.character,
-                                                   static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                if (currentActionParameters.type == LUA_NONE) {
+                    mgScript->CastMagic(_owner, ST_SUCCESS);
+                } else if (currentActionParameters.type == LUA_FIELD) {
+                    mgScript->CastMagicOnField(_owner, currentActionParameters.pos, ST_SUCCESS);
+                } else if (currentActionParameters.type == LUA_CHARACTER) {
+                    mgScript->CastMagicOnCharacter(_owner, currentActionParameters.character, ST_SUCCESS);
                     // Todo add ki handling here
-                } else if (_source.Type == LUA_ITEM) {
-                    mgScript->CastMagicOnItem(_owner, _source.item, static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
+                } else if (currentActionParameters.type == LUA_ITEM) {
+                    mgScript->CastMagicOnItem(_owner, currentActionParameters.item, ST_SUCCESS);
                 }
             }
         }
     }
 
     if (!_actionrunning) {
-        _script.reset();
+        script.reset();
         _redoaniTimer.reset();
         _redosoundTimer.reset();
         _timetowaitTimer.reset();
@@ -291,63 +314,65 @@ void LongTimeAction::successAction() {
 }
 
 void LongTimeAction::changeSource(Character *cc) {
-    _source.Type = LUA_CHARACTER;
-    _source.pos = cc->getPosition();
-    _source.character = cc;
-    _sourceId = cc->getId();
-    _sourceCharType = cc->getType();
+    currentActionParameters.type = LUA_CHARACTER;
+    currentActionParameters.pos = cc->getPosition();
+    currentActionParameters.character = cc;
+    parameterId = cc->getId();
+    characterType = cc->getType();
 }
 
 void LongTimeAction::changeSource(const ScriptItem &sI) {
-    _source.Type = LUA_ITEM;
-    _source.pos = sI.pos;
-    _source.item = sI;
-    _sourceId = 0;
-    _sourceCharType = Character::player;
+    currentActionParameters.type = LUA_ITEM;
+    currentActionParameters.pos = sI.pos;
+    currentActionParameters.item = sI;
+    parameterId = 0;
+    characterType = Character::player;
 }
 
 void LongTimeAction::changeSource(position pos) {
-    _source.Type = LUA_FIELD;
-    _source.pos = pos;
-    _sourceId = 0;
-    _sourceCharType = Character::player;
+    currentActionParameters.type = LUA_FIELD;
+    currentActionParameters.pos = pos;
+    parameterId = 0;
+    characterType = Character::player;
 }
 
+void LongTimeAction::changeSource(const std::string &text) { currentActionParameters.text = text; }
+
 void LongTimeAction::changeSource() {
-    _source.Type = LUA_NONE;
-    _sourceId = 0;
-    _sourceCharType = Character::player;
+    currentActionParameters.type = LUA_NONE;
+    parameterId = 0;
+    characterType = Character::player;
 }
 
 void LongTimeAction::checkSource() {
-    if (_sourceId == 0) {
-        _source.character = nullptr;
-        _sourceCharType = 0;
+    if (parameterId == 0) {
+        currentActionParameters.character = nullptr;
+        characterType = 0;
         return;
     }
-    if (_sourceId < MONSTER_BASE) {
+    if (parameterId < MONSTER_BASE) {
         // player
 
-        if (World::get()->Players.find(_sourceId) == nullptr) {
-            _source.character = nullptr;
+        if (World::get()->Players.find(parameterId) == nullptr) {
+            currentActionParameters.character = nullptr;
 
-            _sourceCharType = 0;
+            characterType = 0;
         }
 
-    } else if (_sourceId < NPC_BASE) {
+    } else if (parameterId < NPC_BASE) {
         // monster
 
-        if (World::get()->Monsters.find(_sourceId) == nullptr) {
-            _source.character = nullptr;
+        if (World::get()->Monsters.find(parameterId) == nullptr) {
+            currentActionParameters.character = nullptr;
 
-            _sourceCharType = 0;
+            characterType = 0;
         }
 
     } else {
-        if (World::get()->Npc.find(_sourceId) == nullptr) {
-            _source.character = nullptr;
+        if (World::get()->Npc.find(parameterId) == nullptr) {
+            currentActionParameters.character = nullptr;
 
-            _sourceCharType = 0;
+            characterType = 0;
         }
     }
 }

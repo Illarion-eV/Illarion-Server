@@ -21,11 +21,19 @@
 #include "LuaPlayerTalkScript.hpp"
 
 #include "Character.hpp"
+#include "LongTimeAction.hpp"
 #include "character_ptr.hpp"
 
 LuaPlayerTalkScript::LuaPlayerTalkScript(const std::string &filename) : LuaScript(filename) {}
 
-auto LuaPlayerTalkScript::talk(Character *player, int talkType, const std::string &message) -> std::string {
+auto LuaPlayerTalkScript::talk(Character *player, int talkType, const std::string &message, LtaState actionState)
+        -> std::string {
     character_ptr fusePlayer(player);
-    return callEntrypoint<std::string>("talk", fusePlayer, talkType, message);
+    return callEntrypoint<std::string>("talk", fusePlayer, talkType, message, static_cast<unsigned char>(actionState));
+}
+
+auto LuaPlayerTalkScript::actionDisturbed(Character *performer, Character *disturber) -> bool {
+    character_ptr fuse_performer(performer);
+    character_ptr fuse_disturber(disturber);
+    return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }

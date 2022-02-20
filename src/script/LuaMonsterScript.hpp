@@ -26,6 +26,7 @@
 #include "LuaScript.hpp"
 
 class World;
+enum LtaState : unsigned char;
 
 class LuaMonsterScript : public LuaScript {
 public:
@@ -41,7 +42,7 @@ public:
     void onDeath(Character *Monster);
     void onAttacked(Character *Monster, Character *attacker);
     void onCasted(Character *Monster, Character *caster);
-    void useMonster(Character *Monster, Character *user, unsigned char ltastate);
+    void useMonster(Character *Monster, Character *user, LtaState actionState);
     void lookAtMonster(Character *source, Character *target, unsigned char mode);
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;
     void onAttack(Character *Monster, Character *target);
