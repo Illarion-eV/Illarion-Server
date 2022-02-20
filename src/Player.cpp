@@ -1941,7 +1941,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
         // TODO: Save player from dedicated thread only, see PlayerManager
         // save();
 
-        if (results.empty()) {
+        if (results.affected_rows() == 0) {
             InsertQuery insQuery;
             const InsertQuery::columnIndex userColumn = insQuery.addColumn("qpg_userid");
             const InsertQuery::columnIndex questColumn = insQuery.addColumn("qpg_questid");
