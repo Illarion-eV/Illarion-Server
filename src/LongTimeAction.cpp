@@ -317,6 +317,7 @@ void LongTimeAction::changeSource(Character *cc) {
     currentActionParameters.type = LUA_CHARACTER;
     currentActionParameters.pos = cc->getPosition();
     currentActionParameters.character = cc;
+    currentScriptParameters = currentActionParameters;
     parameterId = cc->getId();
     characterType = cc->getType();
 }
@@ -325,6 +326,7 @@ void LongTimeAction::changeSource(const ScriptItem &sI) {
     currentActionParameters.type = LUA_ITEM;
     currentActionParameters.pos = sI.pos;
     currentActionParameters.item = sI;
+    currentScriptParameters = currentActionParameters;
     parameterId = 0;
     characterType = Character::player;
 }
@@ -332,14 +334,19 @@ void LongTimeAction::changeSource(const ScriptItem &sI) {
 void LongTimeAction::changeSource(position pos) {
     currentActionParameters.type = LUA_FIELD;
     currentActionParameters.pos = pos;
+    currentScriptParameters = currentActionParameters;
     parameterId = 0;
     characterType = Character::player;
 }
 
-void LongTimeAction::changeSource(const std::string &text) { currentActionParameters.text = text; }
+void LongTimeAction::changeSource(const std::string &text) {
+    currentActionParameters.text = text;
+    currentScriptParameters = currentActionParameters;
+}
 
 void LongTimeAction::changeSource() {
     currentActionParameters.type = LUA_NONE;
+    currentScriptParameters = currentActionParameters;
     parameterId = 0;
     characterType = Character::player;
 }
