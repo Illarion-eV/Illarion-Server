@@ -633,6 +633,7 @@ public:
                           const std::string &scriptname) -> bool override;
 
     auto getPlayersOnline() const -> std::vector<Player *> override;
+    auto getPlayerIdByName(const std::string &name, TYPE_OF_CHARACTER_ID &id) const -> bool override;
 
     auto getNPCS() const -> std::vector<NPC *> override;
 

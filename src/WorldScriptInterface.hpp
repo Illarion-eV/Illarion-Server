@@ -60,6 +60,7 @@ public:
     [[nodiscard]] virtual auto getPlayersInRangeOf(const position &pos, uint8_t radius) const
             -> std::vector<Player *> = 0;
     [[nodiscard]] virtual auto getPlayersOnline() const -> std::vector<Player *> = 0;
+    [[nodiscard]] virtual auto getPlayerIdByName(const std::string &name, TYPE_OF_CHARACTER_ID &id) const -> bool = 0;
 
     // Related to Data
 

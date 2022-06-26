@@ -34,6 +34,7 @@ auto world() -> Binding<World> {
             .def("deleteNPC", &World::deleteNPC)
             .def("createDynamicNPC", &World::createDynamicNPC)
             .def("getPlayersOnline", &world_getPlayersOnline)
+            .def("getPlayerIdByName", &World::getPlayerIdByName, luabind::pure_out_value(_3))
             .def("getNPCS", &world_getNPCS)
             .def("getCharactersInRangeOf", &world_getCharactersInRangeOf)
             .def("getPlayersInRangeOf", &world_getPlayersInRangeOf)

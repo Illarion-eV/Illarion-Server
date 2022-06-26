@@ -22,6 +22,7 @@ public:
     MOCK_METHOD(std::vector<NPC *>, getNPCSInRangeOf, (const position &, uint8_t), (const override));
     MOCK_METHOD(std::vector<Player *>, getPlayersInRangeOf, (const position &, uint8_t), (const override));
     MOCK_METHOD(std::vector<Player *>, getPlayersOnline, (), (const override));
+    MOCK_METHOD(bool, getPlayerIdByName, (const std::string &, TYPE_OF_CHARACTER_ID &), (const override));
     MOCK_METHOD(bool, getArmorStruct, (TYPE_OF_ITEM_ID, ArmorStruct &), (override));
     MOCK_METHOD(std::string, getItemName, (TYPE_OF_ITEM_ID, uint8_t), (const override));
     MOCK_METHOD(ItemStruct, getItemStats, (const ScriptItem &), (const override));
@@ -75,6 +76,7 @@ public:
 
 using ::testing::_;
 using ::testing::AtLeast;
+using ::testing::DoAll;
 using ::testing::ElementsAre;
 using ::testing::Return;
 using ::testing::ReturnRef;
@@ -182,6 +184,21 @@ TEST_F(world_bindings, getPlayersOnline) {
     EXPECT_CALL(world, getPlayersOnline()).WillOnce(Return(chars));
     auto result = script.test<TYPE_OF_CHARACTER_ID, World *>(&world);
     EXPECT_EQ(result, player->getId());
+}
+
+TEST_F(world_bindings, getPlayerIdByName1) {
+    LuaTestSupportScript script{"function test(world) return world:getPlayerIdByName('name') end"};
+    EXPECT_CALL(world, getPlayerIdByName("name", _)).WillOnce(Return(true));
+    auto result = script.test<bool, World *>(&world);
+    EXPECT_TRUE(result);
+}
+
+TEST_F(world_bindings, getPlayerIdByName2) {
+    TYPE_OF_CHARACTER_ID id = 42;
+    LuaTestSupportScript script{"function test(world) _, id = world:getPlayerIdByName('name') return id end"};
+    EXPECT_CALL(world, getPlayerIdByName("name", _)).WillOnce(DoAll(SetArgReferee<1>(id), Return(true)));
+    auto result = script.test<int, World *>(&world);
+    EXPECT_EQ(result, id);
 }
 
 TEST_F(world_bindings, getArmorStruct1) {

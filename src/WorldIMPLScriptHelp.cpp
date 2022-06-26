@@ -77,6 +77,10 @@ auto World::getPlayersOnline() const -> std::vector<Player *> {
     return list;
 }
 
+auto World::getPlayerIdByName(const std::string &name, TYPE_OF_CHARACTER_ID &id) const -> bool {
+    return false;
+}
+
 auto World::getNPCS() const -> std::vector<NPC *> {
     std::vector<NPC *> list;
 
