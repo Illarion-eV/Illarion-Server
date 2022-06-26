@@ -78,6 +78,27 @@ auto World::getPlayersOnline() const -> std::vector<Player *> {
 }
 
 auto World::getPlayerIdByName(const std::string &name, TYPE_OF_CHARACTER_ID &id) const -> bool {
+    try {
+        using namespace Database;
+
+        SelectQuery query;
+        query.addColumn("chars", "chr_playerid");
+        query.addEqualCondition<std::string>("chars", "chr_name", name);
+        query.addServerTable("chars");
+
+        auto result = query.execute();
+
+        if (not result.empty()) {
+            const auto &row = result.front();
+            id = row["chr_playerid"].as<TYPE_OF_CHARACTER_ID>();
+            return true;
+        }
+    } catch (std::exception &e) {
+        Logger::error(LogFacility::Database)
+                << "Error while loading player id by name from database: " << e.what() << Log::end;
+    }
+
+    id = 0;
     return false;
 }
 
