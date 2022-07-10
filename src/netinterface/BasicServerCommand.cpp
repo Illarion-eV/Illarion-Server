@@ -39,6 +39,7 @@ BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize)
 }
 
 void BasicServerCommand::initHeader() {
+    bufferPos = 0; // reset buffer position to 0 from previous use
     addUnsignedCharToBuffer(getDefinitionByte());
     addUnsignedCharToBuffer(getDefinitionByte() xor UCHAR_MAX);
     addShortIntToBuffer(0); // dummy for the length
