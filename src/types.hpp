@@ -31,7 +31,7 @@ using TYPE_OF_RACE_ID = uint16_t;
 using TYPE_OF_RACE_TYPE_ID = uint16_t;
 
 using TYPE_OF_VOLUME = uint16_t;
-using TYPE_OF_WEIGHT = uint16_t;
+using TYPE_OF_WEIGHT = int;
 using TYPE_OF_AGINGSPEED = uint8_t;
 using TYPE_OF_BRIGHTNESS = uint8_t;
 using TYPE_OF_WORTH = uint32_t;

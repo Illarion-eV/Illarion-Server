@@ -323,7 +323,7 @@ void addItemLookAt(BasicServerCommand *cmd, const ItemLookAt &lookAt) {
     cmd->addStringToBuffer(lookAt.getType());
     cmd->addUnsignedCharToBuffer(lookAt.getLevel());
     cmd->addUnsignedCharToBuffer(static_cast<unsigned char>(lookAt.isUsable()));
-    cmd->addShortIntToBuffer(lookAt.getWeight());
+    cmd->addIntToBuffer(lookAt.getWeight());
     cmd->addIntToBuffer(lookAt.getWorth());
     cmd->addStringToBuffer(lookAt.getQualityText());
     cmd->addStringToBuffer(lookAt.getDurabilityText());
