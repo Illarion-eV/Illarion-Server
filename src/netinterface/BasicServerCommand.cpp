@@ -37,7 +37,7 @@ BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize)
     buffer.resize(baseBufferSize);
     initHeader();
 }
-
+//test
 void BasicServerCommand::initHeader() {
     bufferPos = 0; // reset buffer position to 0 from previous use
     addUnsignedCharToBuffer(getDefinitionByte());
