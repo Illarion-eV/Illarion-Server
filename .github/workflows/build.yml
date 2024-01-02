@@ -116,12 +116,11 @@ jobs:
 
       - name: Login to GitHub
         if: ${{ steps.docker-vars.outputs.has-docker-secret == 'true' }}
-        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-
-      - name: Check Docker login
-        if: ${{ steps.docker-vars.outputs.has-docker-secret == 'true' }}
-        run: docker images
-
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ steps.docker-vars.outputs.docker-secret }}
 
       - name: Build and push
         uses: docker/build-push-action@v2
