@@ -40,7 +40,7 @@ RUN \
 RUN \
     # Download the easyCompiler
     mkdir -p /opt/easyCompiler && \
-    wget http://illarion.org/media/localserver/compiler.jar -O /opt/easyCompiler/compiler.jar -q && \    
+    wget https://illarion.org/media/localserver/compiler.jar -O /opt/easyCompiler/compiler.jar -q && \    
     # Setup directories for the server.
     mkdir -p /usr/share/illarion/map && \
     mkdir -p /usr/share/illarion/scripts && \
