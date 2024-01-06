@@ -100,7 +100,7 @@ jobs:
             return repo.data
 
       - name: Fetch Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: Package-RelWithDebInfo
           path: ${{runner.workspace}}
