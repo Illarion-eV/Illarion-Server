@@ -41,7 +41,7 @@ jobs:
         run: |
           cmake -E make_directory ../build
           cd ../build
-          echo ::set-output name=build-directory::$(pwd -P)
+          echo "build-directory=$(pwd -P)" >> $GITHUB_OUTPUT
 
       - name: Initialize CodeQL
         if: ${{ github.event_name == 'schedule' }}
@@ -84,6 +84,10 @@ jobs:
     needs: build
     if: ${{ github.event_name != 'schedule' }}
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v2
 
@@ -105,7 +109,7 @@ jobs:
         shell: bash
         run: mv ${{runner.workspace}}/*.deb $GITHUB_WORKSPACE/setup/docker/base/
 
-      - uses: Illarion-eV/Illarion-Docker-Version@v1
+      - uses: Illarion-eV/Illarion-Docker-Version@afe43f2b2fde18f93c3fa7a16d91f3946acc290b
         id: docker-vars
         with:
           image-name: ghcr.io/${{ github.repository }}/base
@@ -116,14 +120,14 @@ jobs:
 
       - name: Login to GitHub
         if: ${{ steps.docker-vars.outputs.has-docker-secret == 'true' }}
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          username: ${{ github.actor }}
           password: ${{ steps.docker-vars.outputs.docker-secret }}
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: setup/docker/base
           file: setup/docker/base/Dockerfile
@@ -133,8 +137,8 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ fromJson(steps.repo.outputs.result).name }}
             org.opencontainers.image.description=${{ fromJson(steps.repo.outputs.result).description }}
-            org.opencontainers.image.url=${{ fromJson(steps.repo.outputs.result).homepage }}
-            org.opencontainers.image.source=${{ fromJson(steps.repo.outputs.result).html_url }}
+            org.opencontainers.image.url=${{ fromJson(steps.repo.outputs.result).html_url }}
+            org.opencontainers.image.source=${{ fromJson(steps.repo.outputs.result).clone_url }}
             org.opencontainers.image.version=${{ steps.docker-vars.outputs.version }}
             org.opencontainers.image.created=${{ steps.docker-vars.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
