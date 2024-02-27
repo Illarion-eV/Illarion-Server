@@ -607,7 +607,7 @@ auto World::getTime(const std::string &timeType) const -> int {
     time_t curr_unixtime = time(nullptr);
     struct tm *timestamp = localtime(&curr_unixtime);
 
-    auto illaTime = (int)curr_unixtime;
+    auto illaTime = (long)curr_unixtime;
     static constexpr auto secondsInHour = 60 * 60;
 
     // in case its currently dst, correct the timestamp so the illarion time changes the timestamp as well
@@ -618,7 +618,7 @@ auto World::getTime(const std::string &timeType) const -> int {
     illaTime = (illaTime - illarionBirthTime) * illarionTimeFactor;
 
     if (timeType == "illarion") {
-        return (int)illaTime;
+        return (long)illaTime;
     }
 
     // Calculating year
