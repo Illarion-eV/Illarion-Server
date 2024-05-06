@@ -30,7 +30,7 @@ constexpr auto checkMonitoringClientsInterval = 250ms;
 constexpr auto scheduledScriptsInterval = 100ms;
 constexpr auto wearReductionInterval = 3min;
 constexpr auto gameLoopInterval = 100ms;
-constexpr auto scriptRunTimeLimitSoft = 20ms;
+constexpr auto scriptRunTimeLimitSoft = 250ms; //Upping this from 20ms to 250ms because it spams the living crap out of the devserver log at 20ms, which is a real nuisance
 constexpr auto ingameTimeUpdateInterval = 8h;
 
 constexpr auto PLAYER_SAVE_INTERVAL = 60;
