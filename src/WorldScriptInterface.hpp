@@ -102,7 +102,7 @@ public:
     // Other
 
     virtual void broadcast(const std::string &german, const std::string &english) const = 0;
-    [[nodiscard]] virtual auto getTime(const std::string &timeType) const -> int = 0;
+    [[nodiscard]] virtual auto getTime(const std::string &timeType) const -> long = 0;
     virtual void gfx(unsigned short int gfxid, const position &pos) const = 0;
     virtual void makeSound(unsigned short int soundid, const position &pos) const = 0;
     virtual void sendMonitoringMessage(const std::string &msg, unsigned char id = 0) const = 0;

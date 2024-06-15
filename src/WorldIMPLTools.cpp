@@ -597,17 +597,17 @@ void World::Load() {
 
 void World::import() { maps.importFromEditor(); }
 
-auto World::getTime(const std::string &timeType) const -> int {
+auto World::getTime(const std::string &timeType) const -> long {
     // return unix timestamp if requsted and quit function
     if (timeType == "unix") {
-        return (int)time(nullptr);
+        return (long)time(nullptr);
     }
 
     // get current time and timezone data to get additional informations for time conversation
     time_t curr_unixtime = time(nullptr);
     struct tm *timestamp = localtime(&curr_unixtime);
 
-    auto illaTime = (int)curr_unixtime;
+    auto illaTime = (long)curr_unixtime;
     static constexpr auto secondsInHour = 60 * 60;
 
     // in case its currently dst, correct the timestamp so the illarion time changes the timestamp as well
@@ -618,17 +618,17 @@ auto World::getTime(const std::string &timeType) const -> int {
     illaTime = (illaTime - illarionBirthTime) * illarionTimeFactor;
 
     if (timeType == "illarion") {
-        return (int)illaTime;
+        return (long)illaTime;
     }
 
     // Calculating year
     static constexpr auto secondsInYear = 60 * 60 * 24 * 365;
-    auto year = (int)(illaTime / secondsInYear);
+    auto year = (long)(illaTime / secondsInYear);
     illaTime -= year * secondsInYear;
 
     // Calculating day
     static constexpr auto secondsInDay = 60 * 60 * 24;
-    auto day = (int)(illaTime / secondsInDay);
+    auto day = (long)(illaTime / secondsInDay);
     illaTime -= day * secondsInDay;
     ++day;
 
@@ -636,7 +636,7 @@ auto World::getTime(const std::string &timeType) const -> int {
     static constexpr auto daysInIllarionMonth = 24;
     static constexpr auto daysInLastIllarionMonth = 5;
     static constexpr auto monthsInIllarionYear = 16;
-    auto month = (int)(day / daysInIllarionMonth);
+    auto month = (long)(day / daysInIllarionMonth);
     day -= month * daysInIllarionMonth;
 
     // checking for range borders and fixing the date
@@ -668,12 +668,12 @@ auto World::getTime(const std::string &timeType) const -> int {
 
     // Calculate the time of day
     // Calculating hour
-    const auto hour = (int)(illaTime / secondsInHour);
+    const auto hour = (long)(illaTime / secondsInHour);
     illaTime -= hour * secondsInHour;
 
     // Calculating minute
     static constexpr auto secondsInMinute = 60;
-    const auto minute = (int)(illaTime / secondsInMinute);
+    const auto minute = (long)(illaTime / secondsInMinute);
 
     // Calculating seconds
     illaTime -= minute * secondsInMinute;

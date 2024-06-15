@@ -224,9 +224,9 @@ public:
      * Method for returning the current illarion time
      *
      *@param timeType <"year"|"month"|"day"|"hour"|"minute"|"second">
-     *@return an int which is the current illarion time from the type
+     *@return a long which is the current illarion time from the type
      */
-    auto getTime(const std::string &timeType) const -> int override;
+    auto getTime(const std::string &timeType) const -> long override;
 
     void allowLogin(bool allow) { _is_login_allowed = allow; }
     auto isLoginAllowed() const -> bool { return _is_login_allowed; }

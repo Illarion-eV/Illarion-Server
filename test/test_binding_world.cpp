@@ -51,7 +51,7 @@ public:
     MOCK_METHOD(void, removePersistenceAt, (const position &), (override));
     MOCK_METHOD(bool, isPersistentAt, (const position &), (const override));
     MOCK_METHOD(void, broadcast, (const std::string &, const std::string &), (const override));
-    MOCK_METHOD(int, getTime, (const std::string &), (const override));
+    MOCK_METHOD(long, getTime, (const std::string &), (const override));
     MOCK_METHOD(void, gfx, (unsigned short int, const position &), (const override));
     MOCK_METHOD(void, makeSound, (unsigned short int, const position &), (const override));
     MOCK_METHOD(void, sendMonitoringMessage, (const std::string &, unsigned char), (const override));
