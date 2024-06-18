@@ -69,7 +69,8 @@ enum clientcommands {
     C_MESSAGEDIALOG_TS = 0x51,
     C_MERCHANTDIALOG_TS = 0x52,
     C_SELECTIONDIALOG_TS = 0x53,
-    C_CRAFTINGDIALOG_TS = 0x54
+    C_CRAFTINGDIALOG_TS = 0x54,
+    C_AUCTIONDIALOG_TS = 0x56
 };
 
 class InputDialogTS : public BasicClientCommand {
@@ -110,6 +111,25 @@ private:
 
 public:
     MerchantDialogTS();
+    void decodeData() override;
+    void performAction(Player *player) override;
+    auto clone() -> ClientCommandPointer override;
+};
+
+class AuctionDialogTS : public BasicClientCommand {
+private:
+    unsigned int dialogId = 0;
+    uint8_t result = 0;
+    uint8_t purchaseIndex = 0;
+    uint16_t purchaseAmount = 0;
+    uint8_t saleLocation = 0;
+    uint16_t saleSlot = 0;
+    uint16_t saleAmount = 0;
+    uint8_t lookAtList = 0;
+    uint8_t lookAtSlot = 0;
+
+public:
+    AuctionDialogTS();
     void decodeData() override;
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;

@@ -23,6 +23,7 @@
 #include "Item.hpp"
 #include "Showcase.hpp"
 #include "dialog/MerchantDialog.hpp"
+#include "dialog/AuctionDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
@@ -508,6 +509,12 @@ public:
     void executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot,
                                    Item::number_type amount);
     void executeMerchantDialogLookAt(unsigned int dialogId, uint8_t list, uint8_t slot);
+
+    void requestAuctionDialog(AuctionDialog *auctionDialog) override;
+    void executeAuctionDialogAbort(unsigned int dialogId);
+    void executeAuctionDialogBid(unsigned int dialogId, AuctionDialog::index_type index,
+                                  Item::number_type amount) const;
+    void executeAuctionDialogLookAt(unsigned int dialogId, uint8_t list, uint8_t slot);
 
     void requestSelectionDialog(SelectionDialog *selectionDialog) override;
     void executeSelectionDialog(unsigned int dialogId, bool success, SelectionDialog::index_type index);

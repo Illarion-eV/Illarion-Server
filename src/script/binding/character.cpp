@@ -53,6 +53,7 @@ auto character() -> Binding<Character> {
             .def("requestInputDialog", &Character::requestInputDialog, luabind::adopt(_2))
             .def("requestMessageDialog", &Character::requestMessageDialog, luabind::adopt(_2))
             .def("requestMerchantDialog", &Character::requestMerchantDialog, luabind::adopt(_2))
+            .def("requestAuctionDialog", &Character::requestAuctionDialog, luabind::adopt(_2))
             .def("requestSelectionDialog", &Character::requestSelectionDialog, luabind::adopt(_2))
             .def("requestCraftingDialog", &Character::requestCraftingDialog, luabind::adopt(_2))
             .def("idleTime", &Character::idleTime)

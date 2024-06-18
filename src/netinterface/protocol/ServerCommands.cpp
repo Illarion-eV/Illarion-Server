@@ -27,6 +27,7 @@
 #include "dialog/CraftingDialog.hpp"
 #include "dialog/InputDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
+#include "dialog/AuctionDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "globals.hpp"
@@ -120,6 +121,41 @@ MerchantDialogTC::MerchantDialogTC(const MerchantDialog &merchantDialog, unsigne
     addUnsignedCharToBuffer(size);
 
     for (auto it = merchantDialog.getSecondaryRequestsBegin(); it != merchantDialog.getSecondaryRequestsEnd(); ++it) {
+        addShortIntToBuffer(it->getItem());
+        addStringToBuffer(it->getName());
+        addIntToBuffer(it->getPrice());
+    }
+
+    addIntToBuffer(static_cast<int>(dialogId));
+}
+
+AuctionDialogTC::AuctionDialogTC(const AuctionDialog &auctionDialog, unsigned int dialogId)
+        : BasicServerCommand(SC_AUCTIONDIALOG_TC) {
+    addStringToBuffer(auctionDialog.getTitle());
+    AuctionDialog::index_type size = auctionDialog.getOffersSize();
+    addUnsignedCharToBuffer(size);
+
+    for (auto it = auctionDialog.getOffersBegin(); it != auctionDialog.getOffersEnd(); ++it) {
+        const OfferProduct &offer = *it;
+        addShortIntToBuffer(offer.getItem());
+        addStringToBuffer(offer.getName());
+        addIntToBuffer(offer.getPrice());
+        addShortIntToBuffer(offer.getStack());
+    }
+
+    size = auctionDialog.getPrimaryRequestsSize();
+    addUnsignedCharToBuffer(size);
+
+    for (auto it = auctionDialog.getPrimaryRequestsBegin(); it != auctionDialog.getPrimaryRequestsEnd(); ++it) {
+        addShortIntToBuffer(it->getItem());
+        addStringToBuffer(it->getName());
+        addIntToBuffer(it->getPrice());
+    }
+
+    size = auctionDialog.getSecondaryRequestsSize();
+    addUnsignedCharToBuffer(size);
+
+    for (auto it = auctionDialog.getSecondaryRequestsBegin(); it != auctionDialog.getSecondaryRequestsEnd(); ++it) {
         addShortIntToBuffer(it->getItem());
         addStringToBuffer(it->getName());
         addIntToBuffer(it->getPrice());

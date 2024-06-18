@@ -20,6 +20,7 @@ target_sources( script_binding
         long_time_effect.cpp
         long_time_effect_struct.cpp
         merchant_dialog.cpp
+        auction_dialog.cpp
         message_dialog.cpp
         monster.cpp
         monster_armor.cpp

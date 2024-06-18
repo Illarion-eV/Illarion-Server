@@ -30,6 +30,7 @@
 #include "dialog/CraftingDialog.hpp"
 #include "dialog/InputDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
+#include "dialog/AuctionDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "tuningConstants.hpp"
@@ -428,6 +429,7 @@ public:
     virtual void requestInputDialog(InputDialog *inputDialog);
     virtual void requestMessageDialog(MessageDialog *messageDialog);
     virtual void requestMerchantDialog(MerchantDialog *merchantDialog);
+    virtual void requestAuctionDialog(AuctionDialog *auctionDialog);
     virtual void requestSelectionDialog(SelectionDialog *selectionDialog);
     virtual void requestCraftingDialog(CraftingDialog *craftingDialog);
     virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt);

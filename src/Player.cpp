@@ -39,6 +39,7 @@
 #include "dialog/CraftingDialog.hpp"
 #include "dialog/InputDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
+#include "dialog/AuctionDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "map/Field.hpp"
@@ -2539,6 +2540,53 @@ void Player::executeMerchantDialogLookAt(unsigned int dialogId, uint8_t list, ui
         merchantDialog->setLookAtList(static_cast<MerchantDialog::ListType>(list));
         merchantDialog->setPurchaseIndex(slot);
         auto lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*merchantDialog);
+
+        ServerCommandPointer cmd = std::make_shared<LookAtDialogGroupItemTC>(dialogId, list, slot, lookAt);
+        Connection->addCommand(cmd);
+    }
+}
+
+void Player::requestAuctionDialog(AuctionDialog *auctionDialog) {
+    requestDialog<AuctionDialog, AuctionDialogTC>(auctionDialog);
+}
+
+void Player::executeAuctionDialogAbort(unsigned int dialogId) {
+    auto auctionDialog = getDialog<AuctionDialog>(dialogId);
+
+    if (auctionDialog) {
+        auctionDialog->setResult(AuctionDialog::playerAborts);
+        auctionDialog->setPurchaseIndex(0);
+        auctionDialog->setPurchaseAmount(0);
+        ScriptItem item;
+        auctionDialog->setSaleItem(item);
+        LuaScript::executeDialogCallback(*auctionDialog);
+    }
+
+    dialogs.erase(dialogId);
+}
+
+void Player::executeAuctionDialogBid(unsigned int dialogId, AuctionDialog::index_type index,
+                                      Item::number_type amount) const {
+    auto auctionDialog = getDialog<AuctionDialog>(dialogId);
+
+    if (auctionDialog) {
+        auctionDialog->setResult(AuctionDialog::playerBids);
+        auctionDialog->setPurchaseIndex(index);
+        auctionDialog->setPurchaseAmount(amount);
+        ScriptItem item;
+        auctionDialog->setSaleItem(item);
+        LuaScript::executeDialogCallback(*auctionDialog);
+    }
+}
+
+void Player::executeAuctionDialogLookAt(unsigned int dialogId, uint8_t list, uint8_t slot) {
+    auto auctionDialog = getDialog<AuctionDialog>(dialogId);
+
+    if (auctionDialog) {
+        auctionDialog->setResult(AuctionDialog::playerLooksAt);
+        auctionDialog->setLookAtList(static_cast<AuctionDialog::ListType>(list));
+        auctionDialog->setPurchaseIndex(slot);
+        auto lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*auctionDialog);
 
         ServerCommandPointer cmd = std::make_shared<LookAtDialogGroupItemTC>(dialogId, list, slot, lookAt);
         Connection->addCommand(cmd);
