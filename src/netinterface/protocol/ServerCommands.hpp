@@ -84,7 +84,6 @@ enum ServerCommands {
     SC_SELECTIONDIALOG_TC = 0x53,
     SC_CRAFTINGDIALOG_TC = 0x54,
     SC_CRAFTINGDIALOGUPDATE_TC = 0x55,
-    SC_AUCTIONDIALOG_TC = 0x56,
     SC_CLOSEDIALOG_TC = 0x5F,
     SC_QUESTPROGRESS_TC = 0x40,
     SC_ABORTQUEST_TC = 0x41,
@@ -129,13 +128,6 @@ class MerchantDialogTC : public BasicServerCommand {
 public:
     MerchantDialogTC(const MerchantDialog &merchantDialog, unsigned int dialogId);
 };
-
-class AuctionDialog;
-class AuctionDialogTC : public BasicServerCommand {
-public:
-    AuctionDialogTC(const AuctionDialog &auctionDialog, unsigned int dialogId);
-};
-
 
 class SelectionDialog;
 class SelectionDialogTC : public BasicServerCommand {

@@ -6,7 +6,6 @@
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
-#include "dialog/AuctionDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "dialog/CraftingDialog.hpp"
 
@@ -30,7 +29,6 @@ public:
     MOCK_METHOD(void, requestInputDialog, (InputDialog *), (override));
     MOCK_METHOD(void, requestMessageDialog, (MessageDialog *), (override));
     MOCK_METHOD(void, requestMerchantDialog, (MerchantDialog *), (override));
-    MOCK_METHOD(void, requestAuctionDialog, (AuctionDialog *), (override));
     MOCK_METHOD(void, requestSelectionDialog, (SelectionDialog *), (override));
     MOCK_METHOD(void, requestCraftingDialog, (CraftingDialog *), (override));
     MOCK_METHOD(void, requestCraftingLookAt, (unsigned int, ItemLookAt &), (override));
@@ -155,19 +153,6 @@ TEST_F(monster_bindings, requestMerchantDialog) {
                                   end"};
     MerchantDialog *dialog = nullptr;
     EXPECT_CALL(*monster, requestMerchantDialog(Property(&MerchantDialog::getTitle, "foo"))).WillOnce(SaveArg<0>(&dialog));
-    script.test<bool, Monster *>(monster);
-    delete dialog;
-}
-
-TEST_F(monster_bindings, requestAuctionDialog) {
-    LuaTestSupportScript script {"function test(monster) \
-                                      dialog = AuctionDialog('foo', nil) \
-                                      monster:requestAuctionDialog(dialog) \
-                                      dialog = nil \
-                                      collectgarbage() \
-                                  end"};
-    AuctionDialog *dialog = nullptr;
-    EXPECT_CALL(*monster, requestAuctionDialog(Property(&AuctionDialog::getTitle, "foo"))).WillOnce(SaveArg<0>(&dialog));
     script.test<bool, Monster *>(monster);
     delete dialog;
 }

@@ -362,7 +362,6 @@ void LuaScript::init_base_functions() {
                        binding::crafting_dialog(), binding::field(), binding::input_dialog(), binding::item(),
                        binding::item_look_at(), binding::long_time_action(), binding::long_time_character_effects(),
                        binding::long_time_effect(), binding::long_time_effect_struct(), binding::merchant_dialog(),
-                       binding::auction_dialog(),
                        binding::message_dialog(), binding::monster(), binding::monster_armor(), binding::npc(),
                        binding::player(), binding::position(), binding::random(), binding::script_item(),
                        binding::script_variables_table(), binding::selection_dialog(), binding::tiles_struct(),

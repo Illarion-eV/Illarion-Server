@@ -27,7 +27,6 @@ CommandFactory::CommandFactory() {
     templateList[C_MESSAGEDIALOG_TS] = std::make_unique<MessageDialogTS>();
     templateList[C_INPUTDIALOG_TS] = std::make_unique<InputDialogTS>();
     templateList[C_MERCHANTDIALOG_TS] = std::make_unique<MerchantDialogTS>();
-    templateList[C_AUCTIONDIALOG_TS] = std::make_unique<AuctionDialogTS>();
     templateList[C_SELECTIONDIALOG_TS] = std::make_unique<SelectionDialogTS>();
     templateList[C_CRAFTINGDIALOG_TS] = std::make_unique<CraftingDialogTS>();
     templateList[C_LOGIN_TS] = std::make_unique<LoginCommandTS>();

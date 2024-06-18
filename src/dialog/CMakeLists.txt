@@ -7,7 +7,6 @@ target_sources( dialog
         Dialog.cpp
         InputDialog.cpp
         MerchantDialog.cpp
-        AuctionDialog.cpp
         MessageDialog.cpp
         SelectionDialog.cpp
 )

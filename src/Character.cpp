@@ -1472,10 +1472,6 @@ void Character::requestMerchantDialog(MerchantDialog *merchantDialog) {
     // Nothing to do here, overloaded in Player
 }
 
-void Character::requestAuctionDialog(AuctionDialog *auctionDialog) {
-    // Nothing to do here, overloaded in Player
-}
-
 void Character::requestSelectionDialog(SelectionDialog *selectionDialog) {
     // Nothing to do here, overloaded in Player
 }

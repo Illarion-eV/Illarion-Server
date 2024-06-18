@@ -131,50 +131,6 @@ auto MerchantDialogTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-AuctionDialogTS::AuctionDialogTS() : BasicClientCommand(C_AUCTIONDIALOG_TS) {}
-
-void AuctionDialogTS::decodeData() {
-    dialogId = getIntFromBuffer();
-    result = getUnsignedCharFromBuffer();
-
-    switch (result) {
-    case 0:
-        break;
-
-    case 1:
-        purchaseIndex = getUnsignedCharFromBuffer();
-        purchaseAmount = getShortIntFromBuffer();
-        break;
-
-    case 3:
-        lookAtList = getUnsignedCharFromBuffer();
-        lookAtSlot = getUnsignedCharFromBuffer();
-        break;
-    }
-}
-
-void AuctionDialogTS::performAction(Player *player) {
-    time(&(player->lastaction));
-
-    switch (result) {
-    case 0:
-        player->executeAuctionDialogAbort(dialogId);
-        break;
-    case 1:
-        player->executeAuctionDialogBid(dialogId, purchaseIndex, purchaseAmount);
-        break;
-
-    case 3:
-        player->executeAuctionDialogLookAt(dialogId, lookAtList, lookAtSlot);
-        break;
-    }
-}
-
-auto AuctionDialogTS::clone() -> ClientCommandPointer {
-    ClientCommandPointer cmd = std::make_shared<AuctionDialogTS>();
-    return cmd;
-}
-
 SelectionDialogTS::SelectionDialogTS() : BasicClientCommand(C_SELECTIONDIALOG_TS) {}
 
 void SelectionDialogTS::decodeData() {
