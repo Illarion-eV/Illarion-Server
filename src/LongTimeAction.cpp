@@ -30,6 +30,7 @@
 #include "script/LuaScript.hpp"
 #include "script/LuaTileScript.hpp"
 #include "script/server.hpp"
+#include "Logger.hpp"
 
 #include <memory>
 #include <utility>
@@ -246,6 +247,10 @@ void LongTimeAction::abortAction() {
 
 void LongTimeAction::successAction() {
     checkSource();
+
+    Logger::error(LogFacility::Script)
+                << "Action running: " << _actionrunning << " Current action type: " << currentActionType << " currentActionParameters.type: "
+                << currentActionParameters.type << "." << Log::end;
 
     if (_actionrunning) {
         _actionrunning = false;
