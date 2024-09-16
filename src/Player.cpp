@@ -813,6 +813,8 @@ void Player::check_logindata() {
         charQuery.addColumn("chars", "chr_lastsavetime");
         charQuery.addColumn("chars", "chr_sex");
         charQuery.addColumn("chars", "chr_race");
+        charQuery.addColumn("chars", "chr_shortdesc_de");
+        charQuery.addColumn("chars", "chr_shortdesc_us");
         charQuery.addEqualCondition<std::string>("chars", "chr_name", getName());
         charQuery.addServerTable("chars");
 
@@ -836,6 +838,8 @@ void Player::check_logindata() {
         lastsavetime = charRow["chr_lastsavetime"].as<time_t>();
         setAttribute(Character::sex, charRow["chr_sex"].as<uint16_t>());
         setRace(charRow["chr_race"].as<TYPE_OF_RACE_ID>());
+        descriptionEn = charRow["chr_shortdesc_us"].as<TYPE_OF_ENGLISH>();
+        descriptionDe = charRow["chr_shortdesc_de"].as<TYPE_OF_GERMAN>();
 
         // first we check the status since we already retrieved it
         switch (status) {
@@ -1073,6 +1077,8 @@ auto Player::save() noexcept -> bool {
             query.addAssignColumn<std::string>("chr_lastip", last_ip);
             query.addAssignColumn<uint32_t>("chr_onlinetime", onlinetime + lastsavetime - logintime);
             query.addAssignColumn<time_t>("chr_lastsavetime", lastsavetime);
+            query.addAssignColumn<TYPE_OF_ENGLISH>("chr_shortdesc_us", descriptionEn);
+            query.addAssignColumn<TYPE_OF_GERMAN>("chr_shortdesc_de", descriptionDe);
 
             if (status != 0) {
                 query.addAssignColumn<time_t>("chr_statustime", statustime);
