@@ -73,7 +73,7 @@ jobs:
         shell: bash
         run: cpack . -C ${{ matrix.build-type }}
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: Package-${{ matrix.build-type }}
           path: ${{runner.workspace}}/build/*.deb
