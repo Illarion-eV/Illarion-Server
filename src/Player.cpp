@@ -1059,7 +1059,9 @@ auto Player::save() noexcept -> bool {
                     connection->streamTo({server, "naming"}, {"name_player", "name_named_player", "name_player_name"});
 
             for (const auto &playerAndName : namedPlayers) {
-                stream.write_values(getId(), playerAndName.first, playerAndName.second);
+                if (playerAndName.second.size() <= 50) {
+                    stream.write_values(getId(), playerAndName.first, playerAndName.second);
+                }
             }
 
             stream.complete();
