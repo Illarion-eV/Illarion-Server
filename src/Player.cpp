@@ -1632,7 +1632,7 @@ void Player::introducePlayer(Player *player) {
 void Player::namePlayer(TYPE_OF_CHARACTER_ID playerId, const std::string &name) {
     const Character *character = World::get()->findCharacter(playerId);
 
-    if (character != nullptr) {
+    if (character == nullptr) {
 
         Logger::error(LogFacility::Player) << to_string() << " tried to name another player that already logged off." << Log::end;
 
