@@ -127,7 +127,7 @@ jobs:
           password: ${{ steps.docker-vars.outputs.docker-secret }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: setup/docker/base
           file: setup/docker/base/Dockerfile
