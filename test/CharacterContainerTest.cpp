@@ -22,7 +22,6 @@ public:
     MOCK_CONST_METHOD0(to_string, std::string());
 };
 
-
 class CharacterContainerTest : public ::testing::Test {
 public:
     CharacterContainerTest() {
