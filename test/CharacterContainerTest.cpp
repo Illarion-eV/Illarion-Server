@@ -41,7 +41,6 @@ public:
     CharacterContainer<Character> container;
 };
 
-
 TEST_F(CharacterContainerTest, empty) {
     EXPECT_TRUE(container.empty());
     EXPECT_EQ(0, container.size());
