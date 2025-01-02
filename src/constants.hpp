@@ -19,6 +19,8 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+#include <array>
+
 #include "types.hpp"
 
 #include <cstdint>
