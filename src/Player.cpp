@@ -419,7 +419,7 @@ auto Player::lookIntoContainerOnField(direction dir) -> bool {
         Item item;
 
         if (field.viewItemOnStack(item)) {
-            if (isIdInDepotArray(item.getId()) && item.isContainer()) {
+            if (isIdInDepotArray(item.getId()) == false && item.isContainer()) {
                 auto it = field.containers.find(item.getNumber());
 
                 if (it != field.containers.end()) {
