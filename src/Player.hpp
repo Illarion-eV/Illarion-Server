@@ -135,6 +135,7 @@ public:
     auto getScreenRange() const -> Coordinate override;
 
 private:
+    bool isIdInDepotArray(int itemId);
     std::set<uint32_t> visibleChars;
     std::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
     std::unordered_map<TYPE_OF_CHARACTER_ID, std::string> namedPlayers;

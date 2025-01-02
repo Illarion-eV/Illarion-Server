@@ -401,6 +401,15 @@ auto Player::lookIntoBackPack() -> bool {
     return false;
 }
 
+bool Player::isIdInDepotArray(int itemId) {
+    for (const auto& DEPOTITEM : DEPOTITEMS) {
+        if (itemId == DEPOTITEM) {
+            return true;
+        }
+    }
+    return false;
+}
+
 auto Player::lookIntoContainerOnField(direction dir) -> bool {
     position containerPosition = getPosition();
     containerPosition.move(dir);
@@ -408,16 +417,6 @@ auto Player::lookIntoContainerOnField(direction dir) -> bool {
     try {
         map::Field &field = World::get()->fieldAt(containerPosition);
         Item item;
-
-        int isIdInDepotArray(int itemId) {
-            for (const auto& DEPOTITEM : DEPOTITEMS) {
-                if (itemId == DEPOTITEM) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
 
         if (field.viewItemOnStack(item)) {
             if (isIdInDepotArray(item.getId()) && item.isContainer()) {
