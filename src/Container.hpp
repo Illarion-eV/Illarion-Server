@@ -85,7 +85,16 @@ public:
 
     [[nodiscard]] auto getFirstFreeSlot() const -> TYPE_OF_CONTAINERSLOTS;
 
-    [[nodiscard]] inline auto isDepot() const -> bool { return itemId == DEPOTITEM; }
+
+    [[nodiscard]] inline auto isDepot() const -> bool {
+
+        for (const auto& DEPOTITEM : DEPOTITEMS) {
+            if (itemId == DEPOTITEM) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 private:
     static constexpr auto maximumRecursionDepth = 100;

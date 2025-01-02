@@ -409,8 +409,18 @@ auto Player::lookIntoContainerOnField(direction dir) -> bool {
         map::Field &field = World::get()->fieldAt(containerPosition);
         Item item;
 
+        int isIdInDepotArray(int itemId) {
+            for (const auto& DEPOTITEM : DEPOTITEMS) {
+                if (itemId == DEPOTITEM) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
         if (field.viewItemOnStack(item)) {
-            if (item.getId() != DEPOTITEM && item.isContainer()) {
+            if (isIdInDepotArray(item.getId()) && item.isContainer()) {
                 auto it = field.containers.find(item.getNumber());
 
                 if (it != field.containers.end()) {
@@ -418,7 +428,7 @@ auto Player::lookIntoContainerOnField(direction dir) -> bool {
                     return true;
                 }
             } else {
-                if (item.getId() == DEPOTITEM) {
+                if (isIdInDepotArray(item.getId())) {
                     ScriptItem scriptItem(item);
                     scriptItem.type = ScriptItem::it_field;
                     scriptItem.pos = containerPosition;
@@ -1436,7 +1446,7 @@ auto Player::load() noexcept -> bool {
 
         for (size_t i = 0; i < depotRows; ++i) {
             if (depotid[i] != 0) {
-                depotContents[depotid[i]] = new Container(DEPOTITEM);
+                depotContents[depotid[i]] = new Container(321);
                 depots[depotid[i]] = depotContents[depotid[i]];
             }
         }
@@ -1919,7 +1929,7 @@ void Player::openDepot(const ScriptItem &item) {
             openShowcase(depotContents[depotid], item, false);
         }
     } else {
-        depotContents[depotid] = new Container(DEPOTITEM);
+        depotContents[depotid] = new Container(item.getId());
         openShowcase(depotContents[depotid], item, false);
     }
 }

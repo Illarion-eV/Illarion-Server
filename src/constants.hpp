@@ -57,7 +57,7 @@ constexpr auto WAITINGVALIDATION = 1;
 constexpr auto BANNED = 30;
 constexpr auto BANNEDFORTIME = 31;
 
-constexpr auto DEPOTITEM = 321;
+constexpr std::array<int, 2> DEPOTITEMS = {321, 4817};
 constexpr auto DEPOTSIZE = 100;
 constexpr auto BLOCKEDITEM = 228;
 
