@@ -180,17 +180,31 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
 
     } else {
         if (online) {
+            std::string errorMsg = error.message();
+
+            // Handle specific errors
+            if (error == boost::asio::error::eof) {
+                errorMsg = "Connection closed by remote peer (EOF)";
+            } else if (error == boost::asio::error::operation_aborted) {
+                errorMsg = "Operation aborted (possible shutdown or timeout)";
+            } else if (error == boost::asio::error::connection_reset) {
+                errorMsg = "Connection reset by peer";
+            }
+
+            // Log the error with additional context
             if (owner != nullptr) {
                 Logger::error(LogFacility::Other)
-                        << "Error in NetInterface::handle_read_header for " << owner->to_string() << " from "
-                        << getIPAdress() << ": " << error.message() << Log::end;
+                    << "Error in NetInterface::handle_read_header for " << owner->to_string()
+                    << " from " << getIPAdress() << ": " << errorMsg << Log::end;
             } else {
-                Logger::error(LogFacility::Other) << "Error in NetInterface::handle_read_header from " << getIPAdress()
-                                                  << ": " << error.message() << Log::end;
+                Logger::error(LogFacility::Other)
+                    << "Error in NetInterface::handle_read_header from " << getIPAdress()
+                    << ": " << errorMsg << Log::end;
             }
         }
 
-        closeConnection();
+    // Close the connection regardless of the error type
+    closeConnection();
     }
 }
 
