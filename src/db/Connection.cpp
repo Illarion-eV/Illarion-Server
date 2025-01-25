@@ -22,6 +22,10 @@
 
 #include "db/SchemaHelper.hpp"
 
+#include <iostream>
+#include <chrono>
+#include <thread>
+
 #include <memory>
 #include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
