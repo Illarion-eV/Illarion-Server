@@ -29,8 +29,15 @@
 
 using namespace Database;
 
-Connection::Connection(const std::string &connectionString)
-        : internalConnection(std::make_unique<pqxx::connection>(connectionString)) {}
+Connection::Connection(const std::string &connectionString) {
+    try {
+        internalConnection = std::make_unique<pqxx::connection>(connectionString);
+    } catch (const pqxx::broken_connection &e) {
+        throw std::runtime_error("Failed to connect to the database: " + std::string(e.what()));
+    } catch (const std::exception &e) {
+        throw std::runtime_error("Unexpected error while initializing database connection: " + std::string(e.what()));
+    }
+}
 
 void Connection::beginTransaction() {
     if (!internalConnection) {
@@ -38,29 +45,66 @@ void Connection::beginTransaction() {
     }
 
     rollbackTransaction();
-    transaction = std::make_unique<pqxx::transaction<>>(*internalConnection);
+
+    try {
+        transaction = std::make_unique<pqxx::transaction<>>(*internalConnection);
+    } catch (const pqxx::broken_connection &e) {
+        throw std::runtime_error("Failed to begin transaction: " + std::string(e.what()));
+    } catch (const std::exception &e) {
+        throw std::runtime_error("Unexpected error while starting transaction: " + std::string(e.what()));
+    }
 }
 
 void Connection::commitTransaction() {
-    if (transaction) {
-        transaction->commit();
-        transaction.reset();
+    try {
+        if (transaction) {
+            transaction->commit();
+            transaction.reset();
+        }
+    } catch (const pqxx::broken_connection &e) {
+        throw std::runtime_error("Failed to commit transaction: " + std::string(e.what()));
+    } catch (const std::exception &e) {
+        throw std::runtime_error("Unexpected error during transaction commit: " + std::string(e.what()));
     }
 }
 
 void Connection::rollbackTransaction() {
-    if (transaction) {
-        transaction->abort();
-        transaction.reset();
+    try {
+        if (transaction) {
+            transaction->abort();
+            transaction.reset();
+        }
+    } catch (const pqxx::broken_connection &e) {
+        std::cerr << "Warning: Failed to rollback transaction (connection issue): " << e.what() << std::endl;
+    } catch (const std::exception &e) {
+        std::cerr << "Warning: Unexpected error during transaction rollback: " << e.what() << std::endl;
     }
 }
 
 auto Connection::query(const std::string &query) -> pqxx::result {
-    if (transaction) {
-        return transaction->exec(query);
+    const int max_retries = 3;
+    int retries = 0;
+
+    while (retries < max_retries) {
+        try {
+            if (transaction) {
+                return transaction->exec(query);
+            }
+            throw std::domain_error("No active transaction");
+        } catch (const pqxx::broken_connection &e) {
+            retries++;
+            if (retries >= max_retries) {
+                throw std::runtime_error("Database connection error after retries: " + std::string(e.what()));
+            }
+            std::cerr << "Retrying database query (" << retries << "/" << max_retries << "): " << e.what() << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1)); // Wait before retrying
+        } catch (const std::exception &e) {
+            throw std::runtime_error("Unexpected error during query execution: " + std::string(e.what()));
+        }
     }
 
-    throw std::domain_error("No active transaction");
+    // Fallback return (though retries should handle most cases)
+    return pqxx::result{};
 }
 
 auto Connection::streamTo(pqxx::table_path path, std::initializer_list<std::string_view> columns) -> pqxx::stream_to {
