@@ -26,6 +26,12 @@
 
 class NetInterface;
 
+/**
+ * @brief Handles initial client connections before player authentication.
+ * 
+ * Accepts incoming TCP connections on the game port and queues them for
+ * the PlayerManager to process, authenticate, and convert into Player objects.
+ */
 class InitialConnection : public std::enable_shared_from_this<InitialConnection> {
 public:
     using NewPlayerVector = thread_safe_vector<std::shared_ptr<NetInterface>>;

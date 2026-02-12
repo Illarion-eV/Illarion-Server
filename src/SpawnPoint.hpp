@@ -28,60 +28,107 @@
 // just declare a class named World...
 class World;
 
-//! defines a Spawnpoint
+/**
+ * @brief Manages automatic spawning of monsters at a specific location.
+ *
+ * A SpawnPoint tracks multiple monster types and their spawn counts, automatically
+ * creating new monsters at regular intervals when they die or when spawn time elapses.
+ * Monsters can spawn within a defined range and have movement restrictions.
+ */
 class SpawnPoint {
 public:
-    //! Creates a new SpawnPoint at <pos>
+    /**
+     * @brief Creates a new SpawnPoint at the specified position.
+     * @param pos The center position for this spawn point.
+     * @param Range Maximum walking distance from spawn position for spawned monsters.
+     * @param Spawnrange Radius around spawn position where monsters can initially appear.
+     * @param Min_Spawntime Minimum cycles before attempting a new spawn.
+     * @param Max_Spawntime Maximum cycles before attempting a new spawn.
+     * @param Spawnall If true, spawn all missing monsters each cycle; if false, spawn random subset.
+     */
     explicit SpawnPoint(const position &pos, Coordinate Range = defaultWalkRange, Coordinate Spawnrange = 0,
                         uint16_t Min_Spawntime = 1, uint16_t Max_Spawntime = 1, bool Spawnall = false);
 
+    /**
+     * @brief Adds a monster type to this spawn point.
+     * @param type The monster type ID to spawn.
+     * @param count The maximum number of this monster type to maintain.
+     * @note If the type already exists, the count is added to the existing maximum.
+     */
     void addMonster(TYPE_OF_CHARACTER_ID type, int count);
 
-    //! load spawnpoints from database
+    /**
+     * @brief Loads spawn point configuration from the database.
+     * @param id The database ID of the spawn point to load.
+     * @return true if loaded successfully, false otherwise.
+     */
     auto load(const int &id) -> bool;
 
+    /**
+     * @brief Attempts to spawn monsters if spawn time has elapsed.
+     * @note Spawning only occurs if world spawning is enabled and spawn timer reaches zero.
+     */
     void spawn();
 
-    //! callback called by dying monsters belonging to spawnpoint
+    /**
+     * @brief Callback invoked when a monster belonging to this spawn point dies.
+     * @param type The monster type ID that died.
+     * @note Decrements the active count for that monster type.
+     */
     void dead(TYPE_OF_CHARACTER_ID type);
 
+    /**
+     * @brief Gets the X coordinate of the spawn position.
+     * @return The X coordinate.
+     */
     [[nodiscard]] inline auto get_x() const -> Coordinate { return spawnpos.x; }
+
+    /**
+     * @brief Gets the Y coordinate of the spawn position.
+     * @return The Y coordinate.
+     */
     [[nodiscard]] inline auto get_y() const -> Coordinate { return spawnpos.y; }
+
+    /**
+     * @brief Gets the Z coordinate of the spawn position.
+     * @return The Z coordinate.
+     */
     [[nodiscard]] inline auto get_z() const -> Coordinate { return spawnpos.z; }
 
+    /**
+     * @brief Gets the maximum walking range for spawned monsters.
+     * @return The walking range in map coordinates.
+     */
     [[nodiscard]] inline auto getRange() const -> Coordinate { return range; }
 
 private:
-    // our link to the world...
-    World *world;
+    World *world; ///< Link to the game world.
 
-    position spawnpos;
+    position spawnpos; ///< Center position of the spawn point.
 
-    // walkrange of the monsters from the spawn
-    Coordinate range;
+    Coordinate range; ///< Maximum walking distance from spawn for spawned monsters.
 
-    // range of the spawns, in this area the creatures can be spawned
-    Coordinate spawnrange;
+    Coordinate spawnrange; ///< Radius around spawn position where monsters can initially appear.
 
-    // the number of cycles untlin new monsters are spawned
-    uint16_t min_spawntime;
-    uint16_t max_spawntime;
+    uint16_t min_spawntime; ///< Minimum cycles before spawning.
+    uint16_t max_spawntime; ///< Maximum cycles before spawning.
 
-    // the number of cycles until the next spawn
-    uint16_t nextspawntime;
+    uint16_t nextspawntime; ///< Cycles remaining until next spawn attempt.
 
-    // should be all monsters respawned in every cycle
-    bool spawnall;
+    bool spawnall; ///< If true, spawn all missing monsters; if false, spawn random subset.
 
+    /**
+     * @brief Tracks spawn information for a single monster type.
+     */
     struct SpawnEntryStruct {
-        TYPE_OF_CHARACTER_ID typ;
-        int max_count;
-        int akt_count;
+        TYPE_OF_CHARACTER_ID typ; ///< Monster type ID.
+        int max_count; ///< Maximum number of this monster type to maintain.
+        int akt_count; ///< Current number of active monsters of this type.
     };
 
-    std::list<struct SpawnEntryStruct> SpawnTypes;
+    std::list<struct SpawnEntryStruct> SpawnTypes; ///< List of monster types managed by this spawn point.
 
-    static constexpr Coordinate defaultWalkRange = 20;
+    static constexpr Coordinate defaultWalkRange = 20; ///< Default walking range for monsters.
 };
 
 #endif

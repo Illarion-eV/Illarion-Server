@@ -1019,6 +1019,11 @@ void Player::check_logindata() {
     }
 }
 
+/**
+ * @brief Helper structure for serializing nested containers during player save.
+ * 
+ * Stores container references with their IDs for database persistence.
+ */
 struct container_struct {
     Container *container;
     unsigned int id;

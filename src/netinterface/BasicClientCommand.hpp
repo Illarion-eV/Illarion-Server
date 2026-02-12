@@ -28,19 +28,48 @@
 #include <vector>
 
 class Player;
+
+/**
+ * @brief Exception thrown when attempting to read beyond the command buffer size.
+ */
 class OverflowException {};
 
 class BasicClientCommand;
-using ClientCommandPointer = std::shared_ptr<BasicClientCommand>;
+using ClientCommandPointer = std::shared_ptr<BasicClientCommand>; ///< Shared pointer type for client commands
 
+/**
+ * @brief Base class for all commands received from game clients.
+ *
+ * Handles deserialization of network data from clients, including:
+ * - Header parsing (length and checksum validation)
+ * - Type-safe extraction of primitive types and strings from message buffer
+ * - CRC checksum verification for data integrity
+ * - Action point (AP) requirements for command execution
+ * - Timestamp tracking for command arrival time
+ *
+ * Subclasses must implement:
+ * - decodeData(): Parse command-specific data from buffer
+ * - performAction(): Execute the command's game logic
+ * - clone(): Create a new instance for the CommandFactory
+ *
+ * @note Thread-safe buffer reading with automatic overflow detection
+ * @see BasicServerCommand for server-to-client commands
+ * @see CommandFactory for command instantiation
+ */
 class BasicClientCommand : public BasicCommand {
 public:
     /**
-     * Constructor of a basic command
-     * @param defByte the initializing byte of the command
+     * @brief Constructs a client command with command ID and AP requirement.
+     * @param defByte Command identifier byte from network protocol
+     * @param minAP Minimum action points required to execute (default: 0)
      */
     BasicClientCommand(unsigned char defByte, uint16_t minAP = 0);
 
+    /**
+     * @brief Sets header data received from network protocol.
+     * @param mlength Message body length in bytes (excluding header)
+     * @param mcheckSum CRC checksum for data integrity verification
+     */
     void setHeaderData(uint16_t mlength, uint16_t mcheckSum);
 
     virtual ~BasicClientCommand() = default;
@@ -51,80 +80,108 @@ public:
     auto operator=(BasicClientCommand &&) -> BasicClientCommand & = delete;
 
     /**
-     * returns the data ptr for the command message
-     **/
+     * @brief Returns reference to internal message buffer for network data population.
+     * @return Mutable reference to the raw byte buffer
+     */
     auto msg_data() -> std::vector<unsigned char> &;
 
     /**
-     * virtual function which should be overloaded in the concrete classes to get the data
-     * of the command
+     * @brief Parses command-specific data from the message buffer.
+     *
+     * Pure virtual function that subclasses must implement to extract
+     * their specific data fields using the getXXXFromBuffer() methods.
      */
     virtual void decodeData() = 0;
 
     /**
-     * performs the concrete action of the command
-     * @param player the player which received the command
+     * @brief Executes the command's game logic.
+     * @param player The player character who issued this command
+     *
+     * @note Subclasses should check player->actionPoints >= minAP before executing
      */
     virtual void performAction(Player *player) = 0;
 
     /**
-     * a copy function which returns an empty version of the command
-     * (for usage of the commandFactory class
+     * @brief Creates a new empty instance of the same command type.
+     * @return Shared pointer to new command instance
+     *
+     * Used by CommandFactory to create command instances from templates.
      */
     virtual auto clone() -> ClientCommandPointer = 0;
 
     /**
-     * returns if the receiving of the command was sucessfull
-     * @return true if the command was receuved complete and without problems
+     * @brief Validates command data integrity and completeness.
+     * @return True if all data was received, buffer fully consumed, and checksum matches
+     *
+     * Checks three conditions:
+     * - No buffer overflow occurred during reading
+     * - All expected bytes were consumed (bytesRetrieved == length)
+     * - CRC checksum matches transmitted checksum
      */
     [[nodiscard]] auto isDataOk() const -> bool;
 
     /**
-     * reads an unsigned char from the local command buffer
-     * @return the char which was found in the buffer
+     * @brief Extracts a single unsigned byte from the buffer.
+     * @return Byte value from current buffer position
+     * @throws OverflowException if attempting to read beyond buffer bounds
+     *
+     * @note Advances buffer position and updates running CRC
      */
     auto getUnsignedCharFromBuffer() -> unsigned char;
 
     /**
-     * read a string from the local command buffer
-     * @return the string which was found in the buffer
+     * @brief Extracts a length-prefixed string from the buffer.
+     * @return String decoded from buffer (16-bit length prefix + UTF-8 bytes)
+     *
+     * Format: [uint16_t length][char[length] data]
      */
     auto getStringFromBuffer() -> std::string;
 
     /**
-     * reads an int from the local command buffer
-     * @return the int which was in the buffer (32 bit)
+     * @brief Extracts a 32-bit signed integer from the buffer.
+     * @return Integer value in big-endian byte order
      */
     auto getIntFromBuffer() -> int;
 
     /**
-     * reads a short int from the local command buffer
-     * @return the short int which was in the buffer (16 bit)
+     * @brief Extracts a 16-bit signed integer from the buffer.
+     * @return Short integer value in big-endian byte order
      */
     auto getShortIntFromBuffer() -> short int;
 
     /**
-     *returns the length of the command without the header in bytes
+     * @brief Returns command payload length without header.
+     * @return Number of bytes in message body
      */
     [[nodiscard]] auto getLength() const -> uint16_t { return length; }
 
+    /**
+     * @brief Returns minimum action points required to execute command.
+     * @return AP threshold value
+     */
     [[nodiscard]] inline auto getMinAP() const -> uint16_t { return minAP; }
 
+    /**
+     * @brief Returns timestamp when command was received.
+     * @return Steady clock time point for latency/timing analysis
+     */
     [[nodiscard]] inline auto getIncomingTime() const -> std::chrono::steady_clock::time_point { return incomingTime; }
 
+    /**
+     * @brief Records current time as command arrival timestamp.
+     */
     inline void setReceivedTime() { incomingTime = std::chrono::steady_clock::now(); }
 
 protected:
-    bool dataOk = true; /*<true if data is ok, will set to false if a command wants to read more data from the buffer as
-                    is in it, or if the checksum isn't the same*/
-    std::vector<unsigned char> msg_buffer{}; /*< the current buffer for this command*/
-    uint16_t length = 0;                     /*< the length of this command */
-    uint16_t bytesRetrieved = 0;             /*< how much bytes are currently decoded */
-    uint16_t checkSum = 0;                   /*< the checksum transmitted in the header*/
-    uint32_t crc = 0;                        /*< the checksum of the data*/
+    bool dataOk = true; ///< True if data is valid; set to false on buffer overflow or checksum mismatch
+    std::vector<unsigned char> msg_buffer{}; ///< Raw message bytes received from network
+    uint16_t length = 0; ///< Payload length in bytes (excluding header)
+    uint16_t bytesRetrieved = 0; ///< Number of bytes consumed from buffer during decoding
+    uint16_t checkSum = 0; ///< CRC checksum from message header
+    uint32_t crc = 0; ///< Running CRC checksum calculated during buffer reading
 
-    uint16_t minAP; /*< number of ap necessary to perform command */
-    std::chrono::steady_clock::time_point incomingTime;
+    uint16_t minAP; ///< Minimum action points required to execute this command
+    std::chrono::steady_clock::time_point incomingTime; ///< Timestamp when command arrived
 };
 
 #endif

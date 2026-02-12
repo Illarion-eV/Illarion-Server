@@ -31,7 +31,10 @@ class Field;
 }
 
 /**
- * class which holds isometric view specific data
+ * @brief Manages isometric view stripe data for client rendering.
+ * 
+ * Stores field pointers in stripes (rows/columns) that represent the player's
+ * visible area. Used to efficiently send map updates to the client.
  */
 class NewClientView {
 public:

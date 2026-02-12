@@ -21,11 +21,47 @@
 #ifndef TABLE_HPP
 #define TABLE_HPP
 
+/**
+ * @brief Abstract base class for all game data tables
+ *
+ * This interface defines the contract for table classes that load and manage
+ * game data from the database. Tables support double-buffering to allow safe
+ * reloading of data without interrupting gameplay.
+ *
+ * The typical reload workflow is:
+ * 1. Call reloadBuffer() to load new data into a buffer
+ * 2. Call reloadScripts() to refresh any associated script bindings
+ * 3. Call activateBuffer() to atomically swap the buffer with active data
+ */
 class Table {
 public:
+    /**
+     * @brief Reload table data from database into a buffer
+     *
+     * Loads fresh data from the database into an internal buffer without
+     * affecting the currently active data. This allows validation and
+     * preparation before activation.
+     *
+     * @return true if reload was successful, false on error
+     */
     virtual auto reloadBuffer() -> bool = 0;
+
+    /**
+     * @brief Reload script bindings associated with this table
+     *
+     * Refreshes any Lua script connections or callbacks that depend on
+     * this table's data. Called after reloadBuffer() but before activateBuffer().
+     */
     virtual void reloadScripts() = 0;
+
+    /**
+     * @brief Activate the buffered data, making it live
+     *
+     * Atomically swaps the buffered data with the active data. After this
+     * call, the newly loaded data becomes active and the old data is discarded.
+     */
     virtual void activateBuffer() = 0;
+
     Table() = default;
     virtual ~Table() = default;
     Table(const Table &) = default;

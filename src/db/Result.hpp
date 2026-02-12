@@ -25,12 +25,37 @@
 #include <pqxx/result_iterator.hxx>
 
 namespace Database {
-/* This file contains just some namespaces that hide the pqxx implementation
- * of the SQL Query result handling.
+/**
+ * @brief Type aliases for PostgreSQL query result handling.
+ * 
+ * These aliases wrap the pqxx library result types, providing a simplified
+ * interface and hiding the implementation details. Result types include:
+ * - Result: Complete result set from a query
+ * - ResultTuple: Single row from a result set
+ * - ResultField: Single field/column value from a row
+ * - PResult: Pointer to a result set
+ * 
+ * @see pqxx::result for underlying implementation
+ */
+
+/**
+ * @brief Query result set type.
  */
 using Result = pqxx::result;
+
+/**
+ * @brief Single row from a result set.
+ */
 using ResultTuple = pqxx::row;
+
+/**
+ * @brief Single field/column value from a row.
+ */
 using ResultField = pqxx::field;
+
+/**
+ * @brief Pointer to a result set.
+ */
 using PResult = Result *;
 } // namespace Database
 

@@ -25,23 +25,43 @@
 #include <unordered_map>
 
 /**
- *factory class which holds templates of BasicServerCommand classes
- *an returns an empty command given by an id
+ * @brief Factory for creating client command instances from network protocol IDs.
+ *
+ * Maintains a registry of command templates indexed by protocol byte identifiers.
+ * When a command byte is received from the network, the factory clones the
+ * corresponding template to create a new command instance ready for data parsing.
+ *
+ * This pattern allows:
+ * - Fast command instantiation without complex switch statements
+ * - Easy addition of new command types
+ * - Separation of command structure from instantiation logic
+ *
+ * @note Constructor pre-registers all game and admin command types
+ * @see BasicClientCommand for the command base class
  */
 class CommandFactory {
 public:
+    /**
+     * @brief Constructs factory and registers all known command types.
+     *
+     * Pre-populates the template list with instances of all client commands
+     * including player actions (movement, combat, chat) and admin commands
+     * (warp, attribute changes, broadcasts).
+     */
     CommandFactory();
 
     /**
-     *returns a pointer to an emtpy Server Command
-     *@param commandId the id of the command which we want to use
-     *@return a pointer to an empty command with the given commandId
+     * @brief Creates a new command instance for the given protocol ID.
+     * @param commandId Network protocol byte identifying the command type
+     * @return Shared pointer to new command instance, or null if ID unknown
+     *
+     * Returns a clone of the registered template for thread-safe reuse.
      */
     auto getCommand(unsigned char commandId) -> ClientCommandPointer;
 
 private:
     using COMMANDLIST = std::unordered_map<unsigned char, std::unique_ptr<BasicClientCommand>>;
-    COMMANDLIST templateList;
+    COMMANDLIST templateList; ///< Map of protocol IDs to command templates
 };
 
 #endif

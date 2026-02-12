@@ -27,16 +27,56 @@
 #include "db/Result.hpp"
 
 namespace Database {
+/**
+ * @brief Builder class for constructing and executing SQL DELETE queries.
+ * 
+ * DeleteQuery provides a type-safe builder for DELETE statements with support for:
+ * - Single table deletion (via QueryTables mixin)
+ * - WHERE conditions (via QueryWhere mixin)
+ * 
+ * The class enforces single-table deletes only for safety.
+ * 
+ * Example usage:
+ * @code
+ * DeleteQuery query;
+ * query.addServerTable("old_items");
+ * query.addWhereClause("created_at", "<", "2020-01-01");
+ * query.execute(); // DELETE FROM old_items WHERE created_at < '2020-01-01';
+ * @endcode
+ * 
+ * @warning Always use WHERE clauses to avoid accidentally deleting all rows
+ * @note DeleteQuery is non-copyable and non-movable
+ * @see Query
+ * @see QueryTables
+ * @see QueryWhere
+ */
 class DeleteQuery : Query, public QueryTables, public QueryWhere {
 public:
+    /**
+     * @brief Creates a DELETE query with auto-acquired connection.
+     */
     DeleteQuery();
+    
+    /**
+     * @brief Creates a DELETE query with specified connection.
+     * 
+     * @param connection Database connection to use
+     */
     explicit DeleteQuery(const PConnection &connection);
+    
     DeleteQuery(const DeleteQuery &org) = delete;
     auto operator=(const DeleteQuery &org) -> DeleteQuery & = delete;
     DeleteQuery(DeleteQuery &&) = delete;
     auto operator=(DeleteQuery &&) -> DeleteQuery & = delete;
     ~DeleteQuery() override = default;
 
+    /**
+     * @brief Builds and executes the DELETE query.
+     * 
+     * Constructs the SQL from table and WHERE clauses.
+     * 
+     * @return Query result (typically shows number of rows deleted)
+     */
     auto execute() -> Result override;
 };
 

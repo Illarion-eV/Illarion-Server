@@ -36,6 +36,14 @@ class NPC;
 class Player;
 struct WeaponStruct;
 
+/**
+ * @brief Abstract interface for Lua scripts to interact with the game world.
+ * 
+ * Provides script-callable methods for character manipulation, item operations,
+ * map queries, and data table lookups without exposing full World implementation.
+ * 
+ * @see World
+ */
 class WorldScriptInterface {
 public:
     WorldScriptInterface() = default;

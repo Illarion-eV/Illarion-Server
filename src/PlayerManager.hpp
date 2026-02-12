@@ -29,6 +29,12 @@
 
 class Player;
 
+/**
+ * @brief Manages player login, logout, and persistence in separate threads.
+ * 
+ * Singleton that handles asynchronous player connection processing, authentication,
+ * database saves, and graceful disconnection without blocking the main game loop.
+ */
 class PlayerManager {
 public:
     static auto get() -> PlayerManager &;

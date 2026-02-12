@@ -29,6 +29,12 @@
 
 class Character;
 
+/**
+ * @brief Manages all long-term effects active on a single character.
+ * 
+ * Maintains a collection of LongTimeEffect instances, handles effect execution timing,
+ * persistence to database, and provides lookup/removal operations.
+ */
 class LongTimeCharacterEffects {
 public:
     explicit LongTimeCharacterEffects(Character *owner);

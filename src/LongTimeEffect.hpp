@@ -28,6 +28,12 @@ class Character;
 class Player;
 struct LTEPriority;
 
+/**
+ * @brief Represents a timed magical or status effect applied to a character.
+ * 
+ * Long-term effects can modify attributes, apply damage over time, or trigger periodic
+ * script callbacks. Each effect has an execution schedule and can store custom data values.
+ */
 class LongTimeEffect {
 public:
     LongTimeEffect(uint16_t effectId, int32_t executeIn);
@@ -65,6 +71,11 @@ private:
     VALUES values;
 };
 
+/**
+ * @brief Priority comparator for long-term effect execution ordering.
+ * 
+ * Orders effects by execution time for priority queue processing.
+ */
 struct LTEPriority {
     template <typename LTEPointer> auto operator()(const LTEPointer &lhs, const LTEPointer &rhs) const -> bool {
         // effects with higher execution time have lower priority

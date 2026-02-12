@@ -38,6 +38,12 @@ enum LtaState : unsigned char {
     ST_SUCCESS = 2 /**< action was sucessfully*/
 };
 
+/**
+ * @brief Parameters passed to Lua scripts for various action callbacks.
+ * 
+ * Contains context information about the source of an action (character, item,
+ * field position, dialog, or text) to provide scripts with necessary data.
+ */
 struct ActionParameters {
     Character *character = nullptr;
     ScriptItem item;
@@ -49,9 +55,13 @@ struct ActionParameters {
 };
 
 /**
+ * @brief Manages long-duration player actions that can be interrupted.
+ * 
+ * Tracks actions like crafting, using items, or casting spells that take time to complete.
+ * Actions can be aborted by combat, movement, or other disruptions, and trigger Lua
+ * script callbacks on success or failure.
+ * 
  * @ingroup Scriptclasses
- * class which holds the last action of the player for recalling the script on success or aborting the script
- * exportet to lua as <b>action</b>
  */
 class LongTimeAction {
 public:

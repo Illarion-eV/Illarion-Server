@@ -21,14 +21,29 @@
 #ifndef MESSAGE_DIALOG_HPP
 #define MESSAGE_DIALOG_HPP
 
-#include "dialog/Dialog.hpp"
-
+/**
+ * @brief A simple message dialog that displays text to the player.
+ *
+ * This dialog shows informational text with an "OK" button (or equivalent).
+ * Commonly used for notifications, hints, or simple confirmations.
+ */
 class MessageDialog : public Dialog {
 private:
-    string text;
+    string text; ///< The message text to display to the player.
 
 public:
+    /**
+     * @brief Constructs a message dialog.
+     * @param title The dialog window title.
+     * @param text The message text to display.
+     * @param callback Lua function called when player closes the dialog.
+     */
     MessageDialog(const string &title, string text, const luabind::object &callback);
+
+    /**
+     * @brief Gets the message text.
+     * @return The message text string.
+     */
     [[nodiscard]] auto getText() const -> const string &;
 };
 

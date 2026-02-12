@@ -26,22 +26,57 @@
 
 using std::string;
 
+/**
+ * @brief Base class for all player-facing dialog windows.
+ *
+ * This abstract class provides the foundation for interactive dialogs shown to players,
+ * including a title, class identifier for client rendering, and a Lua callback function
+ * that handles player responses.
+ */
 class Dialog {
 private:
-    string title;
-    string className;
-    luabind::object callback;
+    string title;             ///< The dialog window title shown to the player.
+    string className;         ///< CSS-like class name for client-side styling.
+    luabind::object callback; ///< Lua function called when player responds to the dialog.
 
 public:
+    /**
+     * @brief Constructs a dialog with title, class, and callback.
+     * @param title The dialog window title.
+     * @param className The CSS-like class for client rendering.
+     * @param callback Lua function to invoke when player responds.
+     */
     Dialog(string title, string className, const luabind::object &callback);
+
     Dialog(const Dialog &dialog) = default;
     auto operator=(const Dialog &) -> Dialog & = default;
     Dialog(Dialog &&) = default;
     auto operator=(Dialog &&) -> Dialog & = default;
     virtual ~Dialog() = default;
+
+    /**
+     * @brief Gets the dialog window title.
+     * @return The title string.
+     */
     [[nodiscard]] auto getTitle() const -> const string &;
+
+    /**
+     * @brief Gets the CSS-like class name for client rendering.
+     * @return The class name string.
+     */
     [[nodiscard]] auto getClassName() const -> const string &;
+
+    /**
+     * @brief Gets the Lua callback function.
+     * @return The callback object.
+     */
     [[nodiscard]] auto getCallback() const -> const luabind::object &;
+
+    /**
+     * @brief Determines if this dialog should close when the player moves.
+     * @return true if dialog auto-closes on movement, false to keep it open.
+     * @note Default implementation returns true; override for persistent dialogs.
+     */
     [[nodiscard]] virtual auto closeOnMove() const -> bool;
 };
 

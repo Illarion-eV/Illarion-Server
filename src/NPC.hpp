@@ -27,41 +27,63 @@
 class LuaNPCScript;
 
 /**
- * struct to take a text
+ * @brief Holds localized text for NPC dialogue.
+ * 
+ * Contains German and English versions of spoken text for bilingual NPC interactions.
  */
 struct NPCTalk {
-    /**
-     * german version of the spoken text
-     */
-    std::string SpeechText_ger;
-
-    /**
-     * englisch version of the spoken text
-     */
-    std::string SpeechText_eng;
+    std::string SpeechText_ger; ///< German version of the spoken text
+    std::string SpeechText_eng; ///< English version of the spoken text
 };
 
 class World;
 
 /**
- * defines a npc
+ * @brief Represents a non-player character with scripted behavior.
+ * 
+ * NPCs are stationary or semi-stationary characters that interact with players through
+ * Lua scripts. Unlike Monsters, NPCs typically:
+ * - Have fixed spawn positions and don't respawn from SpawnPoints
+ * - Use dialogue scripts for player interaction
+ * - Can act as healers to resurrect dead players
+ * - Maintain persistent IDs based on database records
+ * - Are loaded from the NPCTable during world initialization
+ * 
+ * Each NPC is assigned a unique ID from either NPC_BASE (for persistent NPCs) or
+ * DYNNPC_BASE (for dynamically spawned NPCs).
+ * 
+ * @see Character
+ * @see LuaNPCScript
+ * @see NPCTable
+ * @note NPCs are movable but not copyable
  */
 class NPC : public Character {
 public:
     /**
-     * constructor which creates the npc
-     * @param id of the npc
-     * @param name of the npc
-     * @param type race of the npc
-     * @param pos position on the map of the npc
-     * @param dir in which direction the npc is watching
-     * @param ishealer if true the npc ressurects death players
-     * @param sex the sex of the npc
+     * @brief Creates a new NPC at a specific position.
+     * 
+     * Initializes the NPC with full hitpoints (MAXHPS) and spawns it at the specified
+     * position. The NPC is immediately visible to all nearby players.
+     * 
+     * @param id Database ID for the NPC (use DYNNPC_BASE for dynamically generated NPCs)
+     * @param name Display name of the NPC
+     * @param race Race type ID determining appearance and racial traits
+     * @param pos World position where the NPC spawns
+     * @param dir Direction the NPC initially faces
+     * @param ishealer If true, NPC can resurrect dead players
+     * @param sex Biological sex of the NPC
+     * @param appearance Visual appearance settings (hair, beard, colors)
+     * 
+     * @note Persistent NPCs get ID = NPC_BASE + id; dynamic NPCs get ID = DYNNPC_BASE + counter
      */
     NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race, const position &pos,
         Character::face_to dir, bool ishealer, Character::sex_type sex, const appearance &appearance);
 
-    // testing constructor
+    /**
+     * @brief Default constructor for testing purposes.
+     * 
+     * Creates an uninitialized NPC. Should only be used in test scenarios.
+     */
     NPC() = default;
 
     ~NPC() override;
@@ -70,48 +92,65 @@ public:
     NPC(NPC &&) = default;
     auto operator=(NPC &&) -> NPC & = default;
 
+    /**
+     * @brief Returns the character type identifier.
+     * 
+     * @return Always returns 'npc' constant
+     */
     auto getType() const -> unsigned short override { return npc; }
 
     /**
-     * gets the healer state of this npc
-     * @return if the npc is a healer or not
+     * @brief Checks if this NPC can resurrect dead players.
+     * 
+     * @return true if the NPC is a healer, false otherwise
      */
     auto getHealer() const -> bool { return _ishealer; }
 
     /**
-     * gets the initial position of the npc
-     * @return the starting position of this npc
+     * @brief Retrieves the NPC's original spawn position.
+     * 
+     * @return The position where the NPC was created
      */
     auto getStartPos() const -> position { return _startpos; }
 
     /**
-     * gets a pointer to the script for this npc
-     * @return the pointer for the script
+     * @brief Retrieves the Lua script controlling this NPC's behavior.
+     * 
+     * @return Shared pointer to the NPC's script, or nullptr if no script is assigned
      */
     auto getScript() const -> std::shared_ptr<LuaNPCScript> { return _script; }
 
     /**
-     * adds a script to this npac
-     * @param script a pointer to a lua script for this npc
+     * @brief Assigns a Lua script to control this NPC's behavior.
+     * 
+     * @param script Shared pointer to a LuaNPCScript instance
      */
     void setScript(std::shared_ptr<LuaNPCScript> script) { _script = std::move(script); }
 
     /**
-     * npc receives a spoken text from a character
-     * triggeres a script entry
-     * @param tt how loudly the text is spoken
-     * @param message the text which is spoken
-     * @param cc the character who has spokenthe text
+     * @brief Processes speech received from nearby characters.
+     * 
+     * If the NPC has a Lua script with a receiveText entry point, this triggers
+     * the script callback for dialogue processing. NPCs cannot receive text from themselves.
+     * 
+     * @param tt The speech volume/type (whisper, say, shout, etc.)
+     * @param message The spoken text
+     * @param cc The character who spoke (nullptr if system message)
      */
     void receiveText(talk_type tt, const std::string &message, Character *cc) override;
 
+    /**
+     * @brief Returns a debug string representation of the NPC.
+     * 
+     * @return String in format "NPC Name(ID)"
+     */
     auto to_string() const -> std::string override;
 
 protected:
-    static uint32_t counter;
-    bool _ishealer{};
-    position _startpos{};
-    std::shared_ptr<LuaNPCScript> _script;
+    static uint32_t counter; ///< Global counter for generating unique dynamic NPC IDs
+    bool _ishealer{}; ///< If true, this NPC can resurrect dead players
+    position _startpos{}; ///< Original spawn position of the NPC
+    std::shared_ptr<LuaNPCScript> _script; ///< Lua script controlling NPC behavior and dialogue
 };
 
 #endif

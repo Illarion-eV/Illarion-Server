@@ -19,6 +19,14 @@
 #ifndef LANGUAGE_HPP
 #define LANGUAGE_HPP
 
-enum class Language { german = 0, english = 1 };
+/**
+ * @brief Supported languages for the game server.
+ *
+ * This enum represents the available languages for game text and communication.
+ */
+enum class Language { 
+    german = 0,  ///< German language.
+    english = 1  ///< English language.
+};
 
 #endif

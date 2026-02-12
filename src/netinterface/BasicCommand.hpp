@@ -20,23 +20,39 @@
 #define CBASICCOMMAND_HPP
 
 /**
- *@ingroup Netinterface
- *Basic class for commands which can be sent to a client or received by the server,
- *holding a unique byte to identify the command.
+ * @ingroup Netinterface
+ * @brief Base class for all network commands exchanged between client and server.
+ * 
+ * BasicCommand provides the foundation for the command pattern used in network
+ * communication. Each command type has a unique identifier byte used for:
+ * - Command type identification during deserialization
+ * - Protocol version compatibility checking
+ * - Message routing and dispatch
+ * 
+ * Derived classes include:
+ * - BasicClientCommand: Commands sent from client to server
+ * - BasicServerCommand: Commands sent from server to client
+ * 
+ * @see BasicClientCommand
+ * @see BasicServerCommand
+ * @see CommandFactory
  */
 class BasicCommand {
 private:
-    unsigned char definitionByte; /*<Unique command id*/
+    unsigned char definitionByte; ///< Unique command type identifier
+
 public:
     /**
-     *Constructor which sets the definition byte
-     *\param defByte A unique command id
+     * @brief Creates a command with a specific type identifier.
+     * 
+     * @param defByte Unique command ID byte
      */
     explicit BasicCommand(unsigned char defByte);
 
     /**
-     *Provides read access to the definition byte
-     *\return The unique command id
+     * @brief Gets the command type identifier.
+     * 
+     * @return Unique command ID byte
      */
     [[nodiscard]] auto getDefinitionByte() const -> unsigned char { return definitionByte; };
 };

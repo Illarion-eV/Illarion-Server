@@ -25,13 +25,63 @@
 #include "data/QuestScriptStructTable.hpp"
 #include "script/LuaItemScript.hpp"
 
+/**
+ * @brief Table for item definitions and properties
+ *
+ * Loads item data from the database "items" table, providing access to all
+ * item properties including:
+ * - Physical properties (volume, weight)
+ * - Aging/decay properties (aging speed, rot target, inventory decay)
+ * - Display properties (brightness)
+ * - Economic properties (worth, stack limits)
+ * - Localized names and descriptions
+ * - Rarity and level requirements
+ *
+ * Supports both main item scripts and quest-specific item scripts via the
+ * QuestScriptStructTable base class.
+ *
+ * Database table: items
+ * Script type: LuaItemScript
+ */
 class ItemTable : public QuestScriptStructTable<TYPE_OF_ITEM_ID, ItemStruct, LuaItemScript> {
 public:
+    /**
+     * @brief Get database table name
+     * @return "items"
+     */
     auto getTableName() const -> std::string override;
+
+    /**
+     * @brief Get column names for the items table
+     * @return Vector containing all item table column names
+     */
     auto getColumnNames() -> std::vector<std::string> override;
+
+    /**
+     * @brief Extract item ID from database row
+     * @param row Database result row
+     * @return Item ID from itm_id column
+     */
     auto assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID override;
+
+    /**
+     * @brief Parse database row into ItemStruct
+     * @param row Database result row
+     * @return Populated ItemStruct with all item properties
+     */
     auto assignTable(const Database::ResultTuple &row) -> ItemStruct override;
+
+    /**
+     * @brief Extract script filename from database row
+     * @param row Database result row
+     * @return Script filename from itm_script column
+     */
     auto assignScriptName(const Database::ResultTuple &row) -> std::string override;
+
+    /**
+     * @brief Get quest script nodes for items
+     * @return Iterator range over item quest nodes
+     */
     auto getQuestScripts() -> NodeRange override;
 
 private:

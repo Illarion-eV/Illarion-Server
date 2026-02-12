@@ -31,6 +31,12 @@
 #include <boost/unordered_map.hpp>
 #include <vector>
 
+/**
+ * @brief Pathfinding algorithms and data structures for character movement.
+ * 
+ * Implements A* pathfinding using Boost Graph Library for efficient route
+ * calculation across the game world map.
+ */
 namespace pathfinding {
 
 static constexpr auto numberOfVertices = 1000;
@@ -48,6 +54,12 @@ static const unordered_map<Position, direction> character_directions =
 
 struct world_map_graph;
 
+/**
+ * @brief Iterator over valid movement edges from a character's position.
+ * 
+ * Generates outgoing edges for the eight cardinal and diagonal directions,
+ * filtering out impassable tiles and world boundaries.
+ */
 struct character_out_edge_iterator : public boost::forward_iterator_helper<character_out_edge_iterator, Position,
                                                                            std::ptrdiff_t, Position *, Position> {
     character_out_edge_iterator();
@@ -64,6 +76,12 @@ protected:
     int direction{maxDirection + 1};
 };
 
+/**
+ * @brief Boost Graph Library adapter for the game world map.
+ * 
+ * Represents the world as a graph where positions are vertices and valid
+ * movement steps are edges. Enables use of BGL algorithms like A*.
+ */
 struct world_map_graph {
     using vertex_descriptor = Position;
     using edge_descriptor = std::pair<vertex_descriptor, vertex_descriptor>;
@@ -97,6 +115,11 @@ auto num_vertices(const world_map_graph &g) -> int;
 
 using Cost = float;
 
+/**
+ * @brief Heuristic function for A* that estimates distance to goal.
+ * 
+ * Calculates straight-line distance to guide pathfinding toward the target.
+ */
 class distance_heuristic : public astar_heuristic<world_map_graph, Cost> {
 public:
     using Vertex = graph_traits<world_map_graph>::vertex_descriptor;
@@ -107,10 +130,20 @@ private:
     Vertex goal;
 };
 
+/**
+ * @brief Hash function for map edges (position pairs).
+ * 
+ * Enables use of edges as keys in unordered containers.
+ */
 struct edge_hash : std::unary_function<std::pair<Position, Position>, std::size_t> {
     auto operator()(std::pair<Position, Position> const &e) const -> std::size_t;
 };
 
+/**
+ * @brief Calculates movement cost for edges based on terrain type.
+ * 
+ * Lazy-evaluates edge weights by checking tile walkability and movement cost.
+ */
 struct weight_calc : public boost::unordered_map<std::pair<Position, Position>, Cost, edge_hash> {
     explicit weight_calc(int level);
     auto operator[](const key_type &k) -> mapped_type &;
@@ -119,13 +152,30 @@ private:
     const int level;
 };
 
+/**
+ * @brief Hash function for map positions (vertices).
+ * 
+ * Enables use of positions as keys in unordered containers.
+ */
 struct vertex_hash : std::unary_function<Position, std::size_t> {
     auto operator()(Position const &u) const -> std::size_t;
 };
 
+/**
+ * @brief Exception thrown when A* successfully finds a path to the goal.
+ */
 struct found_goal {};
+
+/**
+ * @brief Exception thrown when A* cannot find a valid path.
+ */
 struct not_found {};
 
+/**
+ * @brief Assigns unique integer indices to discovered vertices.
+ * 
+ * Used by A* algorithm to track visited nodes efficiently.
+ */
 struct vertex_index_hash : public unordered_map<Position, int, vertex_hash> {
     auto operator[](const key_type &k) -> mapped_type &;
 
@@ -133,6 +183,11 @@ private:
     mutable int discovery_counter = 0;
 };
 
+/**
+ * @brief Visitor that monitors A* progress and enforces node limits.
+ * 
+ * Terminates search when goal is found or too many nodes are examined.
+ */
 struct astar_ex_visitor : public boost::default_astar_visitor {
     explicit astar_ex_visitor(Position goal);
 
@@ -144,11 +199,21 @@ private:
     int node_counter = 0;
 };
 
+/**
+ * @brief Stores tentative distance from start to each discovered vertex.
+ * 
+ * Used by A* to track best-known path costs during search.
+ */
 class dist_map : public boost::unordered_map<Position, Cost, vertex_hash> {
 public:
     auto operator[](key_type const &k) -> mapped_type &;
 };
 
+/**
+ * @brief Stores predecessor vertex for each position in the path.
+ * 
+ * Used to reconstruct the final path by backtracking from goal to start.
+ */
 class pred_map : public boost::unordered_map<Position, Position, vertex_hash> {
 public:
     auto operator[](key_type const &k) -> mapped_type &;

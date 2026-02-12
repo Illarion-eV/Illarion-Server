@@ -27,8 +27,10 @@ class World;
 class Player;
 
 /**
- * class which holds all the monitoring clients on the gameserver
- * and sends all the important server informations to them
+ * @brief Manages server monitoring clients that observe game state.
+ * 
+ * Maintains connections to administrative monitoring tools and broadcasts
+ * server status, player activity, and diagnostic information.
  */
 class MonitoringClients {
 public:

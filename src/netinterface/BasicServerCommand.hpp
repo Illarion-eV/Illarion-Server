@@ -28,32 +28,54 @@
 #include <vector>
 
 class BasicServerCommand;
+/**
+ * @brief Shared pointer type for server commands.
+ */
 using ServerCommandPointer = std::shared_ptr<BasicServerCommand>;
 
 /**
- *@ingroup Netinterface
- *Class which represents a basic command that is sent from the
- *server to the client. Each constructor prepares a 6 byte header as follows:
- *- Byte 0: Unique command id
- *- Byte 1: Byte 1 xor 0xFF (complement)
- *- Byte 2+3: Length of the following data segment
- *- Byte 4+5: Checksum consisting of the sum of all data bytes mod 0xFFFF
- *
- *Once all data has been added to the command, the header needs to be finalized with addHeader()
+ * @ingroup Netinterface
+ * @brief Base class for commands sent from server to client.
+ * 
+ * BasicServerCommand handles serialization of outgoing messages with automatic:
+ * - Header generation with command ID, length, and checksum
+ * - Dynamic buffer resizing as data is added
+ * - Type-safe data serialization (strings, ints, colors, etc.)
+ * 
+ * Each command consists of:
+ * - Byte 0: Unique command ID
+ * - Byte 1: Command ID XOR 0xFF (integrity check)
+ * - Bytes 2-3: Payload length (big-endian uint16)
+ * - Bytes 4-5: Checksum (sum of all data bytes mod 0xFFFF)
+ * - Bytes 6+: Payload data
+ * 
+ * Usage pattern:
+ * @code
+ * BasicServerCommand cmd(CMD_ID);
+ * cmd.addStringToBuffer("Hello");
+ * cmd.addIntToBuffer(42);
+ * cmd.addHeader(); // Finalize header with length and checksum
+ * netInterface->addCommand(std::make_shared<BasicServerCommand>(std::move(cmd)));
+ * @endcode
+ * 
+ * @note Command is movable but not copyable
+ * @see BasicClientCommand for client-to-server commands
+ * @see NetInterface for sending commands
  */
 class BasicServerCommand : public BasicCommand {
 public:
     /**
-     * Constructor which creates the server command.
-     * In this case the internal data buffer is 1000 bytes large.
-     * @param defByte The id of this command
+     * @brief Creates a server command with default buffer size (1000 bytes).
+     * 
+     * @param defByte The command ID
      */
     explicit BasicServerCommand(unsigned char defByte);
 
     /**
-     * Constructor which creates the server command.
-     * @param defByte The id of this command
-     * @param bsize The initial buffer size of this command
+     * @brief Creates a server command with custom initial buffer size.
+     * 
+     * @param defByte The command ID
+     * @param bsize Initial buffer size in bytes
      */
     BasicServerCommand(unsigned char defByte, uint16_t bsize);
 
@@ -64,44 +86,87 @@ public:
     ~BasicServerCommand() = default;
 
     /**
-     * Function which returns the data buffer of the command.
-     * @return The data buffer of the command
+     * @brief Gets the complete serialized command buffer.
+     * 
+     * @return Const reference to the byte buffer (header + payload)
      */
     [[nodiscard]] auto cmdData() const -> const std::vector<char> &;
 
     /**
-     * Returns the length of the command in bytes
-     * @return The length of the command
+     * @brief Gets the total command length in bytes.
+     * 
+     * @return Length including header and payload
      */
     [[nodiscard]] auto getLength() const -> int;
 
+    /**
+     * @brief Serializes a string to the buffer.
+     * 
+     * Writes null-terminated string data.
+     * 
+     * @param data String to serialize
+     */
     void addStringToBuffer(const std::string &data);
+    
+    /**
+     * @brief Serializes a 32-bit integer to the buffer (big-endian).
+     * 
+     * @param data Integer value
+     */
     void addIntToBuffer(int data);
+    
+    /**
+     * @brief Serializes a 16-bit integer to the buffer (big-endian).
+     * 
+     * @param data Short integer value
+     */
     void addShortIntToBuffer(short int data);
+    
+    /**
+     * @brief Serializes a single byte to the buffer.
+     * 
+     * @param data Byte value
+     */
     void addUnsignedCharToBuffer(unsigned char data);
+    
+    /**
+     * @brief Serializes a color value to the buffer.
+     * 
+     * @param c Color structure with RGB components
+     */
     void addColourToBuffer(const Colour &c);
 
     /**
-     * Adds all the header information to the top of the buffer
-     * which depends on the commands data, like length and checksum
+     * @brief Finalizes the header with length and checksum.
+     * 
+     * Must be called after all payload data has been added. Computes and writes
+     * the payload length and checksum into the header bytes.
      */
     void addHeader();
+    
+    /**
+     * @brief Initializes the header space in the buffer.
+     * 
+     * Reserves space for the 6-byte header at the start of the buffer.
+     */
     void initHeader();
 
 private:
-    static constexpr uint16_t headerSize = 6;
-    static constexpr uint16_t lengthPosition = 2;
-    static constexpr uint16_t crcPosition = 4;
-    static constexpr uint16_t defaultBufferSize = 1000;
-    uint16_t baseBufferSize = defaultBufferSize;
+    static constexpr uint16_t headerSize = 6; ///< Size of command header in bytes
+    static constexpr uint16_t lengthPosition = 2; ///< Offset of length field in header
+    static constexpr uint16_t crcPosition = 4; ///< Offset of checksum field in header
+    static constexpr uint16_t defaultBufferSize = 1000; ///< Default initial buffer size
+    uint16_t baseBufferSize = defaultBufferSize; ///< Base buffer size for resizing
 
-    std::vector<char> buffer;
-    uint32_t checkSum = 0;
+    std::vector<char> buffer; ///< Serialized command data
+    uint32_t checkSum = 0; ///< Running checksum of payload bytes
 
-    uint16_t bufferPos = 0;     // stores the current buffer position and the size of the used buffer
-    uint16_t bufferSizeMod = 1; // bufferSizeMod * baseBufferSize = current buffer size
+    uint16_t bufferPos = 0; ///< Current write position in buffer
+    uint16_t bufferSizeMod = 1; ///< Buffer size multiplier (actual size = bufferSizeMod * baseBufferSize)
 
-    // if there is a buffer overflow this function doubles buffer size
+    /**
+     * @brief Doubles the buffer size to accommodate more data.
+     */
     void resizeBuffer();
 };
 

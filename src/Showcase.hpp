@@ -21,6 +21,12 @@
 
 class Container;
 
+/**
+ * @brief Represents an open container view for a player.
+ * 
+ * Tracks whether a container is being viewed in the player's inventory or
+ * on the ground, enabling proper container state management.
+ */
 class Showcase {
 public:
     Showcase(Container *container, bool carry);

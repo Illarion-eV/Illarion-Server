@@ -21,18 +21,39 @@
 
 #include <chrono>
 
+/**
+ * @brief A simple interval timer for periodic event checking.
+ *
+ * This timer uses std::chrono::steady_clock to track time intervals and
+ * determine when a specified duration has elapsed. Useful for implementing
+ * periodic updates, cooldowns, or rate limiting.
+ */
 class Timer {
 public:
-    using clock = std::chrono::steady_clock;
-    using timePoint = clock::time_point;
-    using duration = clock::duration;
+    using clock = std::chrono::steady_clock; ///< The clock type used for timing.
+    using timePoint = clock::time_point; ///< A point in time from the steady clock.
+    using duration = clock::duration; ///< A time duration type.
 
+    /**
+     * @brief Constructs a timer with the specified interval.
+     * @param interval The duration to wait between intervals.
+     * @note The timer is initialized with the current time as the starting point.
+     */
     explicit Timer(duration interval);
+
+    /**
+     * @brief Checks if the interval has been exceeded since the last check.
+     *
+     * When this method returns true, it resets the internal timer to the current
+     * time, starting a new interval period.
+     *
+     * @return true if the interval duration has elapsed, false otherwise.
+     */
     auto intervalExceeded() -> bool;
 
 private:
-    timePoint lastIntervalExceeded;
-    duration interval;
+    timePoint lastIntervalExceeded; ///< Timestamp when the interval was last exceeded.
+    duration interval; ///< The duration of the interval to check against.
 };
 
 #endif

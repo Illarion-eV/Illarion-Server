@@ -28,9 +28,22 @@
 #include <iostream>
 #include <map>
 
+/**
+ * @brief Exception thrown when a requested field does not exist on the map.
+ */
 struct FieldNotFound : std::exception {};
+
+/**
+ * @brief Exception thrown when a map operation encounters an error.
+ */
 struct MapError : std::exception {};
 
+/**
+ * @brief Represents a 3D coordinate in the game world.
+ * 
+ * Contains x, y coordinates on the map plane and z for elevation/level.
+ * Provides movement and comparison operations for spatial calculations.
+ */
 struct position {
     Coordinate x;
     Coordinate y;
@@ -101,6 +114,11 @@ struct position {
     }
 };
 
+/**
+ * @brief Comparator for position objects to enable use in sorted containers.
+ * 
+ * Orders positions lexicographically by x, then y, then z coordinates.
+ */
 struct PositionComparison {
     auto operator()(const position &pos1, const position &pos2) const -> bool {
         if (pos1.x == pos2.x) {
@@ -113,12 +131,27 @@ struct PositionComparison {
     }
 };
 
+/**
+ * @brief Standard library namespace.
+ */
 namespace std {
+
+/**
+ * @brief Hash specialization for position to enable use in unordered containers.
+ * 
+ * Allows position objects to be keys in std::unordered_map and std::unordered_set.
+ */
 template <> struct hash<position> {
     auto operator()(const position &p) const -> size_t { return hash_value(p); }
 };
 } // namespace std
 
+/**
+ * @brief Represents a 2D coordinate on the map plane.
+ * 
+ * Similar to position but without elevation (z coordinate). Used for map-level
+ * operations that don't require height information.
+ */
 struct MapPosition {
     Coordinate x;
     Coordinate y;
@@ -139,11 +172,22 @@ struct MapPosition {
 };
 
 namespace std {
+
+/**
+ * @brief Hash specialization for MapPosition to enable use in unordered containers.
+ * 
+ * Allows MapPosition objects to be keys in std::unordered_map and std::unordered_set.
+ */
 template <> struct hash<MapPosition> {
     auto operator()(const MapPosition &p) const -> size_t { return hash_value(p); }
 };
 } // namespace std
 
+/**
+ * @brief Defines a spatial range with horizontal and vertical radii.
+ * 
+ * Used for area-of-effect calculations, visibility checks, and range queries.
+ */
 struct Range {
     Coordinate radius = 0;
     Coordinate zRadius = RANGEUP;

@@ -28,6 +28,14 @@
 #include <unordered_map>
 #include <vector>
 
+/**
+ * @brief Template container providing spatial indexing for character lookup.
+ * 
+ * Efficiently stores and retrieves characters by ID, name, position, or range.
+ * Maintains both direct ID lookup and spatial index for area queries.
+ * 
+ * @tparam T Character type (Player, Monster, or NPC)
+ */
 template <class T> class CharacterContainer {
 public:
     using pointer = T *;

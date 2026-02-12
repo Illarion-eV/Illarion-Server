@@ -32,16 +32,59 @@
 #include <string>
 
 namespace Database {
+/**
+ * @brief Builder class for constructing and executing SQL UPDATE queries.
+ * 
+ * UpdateQuery provides a type-safe builder for UPDATE statements with support for:
+ * - Column value assignment (via QueryAssign mixin)
+ * - Single table updates (via QueryTables mixin)
+ * - WHERE conditions (via QueryWhere mixin)
+ * 
+ * The class enforces single-table updates only for safety.
+ * 
+ * Example usage:
+ * @code
+ * UpdateQuery query;
+ * query.addServerTable("chars");
+ * query.addAssignColumn("level", 10);
+ * query.addAssignColumn("experience", 5000);
+ * query.addWhereClause("char_id", "=", 123);
+ * query.execute(); // UPDATE chars SET level = 10, experience = 5000 WHERE char_id = 123;
+ * @endcode
+ * 
+ * @note UpdateQuery is non-copyable and non-movable
+ * @see Query
+ * @see QueryAssign
+ * @see QueryTables
+ * @see QueryWhere
+ */
 class UpdateQuery : Query, public QueryAssign, public QueryTables, public QueryWhere {
 public:
+    /**
+     * @brief Creates an UPDATE query with auto-acquired connection.
+     */
     UpdateQuery();
+    
+    /**
+     * @brief Creates an UPDATE query with specified connection.
+     * 
+     * @param connection Database connection to use
+     */
     explicit UpdateQuery(const PConnection &connection);
+    
     UpdateQuery(const UpdateQuery &org) = delete;
     auto operator=(const UpdateQuery &org) -> UpdateQuery & = delete;
     UpdateQuery(UpdateQuery &&) = delete;
     auto operator=(UpdateQuery &&) -> UpdateQuery & = delete;
     ~UpdateQuery() override = default;
 
+    /**
+     * @brief Builds and executes the UPDATE query.
+     * 
+     * Constructs the SQL from table, SET assignments, and WHERE clauses.
+     * 
+     * @return Query result (typically shows number of rows affected)
+     */
     auto execute() -> Result override;
 };
 } // namespace Database
