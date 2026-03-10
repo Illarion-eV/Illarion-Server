@@ -170,11 +170,12 @@ void World::checkPlayers() {
 void World::checkPlayerImmediateCommands() {
     std::unique_lock<std::mutex> lock(immediatePlayerCommandsMutex);
     while (!immediatePlayerCommands.empty()) {
-        auto *player = immediatePlayerCommands.front();
+        auto playerId = immediatePlayerCommands.front();
         immediatePlayerCommands.pop();
         lock.unlock();
 
-        if (player->Connection->online) {
+        auto *player = Players.find(playerId);
+        if (player != nullptr && player->Connection && player->Connection->online) {
             player->workoutCommands();
         }
 
@@ -183,8 +184,12 @@ void World::checkPlayerImmediateCommands() {
 }
 
 void World::addPlayerImmediateActionQueue(Player *player) {
+    if (player == nullptr) {
+        return;
+    }
+
     std::unique_lock<std::mutex> lock(immediatePlayerCommandsMutex);
-    immediatePlayerCommands.push(player);
+    immediatePlayerCommands.push(player->getId());
 }
 
 void World::invalidatePlayerDialogs() const { Players.for_each(&Player::invalidateDialogs); }

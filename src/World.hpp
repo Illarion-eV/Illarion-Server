@@ -798,7 +798,7 @@ private:
     static void version_command(Player *player);
 
     std::mutex immediatePlayerCommandsMutex;
-    std::queue<Player *> immediatePlayerCommands;
+    std::queue<TYPE_OF_CHARACTER_ID> immediatePlayerCommands;
 };
 
 #endif
