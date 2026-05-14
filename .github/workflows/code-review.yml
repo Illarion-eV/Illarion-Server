@@ -6,32 +6,87 @@ jobs:
   cppcheck:
     runs-on: ubuntu-latest
 
+    container:
+      image: debian:bookworm
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup C++ build environment
+        uses: ./.github/actions/setup-cpp-build
+        with:
+          install-cppcheck: 'true'
 
       - name: Run cppcheck
-        run: tools/run-cppcheck
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JOB_ID: ${{ github.job }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Only check changed files on PRs for fast feedback
+            git diff --name-only origin/${{ github.base_ref }}...HEAD | \
+              grep -E '\.(cpp|hpp|h|cc|hh|cxx|hxx)$' > changed_files.txt || true
+            
+            if [ -s changed_files.txt ]; then
+              echo "Running cppcheck on changed files:"
+              cat changed_files.txt
+              cppcheck --project=build/compile_commands.json \
+                --file-list=changed_files.txt \
+                --enable=warning,performance,portability \
+                -j $(nproc) \
+                --error-exitcode=1 \
+                -q \
+                --suppress=constParameter:src/netinterface/protocol/BBIWIClientCommands.cpp \
+                --suppress=knownConditionTrueFalse:src/Player.cpp
+            else
+              echo "No C++ files changed in this PR"
+            fi
+          else
+            # Full codebase check on pushes to develop/master
+            echo "Running cppcheck on full codebase"
+            cppcheck --project=build/compile_commands.json \
+              --enable=warning,performance,portability \
+              -j $(nproc) \
+              --error-exitcode=1 \
+              -q \
+              --suppress=constParameter:src/netinterface/protocol/BBIWIClientCommands.cpp \
+              --suppress=knownConditionTrueFalse:src/Player.cpp
+          fi
 
-  clang-format:
+  cpp-linter:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Run clang-format
-        run: tools/run-clang-format && git diff --exit-code
-
-  clang-tidy:
-    runs-on: ubuntu-latest
+    container:
+      image: debian:bookworm
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Run clang-tidy
-        run: tools/run-clang-tidy
+      - name: Setup C++ build environment
+        uses: ./.github/actions/setup-cpp-build
+
+      - name: Run cpp-linter
+        uses: cpp-linter/cpp-linter-action@v2
+        id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JOB_ID: ${{ github.job }}
+        with:
+          style: 'file'
+          tidy-checks: ''
+          database: 'build'
+          version: '18'
+          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+          step-summary: true
+          # Only check changed files on PRs for fast feedback
+          # Check all files on pushes to develop/master for comprehensive coverage
+          files-changed-only: ${{ github.event_name == 'pull_request' }}
+          ignore: 'build'
+
+      - name: Fail if linting errors
+        if: steps.linter.outputs.checks-failed > 0
+        run: |
+          echo "Linting failed with ${{ steps.linter.outputs.checks-failed }} errors"
+          exit 1

@@ -1,5 +1,5 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 pushd $SCRIPTPATH > /dev/null
-docker-compose -f clang-format.yml pull
-docker-compose -f clang-format.yml run --rm clang-format
+docker compose -f clang-format.yml pull
+docker compose -f clang-format.yml run --rm clang-format
 popd > /dev/null

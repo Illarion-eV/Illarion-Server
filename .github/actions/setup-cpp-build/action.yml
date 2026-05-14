@@ -1,0 +1,31 @@
+name: 'Setup C++ Build Environment'
+description: 'Install dependencies and generate compile_commands.json for code analysis'
+
+inputs:
+  install-cppcheck:
+    description: 'Whether to install cppcheck'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install build dependencies
+      shell: bash
+      run: |
+        apt-get update
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get -y -qq install build-essential git wget file
+        apt-get -y -qq install libboost-graph-dev libboost-system-dev libpq-dev lua5.2-dev
+        if [ "${{ inputs.install-cppcheck }}" = "true" ]; then
+          apt-get -y -qq install cppcheck
+        fi
+        wget https://github.com/Kitware/CMake/releases/download/v3.21.1/cmake-3.21.1-linux-x86_64.sh -O cmake.sh -q
+        sh cmake.sh --skip-license --prefix=/usr/local
+
+    - name: Generate compile_commands.json
+      shell: bash
+      run: |
+        cmake -B build \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -Wno-dev
