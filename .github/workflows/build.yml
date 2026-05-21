@@ -45,7 +45,7 @@ jobs:
 
       - name: Initialize CodeQL
         if: ${{ github.event_name == 'schedule' }}
-        uses: github/codeql-action/init@v1
+        uses: github/codeql-action/init@v3
         with:
           languages: cpp
 
@@ -61,7 +61,7 @@ jobs:
 
       - name: Perform CodeQL Analysis
         if: ${{ github.event_name == 'schedule' }}
-        uses: github/codeql-action/analyze@v1
+        uses: github/codeql-action/analyze@v3
 
       - name: Test
         working-directory: ${{ steps.cmake-setup.outputs.build-directory }}
